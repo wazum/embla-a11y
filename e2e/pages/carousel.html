@@ -48,6 +48,17 @@
       .embla__dot[aria-current='true'] {
         background: #595959;
       }
+      .visually-hidden {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        margin: -1px;
+        padding: 0;
+        border: 0;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
+      }
       .embla--vertical {
         height: 600px;
       }
@@ -79,6 +90,13 @@
           data-dot-label="Go to slide {first}"
           data-dot-label-group="Go to slides {first} to {last}"
         ></div>
+        <p
+          class="embla__announcer visually-hidden"
+          aria-live="polite"
+          aria-atomic="true"
+          data-announcement="Slide {first} of {total}"
+          data-announcement-group="Slides {first} to {last} of {total}"
+        ></p>
         <p id="cart-status">Cart is empty</p>
       </section>
       <p><a href="index.html">All variants</a></p>

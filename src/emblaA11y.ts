@@ -5,6 +5,7 @@ import type {
   OptionsHandlerType
 } from 'embla-carousel'
 import { asEmblaV9 } from './compat/emblaV8.js'
+import { Announcer, type AnnouncementType } from './features/Announcer.js'
 import { DotButtons, type DotLabelType } from './features/DotButtons.js'
 import type { Feature } from './features/Feature.js'
 import { FocusRescue, type FocusMemoryType } from './features/FocusRescue.js'
@@ -31,6 +32,8 @@ type OptionsType = CreateOptionsType<{
   dotLabel: DotLabelType | null
   rotationButton: HTMLElement | null
   rotationLabel: RotationLabelType | null
+  announcer: HTMLElement | null
+  announcement: AnnouncementType | null
 }>
 
 export type EmblaA11yType = CreatePluginType<{}, OptionsType>
@@ -48,7 +51,9 @@ const defaultOptions: OptionsType = {
   dots: null,
   dotLabel: null,
   rotationButton: null,
-  rotationLabel: null
+  rotationLabel: null,
+  announcer: null,
+  announcement: null
 }
 
 function emblaA11y(userOptions: EmblaA11yOptionsType = {}): EmblaA11yType {
@@ -80,6 +85,9 @@ function emblaA11y(userOptions: EmblaA11yOptionsType = {}): EmblaA11yType {
     if (options.hideOffscreen) features.push(new HideOffscreen(emblaApi))
     if (options.dots !== null) {
       features.push(new DotButtons(emblaApi, options.dots, options.dotLabel))
+    }
+    if (options.announcer !== null) {
+      features.push(new Announcer(emblaApi, options.announcer, options))
     }
   }
 
