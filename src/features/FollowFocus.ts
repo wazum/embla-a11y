@@ -1,17 +1,55 @@
 import type { EmblaCarouselType } from 'embla-carousel'
 import type { Feature } from './Feature.js'
 
+/**
+ * Moves the carousel until the focused element inside a slide is fully visible.
+ * It follows keyboard, screen reader and script focus, but not mouse or touch presses or focus the browser restores.
+ * It also undoes the browser's own scrolling of the viewport.
+ */
 export class FollowFocus implements Feature {
   private readonly emblaApi: EmblaCarouselType
   private readonly onFocusIn = (event: FocusEvent): void => this.follow(event.target)
+  private readonly onPointerDown = (event: PointerEvent): void => {
+    this.pressed = event.target instanceof Node ? event.target : null
+  }
+  private readonly onKeyDown = (): void => {
+    this.pressed = null
+  }
+  private readonly onSlideFocus = (): boolean => {
+    const focused = document.activeElement
+    return !(focused instanceof Element && this.overflow(focused) === 0)
+  }
+  private readonly onWindowBlur = (): void => {
+    this.windowWasLeft = true
+  }
+  private readonly onWindowFocus = (): void => {
+    clearTimeout(this.restoreTimeout)
+    this.restoreTimeout = setTimeout(() => {
+      this.windowWasLeft = false
+    })
+  }
+  private windowWasLeft = false
+  private pressed: Node | null = null
+  private restoreTimeout: ReturnType<typeof setTimeout> | undefined
 
   public constructor(emblaApi: EmblaCarouselType) {
     this.emblaApi = emblaApi
     emblaApi.rootNode().addEventListener('focusin', this.onFocusIn)
+    emblaApi.rootNode().addEventListener('pointerdown', this.onPointerDown, true)
+    window.addEventListener('keydown', this.onKeyDown, true)
+    emblaApi.on('slidefocus', this.onSlideFocus)
+    window.addEventListener('blur', this.onWindowBlur)
+    window.addEventListener('focus', this.onWindowFocus)
   }
 
   public destroy(): void {
+    clearTimeout(this.restoreTimeout)
     this.emblaApi.rootNode().removeEventListener('focusin', this.onFocusIn)
+    this.emblaApi.rootNode().removeEventListener('pointerdown', this.onPointerDown, true)
+    window.removeEventListener('keydown', this.onKeyDown, true)
+    this.emblaApi.off('slidefocus', this.onSlideFocus)
+    window.removeEventListener('blur', this.onWindowBlur)
+    window.removeEventListener('focus', this.onWindowFocus)
   }
 
   private follow(target: EventTarget | null): void {
@@ -19,7 +57,12 @@ export class FollowFocus implements Feature {
     root.scrollLeft = 0
     root.scrollTop = 0
 
-    if (!(target instanceof Element) || !target.matches(':focus-visible')) return
+    const restoredByBrowser = this.windowWasLeft
+    const pressed = this.pressed
+    this.windowWasLeft = false
+    this.pressed = null
+    if (restoredByBrowser || !(target instanceof Element)) return
+    if (pressed !== null && target.contains(pressed)) return
     if (this.overflow(target) === 0) return
     this.goToSlideOf(target)
 
