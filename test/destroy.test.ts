@@ -1,39 +1,30 @@
 import { afterEach, expect, test } from 'vitest'
+import { page } from 'vitest/browser'
 import A11y from '../src/index.js'
 import { attributesOf, createCarousel, removeCarousels } from './fixture.js'
 
 afterEach(removeCarousels)
 
-test('restores the original root attributes on destroy', () => {
-  const { root, emblaApi } = createCarousel({
+test('restores the original markup on destroy', () => {
+  const { wrapper, emblaApi } = createCarousel({
     plugins: [A11y({ label: 'Featured products' })],
-    rootAttributes: { 'aria-label': 'Author label', class: 'embla' }
+    wrapperAttributes: { class: 'embla', 'data-carousel': 'products' }
   })
-  const attributesBeforeInit = {
-    'aria-label': 'Author label',
-    class: 'embla',
-    style: root.style.cssText
-  }
 
   emblaApi.destroy()
 
-  expect(attributesOf(root)).toEqual(attributesBeforeInit)
+  expect(attributesOf(wrapper)).toEqual({ class: 'embla', 'data-carousel': 'products' })
 })
 
-test('keeps the region through reInit and still restores the original attributes', () => {
-  const { root, emblaApi } = createCarousel({
-    plugins: [A11y({ label: 'Featured products' })],
-    rootAttributes: { 'aria-label': 'Author label' }
-  })
+test('keeps the region through reInit and removes it on destroy', async () => {
+  const { emblaApi } = createCarousel({ plugins: [A11y({ label: 'Featured products' })] })
 
   emblaApi.reInit()
   emblaApi.reInit()
 
-  expect(root.getAttribute('role')).toBe('region')
-  expect(root.getAttribute('aria-label')).toBe('Featured products')
+  await expect.element(page.getByRole('region', { name: 'Featured products' })).toBeVisible()
 
   emblaApi.destroy()
 
-  expect(root.getAttribute('role')).toBeNull()
-  expect(root.getAttribute('aria-label')).toBe('Author label')
+  expect(page.getByRole('region').elements()).toHaveLength(0)
 })

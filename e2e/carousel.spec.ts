@@ -30,9 +30,16 @@ for (const variant of variants) {
     test('exposes every slide inside the labelled region', async ({ page }) => {
       const region = page.getByRole('region', { name: 'Featured products' })
 
-      await expect(region.getByRole('heading', { level: 2 })).toHaveCount(variant.slides)
+      await expect(region.getByRole('heading', { level: 3 })).toHaveCount(variant.slides)
       await expect(region.getByRole('link')).toHaveCount(variant.slides)
-      await expect(region.getByRole('button')).toHaveCount(variant.slides)
+      await expect(region.getByRole('button', { name: /^Add product/ })).toHaveCount(variant.slides)
+    })
+
+    test('puts the previous and next buttons inside the region', async ({ page }) => {
+      const region = page.getByRole('region', { name: 'Featured products' })
+
+      await expect(region.getByRole('button', { name: 'Previous' })).toBeVisible()
+      await expect(region.getByRole('button', { name: 'Next' })).toBeVisible()
     })
   })
 }

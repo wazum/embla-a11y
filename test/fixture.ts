@@ -5,7 +5,7 @@ import EmblaCarousel, {
 } from 'embla-carousel'
 
 type CarouselFixture = {
-  root: HTMLElement
+  wrapper: HTMLElement
   slides: HTMLElement[]
   emblaApi: EmblaCarouselType
 }
@@ -15,32 +15,49 @@ export function createCarousel({
   slideWidth = '20%',
   options = {},
   plugins = [],
-  rootAttributes = {}
+  wrapperTag = 'div',
+  wrapperAttributes = {},
+  heading
 }: {
   slideCount?: number
   slideWidth?: string
   options?: EmblaOptionsType
   plugins?: EmblaPluginType[]
-  rootAttributes?: Record<string, string>
+  wrapperTag?: 'div' | 'section'
+  wrapperAttributes?: Record<string, string>
+  heading?: { id: string; text: string }
 } = {}): CarouselFixture {
-  const root = document.createElement('div')
-  for (const [name, value] of Object.entries(rootAttributes)) root.setAttribute(name, value)
-  root.style.cssText = 'overflow: hidden; width: 1000px'
+  const wrapper = document.createElement(wrapperTag)
+  for (const [name, value] of Object.entries(wrapperAttributes)) wrapper.setAttribute(name, value)
+
+  if (heading !== undefined) {
+    const headingElement = document.createElement('h2')
+    headingElement.id = heading.id
+    headingElement.textContent = heading.text
+    wrapper.append(headingElement)
+  }
+
+  const viewport = document.createElement('div')
+  viewport.style.cssText = 'overflow: hidden; width: 1000px'
   const container = document.createElement('div')
   container.style.cssText = 'display: flex'
   const slides = Array.from({ length: slideCount }, (_, index) => {
     const slide = document.createElement('div')
     slide.style.cssText = `flex: 0 0 ${slideWidth}; min-width: 0`
-    slide.innerHTML = `<a href="#slide-${index + 1}">Slide ${index + 1}</a>`
+    const link = document.createElement('a')
+    link.href = `#slide-${index + 1}`
+    link.textContent = `Slide ${index + 1}`
+    slide.append(link)
     return slide
   })
   container.append(...slides)
-  root.append(container)
-  document.body.append(root)
+  viewport.append(container)
+  wrapper.append(viewport, createButton('Previous'), createButton('Next'))
+  document.body.append(wrapper)
 
-  const emblaApi = EmblaCarousel(root, options, plugins)
+  const emblaApi = EmblaCarousel(viewport, options, plugins)
 
-  return { root, slides, emblaApi }
+  return { wrapper, slides, emblaApi }
 }
 
 export function attributesOf(element: Element): Record<string, string> {
@@ -49,4 +66,11 @@ export function attributesOf(element: Element): Record<string, string> {
 
 export function removeCarousels(): void {
   document.body.replaceChildren()
+}
+
+function createButton(text: string): HTMLButtonElement {
+  const button = document.createElement('button')
+  button.type = 'button'
+  button.textContent = text
+  return button
 }
