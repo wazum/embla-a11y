@@ -1,0 +1,6 @@
+dist
+package-lock.json
+docs/research
+playwright-report
+test-results
+recordings

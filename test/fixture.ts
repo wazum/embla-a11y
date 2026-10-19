@@ -10,14 +10,17 @@ type CarouselFixture = {
   emblaApi: EmblaCarouselType
 }
 
-export function createCarousel(
-  { slideCount = 5, slideWidth = '20%', options = {}, plugins = [] }: {
-    slideCount?: number
-    slideWidth?: string
-    options?: EmblaOptionsType
-    plugins?: EmblaPluginType[]
-  } = {}
-): CarouselFixture {
+export function createCarousel({
+  slideCount = 5,
+  slideWidth = '20%',
+  options = {},
+  plugins = []
+}: {
+  slideCount?: number
+  slideWidth?: string
+  options?: EmblaOptionsType
+  plugins?: EmblaPluginType[]
+} = {}): CarouselFixture {
   const root = document.createElement('div')
   root.style.cssText = 'overflow: hidden; width: 1000px'
   const container = document.createElement('div')

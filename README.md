@@ -32,7 +32,11 @@ npm test                 # unit tests in real browsers (Vitest browser mode)
 npm run test:e2e         # end-to-end tests with Playwright and axe
 npm run browsers:stop    # stop the browser container
 npm run demo             # demo pages, open /e2e/pages/basic.html
+npm run check            # formatting, lint, types, HTML, unused code, package exports
+npm run format           # fix formatting
 ```
+
+Git hooks (lefthook) run the checks on staged files before each commit and `npm run check` before each push.
 
 When updating Playwright, update the image tag in `compose.yaml` and `.github/workflows/ci.yml` to the same version.
 

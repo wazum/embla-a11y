@@ -9,6 +9,18 @@ permissions:
   contents: read
 
 jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run check
+      - run: npm run actionlint
+
   test:
     runs-on: ubuntu-latest
     container:
@@ -22,10 +34,8 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
-      - run: npm run typecheck
       - run: npx vitest run
       - run: npx playwright test
-      - run: npm run build
       - uses: actions/upload-artifact@v7
         if: failure()
         with:

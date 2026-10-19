@@ -1,0 +1,21 @@
+pre-commit:
+  parallel: true
+  jobs:
+    - name: format
+      glob: '*.{ts,js,json,md,yml,yaml,html,css}'
+      run: npx prettier --check {staged_files}
+    - name: lint
+      glob: '*.ts'
+      run: npx oxlint --type-aware --deny-warnings {staged_files}
+    - name: html
+      glob: '*.html'
+      run: npx html-validate {staged_files}
+    - name: actions
+      glob: '.github/workflows/*.yml'
+      run: npm run actionlint
+    - name: typecheck
+      run: npm run typecheck
+
+pre-push:
+  jobs:
+    - run: npm run check
