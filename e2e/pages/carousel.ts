@@ -79,7 +79,7 @@ document.querySelector('.embla__prev')?.addEventListener('click', () => emblaApi
 document.querySelector('.embla__next')?.addEventListener('click', () => emblaApi.goToNext())
 
 function createSlide(hrefPrefix: string, number: number): HTMLElement {
-  const slide = document.createElement('div')
+  const slide = document.createElement('li')
   slide.className = 'embla__slide'
 
   const heading = document.createElement('h3')
