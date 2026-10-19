@@ -23,7 +23,8 @@ export function createCarousel({
   wrapperAttributes = {},
   heading,
   dotTexts = [],
-  dotsAttributes = {}
+  dotsAttributes = {},
+  list = false
 }: {
   slideCount?: number
   slideWidth?: string
@@ -34,6 +35,7 @@ export function createCarousel({
   heading?: { id: string; text: string }
   dotTexts?: string[]
   dotsAttributes?: Record<string, string>
+  list?: boolean
 } = {}): CarouselFixture {
   const wrapper = document.createElement(wrapperTag)
   for (const [name, value] of Object.entries(wrapperAttributes)) wrapper.setAttribute(name, value)
@@ -47,10 +49,11 @@ export function createCarousel({
 
   const viewport = document.createElement('div')
   viewport.style.cssText = 'overflow: hidden; width: 1000px'
-  const container = document.createElement('div')
-  container.style.cssText = 'display: flex'
+  const container = document.createElement(list ? 'ul' : 'div')
+  container.style.cssText = 'display: flex; margin: 0; padding: 0; list-style: none'
+  if (list) container.setAttribute('role', 'list')
   const slides = Array.from({ length: slideCount }, (_, index) => {
-    const slide = document.createElement('div')
+    const slide = document.createElement(list ? 'li' : 'div')
     slide.style.cssText = `flex: 0 0 ${slideWidth}; min-width: 0`
     const link = document.createElement('a')
     link.href = `#slide-${index + 1}`

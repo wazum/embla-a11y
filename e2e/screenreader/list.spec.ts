@@ -2,11 +2,20 @@ import { expect } from '@playwright/test'
 import { screenReaderTest as test } from '@guidepup/playwright'
 import { listen, nextHeading, openVariant } from './listen.js'
 
-test('counts every slide while off-screen slides are hidden', async ({ page, screenReader }) => {
-  await openVariant(page, screenReader, 'three-per-view&hideOffscreen')
-  await listen(screenReader, nextHeading, 2)
+test.skip(process.platform === 'linux', 'Guidepup cannot steer Orca into the list reliably yet')
 
-  const heard = (await listen(screenReader, (reader) => reader.next(), 4)).join(' | ')
+test('counts every slide while off-screen slides are hidden', async ({ page, screenReader }) => {
+  test.fail(
+    process.platform === 'win32',
+    'NVDA counts only the list items it can reach and ignores aria-setsize'
+  )
+  await openVariant(page, screenReader, 'three-per-view&hideOffscreen')
+  for (let jump = 0; jump < 5; jump++) {
+    const heading = (await listen(screenReader, nextHeading, 1)).join('')
+    if (heading.includes('Featured products')) break
+  }
+
+  const heard = (await listen(screenReader, (reader) => reader.next(), 3)).join(' | ')
 
   expect(heard).toMatch(/\b10\b/)
   expect(heard).not.toMatch(/\b3 items\b/)

@@ -172,7 +172,10 @@ EmblaCarousel(viewport, { breakpoints: { '(prefers-reduced-motion: reduce)': { d
 
 ## Hiding slides that are off-screen
 
-By default every slide stays reachable, which in a long carousel means many Tab stops. With this option, slides that are completely outside the viewport become `inert`: screen readers, the keyboard and the mouse skip them. A slide becomes reachable as soon as any part of it is on screen, and the slide that holds focus is never hidden. Screen reader users then only find the slides on screen in their heading and link lists, so use it only when the long Tab sequence is the bigger problem.
+By default every slide stays reachable, which in a long carousel means many Tab stops. With this option, slides that are completely outside the viewport become `inert`: screen readers, the keyboard and the mouse skip them. A slide becomes reachable as soon as any part of it is on screen, and the slide that holds focus is never hidden. If the slides are list items, the plugin gives each one its position and the full count with `aria-posinset` and `aria-setsize`. Screen reader users then only find the slides on screen in their heading and link lists, so use it only when the long Tab sequence is the bigger problem.
+
+> [!NOTE]
+> VoiceOver reads the full count, for example "list, 10 items". NVDA ignores `aria-setsize` and counts only the slides on screen, so it says "list, with 3 items".
 
 - Option: `hideOffscreen: true`.
 
