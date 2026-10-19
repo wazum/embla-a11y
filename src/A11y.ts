@@ -26,6 +26,8 @@ const defaultOptions: OptionsType = {
 }
 
 function A11y(userOptions: A11yOptionsType = {}): A11yType {
+  const originalAttributes = new Map<Element, Map<string, string | null>>()
+
   function init(emblaApi: EmblaCarouselType, optionsHandler: OptionsHandlerType): void {
     const { mergeOptions, optionsAtMedia } = optionsHandler
     const options = optionsAtMedia(
@@ -33,11 +35,26 @@ function A11y(userOptions: A11yOptionsType = {}): A11yType {
     )
     const root = emblaApi.rootNode()
 
-    root.setAttribute('role', 'region')
-    root.setAttribute('aria-label', options.label)
+    setAttribute(root, 'role', 'region')
+    setAttribute(root, 'aria-label', options.label)
   }
 
-  function destroy(): void {}
+  function destroy(): void {
+    for (const [element, attributes] of originalAttributes) {
+      for (const [name, value] of attributes) {
+        if (value === null) element.removeAttribute(name)
+        else element.setAttribute(name, value)
+      }
+    }
+    originalAttributes.clear()
+  }
+
+  function setAttribute(element: Element, name: string, value: string): void {
+    const attributes = originalAttributes.get(element) ?? new Map<string, string | null>()
+    if (!attributes.has(name)) attributes.set(name, element.getAttribute(name))
+    originalAttributes.set(element, attributes)
+    element.setAttribute(name, value)
+  }
 
   return {
     name: 'a11y',

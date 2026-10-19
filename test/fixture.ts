@@ -14,14 +14,17 @@ export function createCarousel({
   slideCount = 5,
   slideWidth = '20%',
   options = {},
-  plugins = []
+  plugins = [],
+  rootAttributes = {}
 }: {
   slideCount?: number
   slideWidth?: string
   options?: EmblaOptionsType
   plugins?: EmblaPluginType[]
+  rootAttributes?: Record<string, string>
 } = {}): CarouselFixture {
   const root = document.createElement('div')
+  for (const [name, value] of Object.entries(rootAttributes)) root.setAttribute(name, value)
   root.style.cssText = 'overflow: hidden; width: 1000px'
   const container = document.createElement('div')
   container.style.cssText = 'display: flex'
@@ -38,6 +41,10 @@ export function createCarousel({
   const emblaApi = EmblaCarousel(root, options, plugins)
 
   return { root, slides, emblaApi }
+}
+
+export function attributesOf(element: Element): Record<string, string> {
+  return Object.fromEntries(Array.from(element.attributes, ({ name, value }) => [name, value]))
 }
 
 export function removeCarousels(): void {
