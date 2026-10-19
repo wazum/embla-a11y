@@ -1,17 +1,13 @@
 import { expect } from '@playwright/test'
 import { screenReaderTest as test } from '@guidepup/playwright'
+import { listen, nextHeading, openVariant } from './listen.js'
 
 test('reaches every visible slide by heading navigation', async ({ page, screenReader }) => {
-  await page.goto('/e2e/pages/carousel.html?variant=three-per-view', { waitUntil: 'load' })
-  await page.getByRole('region', { name: 'Featured products' }).waitFor()
-  await screenReader.navigateToWebContent()
+  await openVariant(page, screenReader, 'three-per-view')
 
-  for (let step = 0; step < 6; step++) {
-    await screenReader.nextHeading()
-  }
-  const spoken = (await screenReader.spokenPhraseLog()).join(' | ')
+  const heard = (await listen(screenReader, nextHeading, 6)).join(' | ')
 
   for (const heading of ['Product 1', 'Product 2', 'Product 3']) {
-    expect(spoken).toContain(heading)
+    expect(heard).toContain(heading)
   }
 })
