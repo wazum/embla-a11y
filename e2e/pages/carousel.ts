@@ -31,6 +31,9 @@ if (variant.options.direction === 'rtl') root.dir = 'rtl'
 const section = root.closest('section')
 if (section !== null) section.hidden = parameters.has('hidden')
 
+const rotationButton = document.querySelector<HTMLElement>('.embla__rotation')
+if (rotationButton !== null) rotationButton.hidden = variant.rotation === undefined
+
 const productHref = `?variant=${variant.name}&product=`
 container.append(
   ...Array.from({ length: variant.slides }, (_, index) => createSlide(productHref, index + 1))
@@ -42,16 +45,26 @@ const emblaApi = asEmblaV9(
       hideOffscreen: parameters.has('hideOffscreen'),
       previousButton: document.querySelector<HTMLElement>('.embla__prev'),
       nextButton: document.querySelector<HTMLElement>('.embla__next'),
-      dots: document.querySelector<HTMLElement>('.embla__dots')
+      dots: document.querySelector<HTMLElement>('.embla__dots'),
+      rotationButton
     }),
     ...(variant.fade === true ? [Fade()] : []),
-    ...(variant.rotation === 'autoplay' ? [Autoplay({ delay: 1000 })] : []),
+    ...(variant.rotation === 'autoplay'
+      ? [
+          Autoplay({
+            delay: 1000,
+            ...(variant.startsStopped === true ? { playOnInit: false } : {})
+          })
+        ]
+      : []),
     ...(variant.rotation === 'auto-scroll' ? [AutoScroll({ speed: 2 })] : [])
   ])
 )
 window.emblaApi = emblaApi
-emblaApi.plugins().autoplay?.play()
-emblaApi.plugins().autoScroll?.play()
+if (variant.startsStopped !== true) {
+  emblaApi.plugins().autoplay?.play()
+  emblaApi.plugins().autoScroll?.play()
+}
 
 document
   .querySelector('.embla__dots')
