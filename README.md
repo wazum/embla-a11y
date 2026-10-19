@@ -1,56 +1,60 @@
 # embla-carousel-a11y
 
-Accessibility plugin for [Embla Carousel](https://www.embla-carousel.com) v9.
+An accessibility plugin for [Embla Carousel](https://www.embla-carousel.com) v9. Work in progress, not published yet.
 
-Work in progress. Not published yet.
-
-## Goals
-
-- Never hide content that users can see.
-- Users are in control of motion: no autoplay surprises, a pause that lasts, `prefers-reduced-motion` respected.
-- Target: WCAG 2.2 AA, plus the AAA criteria a carousel can meet.
-- Verified with automated tests in real browsers and with real screen readers (VoiceOver, NVDA, Orca).
-
-See [docs/definition-of-done.md](docs/definition-of-done.md) for the success criteria and [docs/research](docs/research) for the research behind them.
+The plugin never hides content that people can see, and it lets them control motion. It aims at WCAG 2.2 AA, plus the AAA criteria a carousel can meet. We test it in real browsers and with real screen readers (VoiceOver, NVDA, Orca).
 
 ## Usage
+
+```html
+<section class="embla" aria-labelledby="products-heading">
+  <h2 id="products-heading">Featured products</h2>
+  <div class="embla__viewport">
+    <div class="embla__container">
+      <div class="embla__slide">…</div>
+    </div>
+  </div>
+  <button type="button">Previous</button>
+  <button type="button">Next</button>
+</section>
+```
 
 ```ts
 import EmblaCarousel from 'embla-carousel'
 import A11y from 'embla-carousel-a11y'
 
-EmblaCarousel(rootNode, {}, [A11y({ label: 'Featured products' })])
+EmblaCarousel(document.querySelector('.embla__viewport'), {}, [A11y()])
 ```
 
-## Development
+If your markup has no name for the carousel, pass the id of a visible heading with `labelledBy`, or a text with `label`. The plugin then names the element around the viewport and adds the region role. It never overwrites a name or role you wrote yourself.
 
-Browsers run in the official Playwright Docker image (`compose.yaml`). The test scripts start the container; tests on the host connect to it.
+## What it does today
 
-```sh
-npm install
-npm test                 # unit tests in real browsers (Vitest browser mode)
-npm run test:e2e         # end-to-end tests with Playwright and axe
-npm run browsers:stop    # stop the browser container
-npm run demo             # demo pages, open /e2e/pages/index.html
-npm run check            # formatting, lint, types, HTML, unused code, package exports
-npm run format           # fix formatting
-```
+- It names the carousel region only where your markup leaves a gap. Without any name it adds no region and warns in the console.
+- Every slide stays readable for screen readers and reachable with the keyboard, including slides that are only partly on screen.
+- When something inside a slide gets focus, the carousel moves that slide into view. This works for the Tab key, screen readers, voice control and scripts. Embla on its own only reacts to Tab.
+- It stops the browser from scrolling the carousel by itself when focus moves, which would otherwise shift the slides out of place.
+- When the plugin is destroyed or Embla re-initialises, every attribute it changed goes back to its original value.
 
-Git hooks (lefthook) run the checks on staged files before each commit and `npm run check` before each push.
+## Best practices
 
-When updating Playwright, update the image tag in `compose.yaml` and `.github/workflows/ci.yml` to the same version.
+These come from accessibility experts and from people who use screen readers, magnifiers, voice control or the keyboard.
 
-### Screen reader tests
+**Name the carousel with a visible heading.** Wrap the viewport and its buttons in a `<section>` and point `aria-labelledby` at a heading. Most screen reader users move through a page by headings, and a visible heading gets translated, while an `aria-label` added by script does not.
 
-Screen reader tests drive real VoiceOver, NVDA and Orca with [Guidepup](https://www.guidepup.dev). They run in CI. To run them locally, prepare the machine once (this changes macOS VoiceOver settings):
+**Don't hide slides that are on screen.** Hiding visible slides from screen readers locks out people who see the screen and also use speech, and people who use voice control. Hidden slides also disappear from the heading and link lists that screen reader users navigate with.
 
-```sh
-npx @guidepup/setup setup
-npx @guidepup/setup install
-npm run test:screenreader
-```
+**Offer a way past long carousels.** Because every slide stays reachable, a keyboard user tabs through all of them. In a carousel with many slides, add a link before it that jumps to the content after it, for example "Skip past featured products". Make it visible when it has focus.
 
-The screen reader takes over the machine while the tests run.
+**Add buttons.** Dragging must never be the only way to move the carousel (WCAG 2.5.7). Use real `<button>` elements with visible text, at least 24 by 24 pixels, and keep them visible when they have focus.
+
+**Keep the visible text as the button name.** If a button says "Next", don't give it a different `aria-label`. Voice control users say what they see.
+
+**Avoid autoplay.** Moving content is the most common complaint from disabled users, and it can make people with vestibular disorders feel sick. If you need it, put a stop button before the slides, stop for good when someone interacts with the carousel, and don't start it when the user asks for reduced motion.
+
+**Don't take over the arrow keys.** Screen readers use them to read. Buttons and the Tab key are enough.
+
+**Announce little.** A screen reader should hear a short position such as "3 of 10" after the user moves the carousel, not the whole slide, and nothing while it moves by itself.
 
 ## License
 
