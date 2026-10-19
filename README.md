@@ -287,6 +287,10 @@ These come from accessibility experts and from people who use screen readers, ma
 
 **Add buttons.** Dragging must never be the only way to move the carousel (WCAG 2.5.7). Use real `<button>` elements with visible text, at least 24 by 24 pixels, and keep them visible when they have focus.
 
+**Don't hide unavailable buttons with `opacity: 0`.** A transparent button can still get focus, so keyboard users land on something they cannot see. If both buttons are unavailable and you want them gone, use `hidden` or `display: none`.
+
+**Let people zoom.** If you set `touch-action` on the carousel, keep `pinch-zoom` in it, for example `touch-action: pan-y pinch-zoom`. Without it, people with low vision cannot zoom into the slides on a touch screen.
+
 **Keep the visible text as the button name.** If a button says "Next", don't give it a different `aria-label`. Voice control users say what they see.
 
 **Prefer text in the page over `aria-label`.** Browsers translate text in the page, but not an `aria-label`, and text rendered on the server works before JavaScript runs.
