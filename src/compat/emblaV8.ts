@@ -8,6 +8,7 @@ type EmblaV8Type = {
   scrollTo: (index: number, jump?: boolean) => void
   selectedScrollSnap: () => number
   scrollSnapList: () => number[]
+  plugins: () => object | undefined
   internalEngine: () => object & { slideRegistry: number[][] }
   on: (event: string, listener: () => unknown) => unknown
   off: (event: string, listener: () => unknown) => unknown
@@ -66,6 +67,7 @@ export function asEmblaV9(emblaApi: EmblaCarouselType): EmblaCarouselType {
     goTo: (index: number, instant?: boolean) => emblaV8.scrollTo(index, instant),
     selectedSnap: () => emblaV8.selectedScrollSnap(),
     snapList: () => emblaV8.scrollSnapList(),
+    plugins: () => emblaV8.plugins() ?? {},
     internalEngine: () => {
       const engine = emblaV8.internalEngine()
       return Object.assign(Object.create(engine) as object, {

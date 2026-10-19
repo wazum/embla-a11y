@@ -168,12 +168,41 @@ If your code disables, hides or removes the element that has focus, the plugin m
 
 - No configuration. For the buttons it uses `previousButton` and `nextButton`.
 
-### Autoplay and AutoScroll stop for good
+### Autoplay, AutoScroll and the rotation button
 
 If you use the Autoplay or AutoScroll plugin, any focus or press inside the carousel stops it for good. That includes focus from a screen reader, voice control or a script, not only the Tab key. The carousel then stays where the user is, and the focused slide comes into view. A resize keeps the rotation as it was: once a user stopped it, it stays stopped, and a rotation nobody stopped keeps running.
 
-- No configuration. List the Autoplay or AutoScroll plugin together with this plugin.
-- A visible stop button is still your job for now. Put it before the slides.
+The rotation button starts and stops the rotation. Its text always says what pressing it will do: "Stop slide rotation" while it runs, "Start slide rotation" while it is stopped. The text follows every change, also a stop through focus or a call to `play()` or `stop()` in your code. Focus on the button itself does not stop the rotation.
+
+- No configuration for the stop on interaction. List the Autoplay or AutoScroll plugin together with this plugin.
+- Option: `rotationButton` for the button. `rotationLabel(playing)` changes the text, for example for another language.
+- Markup: a real `<button type="button">` inside the carousel area, before the slides, so people reach it before the moving content. If the button has an icon, put the text in an element with `data-rotation-label`; the plugin only changes that element's text.
+
+```html
+<section class="embla" aria-labelledby="products-heading">
+  <h2 id="products-heading">Featured products</h2>
+  <button type="button" class="embla__rotation">
+    <svg aria-hidden="true" focusable="false">…</svg>
+    <span data-rotation-label>Stop slide rotation</span>
+  </button>
+  <div class="embla__viewport">…</div>
+</section>
+```
+
+```ts
+A11y({ rotationButton: document.querySelector('.embla__rotation') })
+```
+
+For people who asked their system for reduced motion, use the `breakpoints` option of Embla and of each plugin. `duration: 0` makes the moves after a button press instant. Autoplay and AutoScroll keep moving the slides by themselves, so turn them off with `active: false`:
+
+```ts
+const reducedMotion = '(prefers-reduced-motion: reduce)'
+
+EmblaCarousel(viewport, { breakpoints: { [reducedMotion]: { duration: 0 } } }, [
+  Autoplay({ breakpoints: { [reducedMotion]: { active: false } } }),
+  A11y({ rotationButton: document.querySelector('.embla__rotation') })
+])
+```
 
 ### Hiding slides that are off-screen
 

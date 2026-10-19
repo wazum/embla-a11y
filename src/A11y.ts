@@ -12,7 +12,11 @@ import { FollowFocus } from './features/FollowFocus.js'
 import { HideOffscreen } from './features/HideOffscreen.js'
 import { PreviousNextButtons } from './features/PreviousNextButtons.js'
 import { Region } from './features/Region.js'
-import { RotationControl, type RotationMemoryType } from './features/RotationControl.js'
+import {
+  RotationControl,
+  type RotationLabelType,
+  type RotationMemoryType
+} from './features/RotationControl.js'
 
 declare module 'embla-carousel' {
   interface EmblaPluginsType {
@@ -28,6 +32,8 @@ type OptionsType = CreateOptionsType<{
   nextButton: HTMLElement | null
   dots: HTMLElement | null
   dotLabel: DotLabelType
+  rotationButton: HTMLElement | null
+  rotationLabel: RotationLabelType
 }>
 
 export type A11yType = CreatePluginType<{}, OptionsType>
@@ -46,12 +52,14 @@ const defaultOptions: OptionsType = {
   dotLabel: (firstSlide, lastSlide) =>
     firstSlide === lastSlide
       ? `Go to slide ${firstSlide}`
-      : `Go to slides ${firstSlide} to ${lastSlide}`
+      : `Go to slides ${firstSlide} to ${lastSlide}`,
+  rotationButton: null,
+  rotationLabel: (playing) => (playing ? 'Stop slide rotation' : 'Start slide rotation')
 }
 
 function A11y(userOptions: A11yOptionsType = {}): A11yType {
   const focusMemory: FocusMemoryType = { focused: null }
-  const rotationMemory: RotationMemoryType = { stoppedByUser: false, playingBeforeResize: null }
+  const rotationMemory: RotationMemoryType = { stoppedByUser: false, playing: null }
   let features: Feature[] = []
 
   function init(anyEmblaApi: EmblaCarouselType, optionsHandler: OptionsHandlerType): void {
@@ -66,7 +74,7 @@ function A11y(userOptions: A11yOptionsType = {}): A11yType {
     const area = viewport.parentElement ?? viewport
     features = [
       new Region(area, options),
-      new RotationControl(emblaApi, area, rotationMemory),
+      new RotationControl(emblaApi, area, rotationMemory, options),
       new FollowFocus(emblaApi),
       new PreviousNextButtons(emblaApi, options),
       new FocusRescue(emblaApi, area, options, focusMemory)
