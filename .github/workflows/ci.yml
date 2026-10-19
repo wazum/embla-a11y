@@ -33,7 +33,7 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: npm
-      - run: npm ci
+      - run: npm ci --ignore-scripts
       - run: npx vitest run
       - run: npx playwright test
       - uses: actions/upload-artifact@v7
