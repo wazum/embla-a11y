@@ -29,6 +29,34 @@ test('restores the previous and next buttons on destroy', () => {
   expect(attributesOf(buttons.next)).toEqual({ type: 'button' })
 })
 
+test('rescues focus that was already inside the carousel when the plugin started', async () => {
+  const { buttons, emblaApi } = createCarousel()
+  buttons.next.focus()
+
+  emblaApi.reInit({}, [
+    A11y({ label: 'Featured products', previousButton: buttons.previous, nextButton: buttons.next })
+  ])
+  buttons.next.disabled = true
+  await new Promise((resolve) => setTimeout(resolve, 50))
+
+  expect(document.activeElement).toBe(buttons.previous)
+})
+
+test('stops moving focus after destroy', async () => {
+  const { buttons, emblaApi } = createCarousel({
+    plugins: ({ previous, next }) => [
+      A11y({ label: 'Featured products', previousButton: previous, nextButton: next })
+    ]
+  })
+  buttons.next.focus()
+
+  emblaApi.destroy()
+  buttons.next.disabled = true
+  await new Promise((resolve) => setTimeout(resolve, 50))
+
+  expect(document.activeElement).not.toBe(buttons.previous)
+})
+
 test('makes hidden slides reachable again on destroy', () => {
   const { slides, emblaApi } = createCarousel({
     slideCount: 10,

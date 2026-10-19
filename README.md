@@ -42,6 +42,7 @@ If your markup has no name for the carousel, pass the id of a visible heading wi
 - When something inside a slide gets focus, the carousel moves that slide into view. This works for the Tab key, screen readers, voice control and scripts. Embla on its own only reacts to Tab. A mouse or touch press on a partly visible slide does not move the carousel, so the click lands where you pressed.
 - It stops the browser from scrolling the carousel by itself when focus moves, which would otherwise shift the slides out of place.
 - At the start and the end, the previous or next button gets `aria-disabled="true"` instead of `disabled`. Screen readers announce it as unavailable, and a keyboard user who presses Next to the end keeps focus on the button. In a loop neither button is ever unavailable.
+- If your own code disables, hides or removes the element that has focus, the plugin moves focus to a nearby element instead of letting it fall back to the top of the page. A button hands focus to the other button, a slide hands it to the nearest remaining slide, and if nothing is left, the carousel itself takes focus.
 - When the plugin is destroyed or Embla re-initialises, every attribute it changed goes back to its original value.
 
 ## Hiding slides that are off-screen
