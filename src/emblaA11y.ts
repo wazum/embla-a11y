@@ -72,6 +72,7 @@ function emblaA11y(userOptions: EmblaA11yOptionsType = {}): EmblaA11yType {
     const options = optionsAtMedia(
       mergeOptions(mergeOptions(defaultOptions, emblaA11y.globalOptions), userOptions)
     )
+    if (!options.active) return
 
     const viewport = emblaApi.rootNode()
     const area = viewport.parentElement ?? viewport

@@ -265,11 +265,15 @@ The plugin adds nothing on the server. The React, Vue and Solid wrappers also cr
 - No configuration.
 - Markup: render the section, heading, list, buttons and dot names on the server. Then the carousel is accessible before JavaScript runs.
 
-### Clean destroy
+### Clean destroy and switching off
 
-When the plugin is destroyed or Embla re-initialises, every attribute and text the plugin added goes back to how it was.
+When the plugin is destroyed or Embla re-initialises, every attribute and text the plugin added goes back to how it was. The same happens when you switch the plugin off, for example on wide screens where the carousel becomes a plain grid:
 
-- No configuration.
+```ts
+emblaA11y({ breakpoints: { '(min-width: 900px)': { active: false } } })
+```
+
+- No configuration for the cleanup. Use `active: false`, directly or in `breakpoints`, to switch the plugin off.
 
 ## Best practices
 
