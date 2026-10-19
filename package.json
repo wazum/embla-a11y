@@ -47,11 +47,13 @@
     "test": "npm run browsers && vitest run",
     "test:watch": "npm run browsers && vitest",
     "test:e2e": "npm run browsers && playwright test --reporter=list",
+    "test:v8": "EMBLA=8 npm test",
+    "test:e2e:v8": "EMBLA=8 npm run test:e2e",
     "test:screenreader": "playwright test -c playwright.screenreader.config.ts --reporter=list",
     "demo": "vite"
   },
   "peerDependencies": {
-    "embla-carousel": "^9.0.0-rc04"
+    "embla-carousel": "^8.6.0 || ^9.0.0-rc04"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "0.18.5",

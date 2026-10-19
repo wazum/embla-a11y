@@ -6,8 +6,11 @@ Browsers run in the official Playwright Docker image (`compose.yaml`). The test 
 
 ```sh
 npm install
+npm install --prefix v8  # Embla 8.6 and its plugins, for the 8.6 tests
 npm test                 # unit tests in real browsers
 npm run test:e2e         # end-to-end tests with Playwright and axe
+npm run test:v8          # unit tests against Embla 8.6
+npm run test:e2e:v8      # end-to-end tests against Embla 8.6
 npm run browsers:stop    # stop the browser container
 npm run demo             # demo pages at /e2e/pages/index.html
 npm run check            # formatting, lint, types, HTML, unused code, package exports
@@ -15,6 +18,8 @@ npm run format           # fix formatting
 ```
 
 Git hooks check staged files before each commit and run `npm run check` before each push.
+
+Embla 9 is the main version. Everything for Embla 8.6 lives in `src/compat/`: it gives an 8.6 instance the Embla 9 methods the plugin uses. Embla 8.6 and its plugins for the tests are a separate package in `v8/`, because their peer dependencies cannot be installed next to Embla 9. With `EMBLA=8`, Vite and Vitest load them from there.
 
 When you update Playwright, use the same version in the image tag in `compose.yaml` and `.github/workflows/ci.yml`.
 

@@ -1,4 +1,5 @@
 import { defineConfig, devices } from '@playwright/test'
+import { demoPort } from './emblaVersion.js'
 
 const isCi = process.env.CI === 'true'
 
@@ -8,14 +9,14 @@ export default defineConfig({
   forbidOnly: isCi,
   reporter: isCi ? [['github'], ['html', { open: 'never' }]] : 'list',
   use: {
-    baseURL: 'http://localhost:5173',
+    baseURL: `http://localhost:${demoPort}`,
     connectOptions: isCi
       ? undefined
       : { wsEndpoint: 'ws://127.0.0.1:3737/', exposeNetwork: '<loopback>' }
   },
   webServer: {
-    command: 'vite --port 5173 --strictPort',
-    url: 'http://localhost:5173/e2e/pages/index.html',
+    command: `vite --port ${demoPort} --strictPort`,
+    url: `http://localhost:${demoPort}/e2e/pages/index.html`,
     reuseExistingServer: !isCi
   },
   projects: [

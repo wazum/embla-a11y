@@ -1,5 +1,6 @@
 dist
 package-lock.json
+v8/package-lock.json
 docs/research
 playwright-report
 test-results
