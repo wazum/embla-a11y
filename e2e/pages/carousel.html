@@ -32,6 +32,22 @@
         min-height: 44px;
         padding: 0 1rem;
       }
+      .embla__dots {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.25rem;
+        margin-top: 0.5rem;
+      }
+      .embla__dot {
+        width: 24px;
+        height: 24px;
+        border: 2px solid #595959;
+        border-radius: 50%;
+        background: #fff;
+      }
+      .embla__dot[aria-current='true'] {
+        background: #595959;
+      }
       .embla--vertical {
         height: 600px;
       }
@@ -54,6 +70,7 @@
           <button type="button" class="embla__prev">Previous</button>
           <button type="button" class="embla__next">Next</button>
         </div>
+        <div class="embla__dots"></div>
         <p id="cart-status">Cart is empty</p>
       </section>
       <p><a href="index.html">All variants</a></p>

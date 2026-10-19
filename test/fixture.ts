@@ -3,8 +3,9 @@ import EmblaCarousel, {
   type EmblaOptionsType,
   type EmblaPluginType
 } from 'embla-carousel'
+import { asEmblaV9 } from '../src/compat/emblaV8.js'
 
-type ButtonsType = { previous: HTMLButtonElement; next: HTMLButtonElement }
+type ButtonsType = { previous: HTMLButtonElement; next: HTMLButtonElement; dots: HTMLElement }
 
 type CarouselFixture = {
   wrapper: HTMLElement
@@ -20,7 +21,8 @@ export function createCarousel({
   plugins = [],
   wrapperTag = 'div',
   wrapperAttributes = {},
-  heading
+  heading,
+  dotTexts = []
 }: {
   slideCount?: number
   slideWidth?: string
@@ -29,6 +31,7 @@ export function createCarousel({
   wrapperTag?: 'div' | 'section'
   wrapperAttributes?: Record<string, string>
   heading?: { id: string; text: string }
+  dotTexts?: string[]
 } = {}): CarouselFixture {
   const wrapper = document.createElement(wrapperTag)
   for (const [name, value] of Object.entries(wrapperAttributes)) wrapper.setAttribute(name, value)
@@ -55,14 +58,14 @@ export function createCarousel({
   })
   container.append(...slides)
   viewport.append(container)
-  const buttons = { previous: createButton('Previous'), next: createButton('Next') }
-  wrapper.append(viewport, buttons.previous, buttons.next)
+  const dots = document.createElement('div')
+  dots.append(...dotTexts.map((text) => createButton(text)))
+  const buttons = { previous: createButton('Previous'), next: createButton('Next'), dots }
+  wrapper.append(viewport, buttons.previous, buttons.next, dots)
   document.body.append(wrapper)
 
-  const emblaApi = EmblaCarousel(
-    viewport,
-    options,
-    typeof plugins === 'function' ? plugins(buttons) : plugins
+  const emblaApi = asEmblaV9(
+    EmblaCarousel(viewport, options, typeof plugins === 'function' ? plugins(buttons) : plugins)
   )
 
   return { wrapper, slides, buttons, emblaApi }

@@ -39,12 +39,17 @@ const emblaApi = asEmblaV9(
     A11y({
       hideOffscreen: parameters.has('hideOffscreen'),
       previousButton: document.querySelector<HTMLElement>('.embla__prev'),
-      nextButton: document.querySelector<HTMLElement>('.embla__next')
+      nextButton: document.querySelector<HTMLElement>('.embla__next'),
+      dots: document.querySelector<HTMLElement>('.embla__dots')
     }),
     ...(variant.fade === true ? [Fade()] : [])
   ])
 )
 window.emblaApi = emblaApi
+
+document
+  .querySelector('.embla__dots')
+  ?.append(...emblaApi.snapList().map((_, index) => createDot(index)))
 
 document.querySelector('.embla__prev')?.addEventListener('click', () => emblaApi.goToPrev())
 document.querySelector('.embla__next')?.addEventListener('click', () => emblaApi.goToNext())
@@ -67,6 +72,14 @@ function createSlide(hrefPrefix: string, number: number): HTMLElement {
 
   slide.append(heading, link, ' ', button)
   return slide
+}
+
+function createDot(index: number): HTMLButtonElement {
+  const dot = document.createElement('button')
+  dot.type = 'button'
+  dot.className = 'embla__dot'
+  dot.addEventListener('click', () => emblaApi.goTo(index))
+  return dot
 }
 
 function setText(selector: string, text: string): void {
