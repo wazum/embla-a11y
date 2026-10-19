@@ -3,7 +3,7 @@ import AutoScroll from 'embla-carousel-auto-scroll'
 import Autoplay from 'embla-carousel-autoplay'
 import Fade from 'embla-carousel-fade'
 import { asEmblaV9 } from '../../src/compat/emblaV8.js'
-import A11y from '../../src/index.js'
+import emblaA11y from '../../src/index.js'
 import { variants } from '../variants.js'
 
 declare global {
@@ -41,7 +41,7 @@ container.append(
 
 const emblaApi = asEmblaV9(
   EmblaCarousel(root, variant.options, [
-    A11y({
+    emblaA11y({
       hideOffscreen: parameters.has('hideOffscreen'),
       previousButton: document.querySelector<HTMLElement>('.embla__prev'),
       nextButton: document.querySelector<HTMLElement>('.embla__next'),

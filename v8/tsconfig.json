@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": ["ES2023", "DOM"],
+    "strict": true,
+    "skipLibCheck": false,
+    "noEmit": true,
+    "types": [],
+    "paths": {
+      "embla-a11y": ["../dist/index.d.ts"],
+      "embla-carousel": ["./node_modules/embla-carousel"]
+    }
+  },
+  "files": ["consumer.ts"]
+}

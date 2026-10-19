@@ -1,7 +1,7 @@
 {
-  "name": "embla-carousel-a11y",
+  "name": "embla-a11y",
   "version": "0.0.0",
-  "description": "Accessibility plugin for Embla Carousel v9. Keeps visible slides readable, puts users in control of motion, targets WCAG 2.2 AA.",
+  "description": "Accessibility plugin for Embla Carousel 8.6 and 9. Keeps visible slides readable, puts users in control of motion, targets WCAG 2.2 AA.",
   "keywords": [
     "embla",
     "embla-carousel",
@@ -13,10 +13,10 @@
     "wcag"
   ],
   "license": "MIT",
-  "author": "Wolfgang Klinger <wk@plan2.net>",
+  "author": "Wolfgang Klinger <wolfgang@wazum.com>",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/wazum/embla-carousel-a11y.git"
+    "url": "git+https://github.com/wazum/embla-a11y.git"
   },
   "type": "module",
   "sideEffects": false,
@@ -40,7 +40,7 @@
     "html": "html-validate 'e2e/pages/**/*.html'",
     "actionlint": "docker run --rm -v \"$PWD:/repo\" -w /repo rhysd/actionlint:1.7.12 -color",
     "knip": "knip",
-    "package:check": "npm run build && publint --strict && attw --pack --profile esm-only",
+    "package:check": "npm run build && publint --strict && attw --pack --profile esm-only && tsc -p v8",
     "check": "npm run format:check && npm run lint && npm run typecheck && npm run html && npm run knip && npm run package:check",
     "browsers": "docker compose up -d --wait playwright",
     "browsers:stop": "docker compose down",

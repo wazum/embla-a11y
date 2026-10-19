@@ -18,6 +18,7 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
+      - run: npm ci --prefix v8
       - run: npm run check
       - run: npm run actionlint
 
