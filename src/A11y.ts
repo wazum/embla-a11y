@@ -5,6 +5,7 @@ import type {
   OptionsHandlerType
 } from 'embla-carousel'
 import { asEmblaV9 } from './compat/emblaV8.js'
+import { DotButtons, type DotLabelType } from './features/DotButtons.js'
 import type { Feature } from './features/Feature.js'
 import { FocusRescue, type FocusMemoryType } from './features/FocusRescue.js'
 import { FollowFocus } from './features/FollowFocus.js'
@@ -24,6 +25,8 @@ type OptionsType = CreateOptionsType<{
   hideOffscreen: boolean
   previousButton: HTMLElement | null
   nextButton: HTMLElement | null
+  dots: HTMLElement | null
+  dotLabel: DotLabelType
 }>
 
 export type A11yType = CreatePluginType<{}, OptionsType>
@@ -37,7 +40,12 @@ const defaultOptions: OptionsType = {
   labelledBy: null,
   hideOffscreen: false,
   previousButton: null,
-  nextButton: null
+  nextButton: null,
+  dots: null,
+  dotLabel: (firstSlide, lastSlide) =>
+    firstSlide === lastSlide
+      ? `Go to slide ${firstSlide}`
+      : `Go to slides ${firstSlide} to ${lastSlide}`
 }
 
 function A11y(userOptions: A11yOptionsType = {}): A11yType {
@@ -60,6 +68,9 @@ function A11y(userOptions: A11yOptionsType = {}): A11yType {
       new FocusRescue(emblaApi, area, options, focusMemory)
     ]
     if (options.hideOffscreen) features.push(new HideOffscreen(emblaApi))
+    if (options.dots !== null) {
+      features.push(new DotButtons(emblaApi, options.dots, options.dotLabel))
+    }
   }
 
   function destroy(): void {
