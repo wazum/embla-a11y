@@ -16,6 +16,19 @@ test('restores the original markup on destroy', () => {
   expect(attributesOf(wrapper)).toEqual({ class: 'embla', 'data-carousel': 'products' })
 })
 
+test('restores the previous and next buttons on destroy', () => {
+  const { buttons, emblaApi } = createCarousel({
+    plugins: ({ previous, next }) => [
+      A11y({ label: 'Featured products', previousButton: previous, nextButton: next })
+    ]
+  })
+
+  emblaApi.destroy()
+
+  expect(attributesOf(buttons.previous)).toEqual({ type: 'button' })
+  expect(attributesOf(buttons.next)).toEqual({ type: 'button' })
+})
+
 test('makes hidden slides reachable again on destroy', () => {
   const { slides, emblaApi } = createCarousel({
     slideCount: 10,

@@ -34,7 +34,11 @@ container.append(
 )
 
 const emblaApi = EmblaCarousel(root, variant.options, [
-  A11y({ hideOffscreen: parameters.has('hideOffscreen') }),
+  A11y({
+    hideOffscreen: parameters.has('hideOffscreen'),
+    previousButton: document.querySelector<HTMLElement>('.embla__prev'),
+    nextButton: document.querySelector<HTMLElement>('.embla__next')
+  }),
   ...(variant.fade === true ? [Fade()] : [])
 ])
 window.emblaApi = emblaApi

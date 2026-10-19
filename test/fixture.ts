@@ -4,9 +4,12 @@ import EmblaCarousel, {
   type EmblaPluginType
 } from 'embla-carousel'
 
+type ButtonsType = { previous: HTMLButtonElement; next: HTMLButtonElement }
+
 type CarouselFixture = {
   wrapper: HTMLElement
   slides: HTMLElement[]
+  buttons: ButtonsType
   emblaApi: EmblaCarouselType
 }
 
@@ -22,7 +25,7 @@ export function createCarousel({
   slideCount?: number
   slideWidth?: string
   options?: EmblaOptionsType
-  plugins?: EmblaPluginType[]
+  plugins?: EmblaPluginType[] | ((buttons: ButtonsType) => EmblaPluginType[])
   wrapperTag?: 'div' | 'section'
   wrapperAttributes?: Record<string, string>
   heading?: { id: string; text: string }
@@ -52,12 +55,17 @@ export function createCarousel({
   })
   container.append(...slides)
   viewport.append(container)
-  wrapper.append(viewport, createButton('Previous'), createButton('Next'))
+  const buttons = { previous: createButton('Previous'), next: createButton('Next') }
+  wrapper.append(viewport, buttons.previous, buttons.next)
   document.body.append(wrapper)
 
-  const emblaApi = EmblaCarousel(viewport, options, plugins)
+  const emblaApi = EmblaCarousel(
+    viewport,
+    options,
+    typeof plugins === 'function' ? plugins(buttons) : plugins
+  )
 
-  return { wrapper, slides, emblaApi }
+  return { wrapper, slides, buttons, emblaApi }
 }
 
 export function attributesOf(element: Element): Record<string, string> {

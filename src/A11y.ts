@@ -7,6 +7,7 @@ import type {
 import type { Feature } from './features/Feature.js'
 import { FollowFocus } from './features/FollowFocus.js'
 import { HideOffscreen } from './features/HideOffscreen.js'
+import { PreviousNextButtons } from './features/PreviousNextButtons.js'
 import { Region } from './features/Region.js'
 
 declare module 'embla-carousel' {
@@ -19,6 +20,8 @@ type OptionsType = CreateOptionsType<{
   label: string | null
   labelledBy: string | null
   hideOffscreen: boolean
+  previousButton: HTMLElement | null
+  nextButton: HTMLElement | null
 }>
 
 export type A11yType = CreatePluginType<{}, OptionsType>
@@ -30,7 +33,9 @@ const defaultOptions: OptionsType = {
   breakpoints: {},
   label: null,
   labelledBy: null,
-  hideOffscreen: false
+  hideOffscreen: false,
+  previousButton: null,
+  nextButton: null
 }
 
 function A11y(userOptions: A11yOptionsType = {}): A11yType {
@@ -43,7 +48,11 @@ function A11y(userOptions: A11yOptionsType = {}): A11yType {
     )
 
     const viewport = emblaApi.rootNode()
-    features = [new Region(viewport.parentElement ?? viewport, options), new FollowFocus(emblaApi)]
+    features = [
+      new Region(viewport.parentElement ?? viewport, options),
+      new FollowFocus(emblaApi),
+      new PreviousNextButtons(emblaApi, options)
+    ]
     if (options.hideOffscreen) features.push(new HideOffscreen(emblaApi))
   }
 

@@ -14,8 +14,8 @@ The plugin never hides content that people can see, and it lets them control mot
       <div class="embla__slide">…</div>
     </div>
   </div>
-  <button type="button">Previous</button>
-  <button type="button">Next</button>
+  <button type="button" class="embla__prev">Previous</button>
+  <button type="button" class="embla__next">Next</button>
 </section>
 ```
 
@@ -23,8 +23,15 @@ The plugin never hides content that people can see, and it lets them control mot
 import EmblaCarousel from 'embla-carousel'
 import A11y from 'embla-carousel-a11y'
 
-EmblaCarousel(document.querySelector('.embla__viewport'), {}, [A11y()])
+EmblaCarousel(document.querySelector('.embla__viewport'), {}, [
+  A11y({
+    previousButton: document.querySelector('.embla__prev'),
+    nextButton: document.querySelector('.embla__next')
+  })
+])
 ```
+
+You keep your own click handlers on the buttons. The plugin only tells assistive tech when a button can't move the carousel.
 
 If your markup has no name for the carousel, pass the id of a visible heading with `labelledBy`, or a text with `label`. The plugin then names the element around the viewport and adds the region role. It never overwrites a name or role you wrote yourself.
 
@@ -34,6 +41,7 @@ If your markup has no name for the carousel, pass the id of a visible heading wi
 - Every slide stays readable for screen readers and reachable with the keyboard, including slides that are only partly on screen.
 - When something inside a slide gets focus, the carousel moves that slide into view. This works for the Tab key, screen readers, voice control and scripts. Embla on its own only reacts to Tab. A mouse or touch press on a partly visible slide does not move the carousel, so the click lands where you pressed.
 - It stops the browser from scrolling the carousel by itself when focus moves, which would otherwise shift the slides out of place.
+- At the start and the end, the previous or next button gets `aria-disabled="true"` instead of `disabled`. Screen readers announce it as unavailable, and a keyboard user who presses Next to the end keeps focus on the button. In a loop neither button is ever unavailable.
 - When the plugin is destroyed or Embla re-initialises, every attribute it changed goes back to its original value.
 
 ## Hiding slides that are off-screen
