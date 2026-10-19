@@ -28,6 +28,12 @@
       "rules": {
         "no-await-in-loop": "off"
       }
+    },
+    {
+      "files": ["src/compat/**/*.ts"],
+      "rules": {
+        "typescript/no-unsafe-type-assertion": "off"
+      }
     }
   ],
   "ignorePatterns": ["dist", "docs"]

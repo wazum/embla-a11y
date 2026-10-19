@@ -1,8 +1,8 @@
 # embla-carousel-a11y
 
-An accessibility plugin for [Embla Carousel](https://www.embla-carousel.com) v9. Work in progress, not published yet.
+An accessibility plugin for [Embla Carousel](https://www.embla-carousel.com) 8.6 and 9. Work in progress, not published yet.
 
-The plugin never hides content that people can see, and it lets them control motion. It aims at WCAG 2.2 AA, plus the AAA criteria a carousel can meet. We test it in real browsers and with real screen readers (VoiceOver, NVDA, Orca).
+The plugin never hides content that people can see. It aims at WCAG 2.2 AA, plus the AAA criteria a carousel can meet. Every change runs automated tests in Chromium, Firefox and WebKit against both Embla versions, and screen reader tests with VoiceOver, NVDA and Orca.
 
 ## Usage
 

@@ -22,11 +22,17 @@ jobs:
       - run: npm run actionlint
 
   test:
+    name: test (Embla ${{ matrix.embla }})
     runs-on: ubuntu-latest
     container:
       image: mcr.microsoft.com/playwright:v1.64.1-noble
+    strategy:
+      fail-fast: false
+      matrix:
+        embla: ['9', '8']
     env:
       HOME: /root
+      EMBLA: ${{ matrix.embla }}
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -34,12 +40,14 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci --ignore-scripts
+      - run: npm ci --ignore-scripts --prefix v8
+        if: matrix.embla == '8'
       - run: npx vitest run
       - run: npx playwright test
       - uses: actions/upload-artifact@v7
         if: failure()
         with:
-          name: playwright-report
+          name: playwright-report-embla-${{ matrix.embla }}
           path: |
             playwright-report
             test-results

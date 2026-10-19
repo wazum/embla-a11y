@@ -1,5 +1,6 @@
 import EmblaCarousel, { type EmblaCarouselType } from 'embla-carousel'
 import Fade from 'embla-carousel-fade'
+import { asEmblaV9 } from '../../src/compat/emblaV8.js'
 import A11y from '../../src/index.js'
 import { variants } from '../variants.js'
 
@@ -33,14 +34,16 @@ container.append(
   ...Array.from({ length: variant.slides }, (_, index) => createSlide(productHref, index + 1))
 )
 
-const emblaApi = EmblaCarousel(root, variant.options, [
-  A11y({
-    hideOffscreen: parameters.has('hideOffscreen'),
-    previousButton: document.querySelector<HTMLElement>('.embla__prev'),
-    nextButton: document.querySelector<HTMLElement>('.embla__next')
-  }),
-  ...(variant.fade === true ? [Fade()] : [])
-])
+const emblaApi = asEmblaV9(
+  EmblaCarousel(root, variant.options, [
+    A11y({
+      hideOffscreen: parameters.has('hideOffscreen'),
+      previousButton: document.querySelector<HTMLElement>('.embla__prev'),
+      nextButton: document.querySelector<HTMLElement>('.embla__next')
+    }),
+    ...(variant.fade === true ? [Fade()] : [])
+  ])
+)
 window.emblaApi = emblaApi
 
 document.querySelector('.embla__prev')?.addEventListener('click', () => emblaApi.goToPrev())

@@ -4,6 +4,7 @@ import type {
   EmblaCarouselType,
   OptionsHandlerType
 } from 'embla-carousel'
+import { asEmblaV9 } from './compat/emblaV8.js'
 import type { Feature } from './features/Feature.js'
 import { FocusRescue, type FocusMemoryType } from './features/FocusRescue.js'
 import { FollowFocus } from './features/FollowFocus.js'
@@ -43,7 +44,8 @@ function A11y(userOptions: A11yOptionsType = {}): A11yType {
   const focusMemory: FocusMemoryType = { focused: null }
   let features: Feature[] = []
 
-  function init(emblaApi: EmblaCarouselType, optionsHandler: OptionsHandlerType): void {
+  function init(anyEmblaApi: EmblaCarouselType, optionsHandler: OptionsHandlerType): void {
+    const emblaApi = asEmblaV9(anyEmblaApi)
     const { mergeOptions, optionsAtMedia } = optionsHandler
     const options = optionsAtMedia(
       mergeOptions(mergeOptions(defaultOptions, A11y.globalOptions), userOptions)
