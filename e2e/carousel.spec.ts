@@ -2,6 +2,19 @@ import { expect, test } from '@playwright/test'
 import { AxeBuilder } from '@axe-core/playwright'
 import { variants } from './variants.js'
 
+test('previous and next buttons move the carousel', async ({ page }) => {
+  await page.goto('/e2e/pages/carousel.html?variant=one-per-view')
+  const productOne = page.getByRole('heading', { name: 'Product 1', exact: true })
+  const productTwo = page.getByRole('heading', { name: 'Product 2', exact: true })
+
+  await page.getByRole('button', { name: 'Next' }).click()
+  await expect(productTwo).toBeInViewport()
+  await expect(productOne).not.toBeInViewport()
+
+  await page.getByRole('button', { name: 'Previous' }).click()
+  await expect(productOne).toBeInViewport()
+})
+
 for (const variant of variants) {
   test.describe(variant.name, () => {
     test.beforeEach(async ({ page }) => {

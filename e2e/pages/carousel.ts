@@ -23,7 +23,10 @@ container.append(
   ...Array.from({ length: variant.slides }, (_, index) => createSlide(productHref, index + 1))
 )
 
-EmblaCarousel(root, variant.options, [A11y({ label: 'Featured products' })])
+const emblaApi = EmblaCarousel(root, variant.options, [A11y({ label: 'Featured products' })])
+
+document.querySelector('.embla__prev')?.addEventListener('click', () => emblaApi.goToPrev())
+document.querySelector('.embla__next')?.addEventListener('click', () => emblaApi.goToNext())
 
 function createSlide(hrefPrefix: string, number: number): HTMLElement {
   const slide = document.createElement('div')
