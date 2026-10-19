@@ -1,9 +1,44 @@
-import { afterEach, expect, test } from 'vitest'
+import { afterEach, expect, test, vi } from 'vitest'
 import { page } from 'vitest/browser'
 import emblaA11y from '../src/index.js'
 import { attributesOf, createCarousel, removeCarousels } from './fixture.js'
 
-afterEach(removeCarousels)
+afterEach(() => {
+  removeCarousels()
+  vi.restoreAllMocks()
+})
+
+const germanTemplate = {
+  'data-dot-label': 'Folie {first}',
+  'data-dot-label-group': 'Folien {first} bis {last}'
+}
+
+test('names dots with the template from the markup', async () => {
+  createCarousel({
+    slideCount: 4,
+    slideWidth: '50%',
+    options: { slidesToScroll: 2 },
+    dotTexts: ['', ''],
+    dotsAttributes: germanTemplate,
+    plugins: ({ dots }) => [emblaA11y({ label: 'Produkte', dots })]
+  })
+
+  await expect.element(page.getByRole('button', { name: 'Folien 1 bis 2' })).toBeVisible()
+  await expect.element(page.getByRole('button', { name: 'Folien 3 bis 4' })).toBeVisible()
+})
+
+test('names no dot and warns when there is no text, template or option', () => {
+  const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+  const { buttons } = createCarousel({
+    slideCount: 2,
+    slideWidth: '100%',
+    dotTexts: ['', ''],
+    plugins: ({ dots }) => [emblaA11y({ label: 'Produkte', dots })]
+  })
+
+  expect(buttons.dots.textContent).toBe('')
+  expect(warn).toHaveBeenCalledOnce()
+})
 
 test('keeps the visible text of a dot as its name', async () => {
   createCarousel({
@@ -21,6 +56,7 @@ test('marks only the dot of the shown slide as current, whatever the markup said
     slideCount: 3,
     slideWidth: '100%',
     dotTexts: ['', '', ''],
+    dotsAttributes: germanTemplate,
     plugins: ({ dots }) => {
       dots.children[1]?.setAttribute('aria-current', 'true')
       return [emblaA11y({ label: 'Featured products', dots })]
@@ -36,6 +72,7 @@ test('gives up its own name when the dot gets visible text later', async () => {
     slideCount: 2,
     slideWidth: '100%',
     dotTexts: ['', ''],
+    dotsAttributes: germanTemplate,
     plugins: ({ dots }) => [emblaA11y({ label: 'Featured products', dots })]
   })
   const firstDot = buttons.dots.children[0]
@@ -52,6 +89,7 @@ test('keeps a label the author sets later', async () => {
     slideCount: 2,
     slideWidth: '100%',
     dotTexts: ['', ''],
+    dotsAttributes: germanTemplate,
     plugins: ({ dots }) => [emblaA11y({ label: 'Featured products', dots })]
   })
 
@@ -65,6 +103,7 @@ test('names dots rebuilt inside list items', async () => {
   const { buttons } = createCarousel({
     slideCount: 2,
     slideWidth: '100%',
+    dotsAttributes: germanTemplate,
     plugins: ({ dots }) => {
       const list = document.createElement('ul')
       list.append(
@@ -85,7 +124,7 @@ test('names dots rebuilt inside list items', async () => {
   fresh.type = 'button'
   buttons.dots.querySelector('li')?.replaceChildren(fresh)
 
-  await expect.element(page.getByRole('button', { name: 'Go to slide 1' })).toBeVisible()
+  await expect.element(page.getByRole('button', { name: 'Folie 1' })).toBeVisible()
 })
 
 test('keeps a dot name that the browser translated', async () => {
@@ -93,16 +132,17 @@ test('keeps a dot name that the browser translated', async () => {
     slideCount: 2,
     slideWidth: '100%',
     dotTexts: ['', ''],
+    dotsAttributes: germanTemplate,
     plugins: ({ dots }) => [emblaA11y({ label: 'Featured products', dots })]
   })
   const generatedName = buttons.dots.children[0]?.querySelector('span')
   if (generatedName === undefined || generatedName === null) throw new Error('No dot name')
 
-  generatedName.replaceChildren(document.createTextNode('Gehe zu Folie 1'))
+  generatedName.replaceChildren(document.createTextNode('Slide 1'))
   emblaApi.goTo(1, true)
   await new Promise((resolve) => setTimeout(resolve, 50))
 
-  await expect.element(page.getByRole('button', { name: 'Gehe zu Folie 1' })).toBeVisible()
+  await expect.element(page.getByRole('button', { name: 'Slide 1' })).toBeVisible()
 })
 
 test('restores the dots on destroy', () => {
@@ -110,6 +150,7 @@ test('restores the dots on destroy', () => {
     slideCount: 2,
     slideWidth: '100%',
     dotTexts: ['', ''],
+    dotsAttributes: germanTemplate,
     plugins: ({ dots }) => [emblaA11y({ label: 'Featured products', dots })]
   })
 

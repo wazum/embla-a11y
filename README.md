@@ -144,10 +144,22 @@ Style the unavailable state with the attribute, and keep focus visible:
 
 ### Dot buttons
 
-The current dot gets `aria-current="true"`. A dot without a name of its own gets visually hidden text such as "Go to slide 3" or "Go to slides 4 to 6". No dot is ever disabled, and dots you rebuild later get the same treatment.
+The current dot gets `aria-current="true"`. No dot is ever disabled, and dots you rebuild later get the same treatment.
 
-- Options: `dots`, the element that holds the dot buttons. `dotLabel(firstSlide, lastSlide)` changes the generated text, for example for another language.
-- Markup: one `<button type="button">` per snap point, in order. The best name is your own hidden text, rendered on the server, as in the example above: it exists before JavaScript runs and it is in the page's language. The plugin keeps it.
+- Option: `dots`, the element that holds the dot buttons.
+- Markup: one `<button type="button">` per snap point, in order. The best name is your own hidden text, rendered on the server in the page's language, as in the example above. The plugin keeps it.
+
+The plugin never writes text of its own, because only your page knows its language. If you build the dots with JavaScript, put a template on the dots element. The plugin fills in the slide numbers and adds the text as visually hidden text, which browser translation can reach:
+
+```html
+<div
+  class="embla__dots"
+  data-dot-label="Slide {first}"
+  data-dot-label-group="Slides {first} to {last}"
+></div>
+```
+
+`data-dot-label-group` is for dots that stand for several slides. In an app with its own translation library, pass `dotLabel(firstSlide, lastSlide)` instead. Without a name, a template or `dotLabel`, the plugin names nothing and warns in the console.
 
 Style the current dot with the attribute, and make each dot at least 24 by 24 pixels:
 
@@ -172,22 +184,25 @@ If your code disables, hides or removes the element that has focus, the plugin m
 
 If you use the Autoplay or AutoScroll plugin, any focus or press inside the carousel stops it for good. That includes focus from a screen reader, voice control or a script, not only the Tab key. The carousel then stays where the user is, and the focused slide comes into view. A resize keeps the rotation as it was: once a user stopped it, it stays stopped, and a rotation nobody stopped keeps running.
 
-The rotation button starts and stops the rotation. Its text always says what pressing it will do: "Stop slide rotation" while it runs, "Start slide rotation" while it is stopped. The text follows every change, also a stop through focus or a call to `play()` or `stop()` in your code. Focus on the button itself does not stop the rotation.
+The rotation button starts and stops the rotation. Its text always says what pressing it will do. The text follows every change, also a stop through focus or a call to `play()` or `stop()` in your code. Focus on the button itself does not stop the rotation.
 
 - No configuration for the stop on interaction. List the Autoplay or AutoScroll plugin together with this plugin.
-- Option: `rotationButton` for the button. `rotationLabel(playing)` changes the text, for example for another language.
-- Markup: a real `<button type="button">` inside the carousel area, before the slides, so people reach it before the moving content. If the button has an icon, put the text in an element with `data-rotation-label`; the plugin only changes that element's text.
+- Option: `rotationButton` for the button.
+- Markup: a real `<button type="button">` inside the carousel area, before the slides, so people reach it before the moving content. Put both texts in it, in the page's language: one element with `data-rotation-playing` for while it runs, one with `data-rotation-stopped` and `hidden` for while it is stopped. The plugin only switches `hidden` between them.
 
 ```html
 <section class="embla" aria-labelledby="products-heading">
   <h2 id="products-heading">Featured products</h2>
   <button type="button" class="embla__rotation">
     <svg aria-hidden="true" focusable="false">…</svg>
-    <span data-rotation-label>Stop slide rotation</span>
+    <span data-rotation-playing>Stop slide rotation</span>
+    <span data-rotation-stopped hidden>Start slide rotation</span>
   </button>
   <div class="embla__viewport">…</div>
 </section>
 ```
+
+In an app with its own translation library, pass `rotationLabel(playing)` instead. It writes the text into the button, or into an element with `data-rotation-label`. Without texts or `rotationLabel`, the plugin leaves the button alone and warns in the console.
 
 ```ts
 emblaA11y({ rotationButton: document.querySelector('.embla__rotation') })
