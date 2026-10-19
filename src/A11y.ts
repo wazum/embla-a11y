@@ -54,6 +54,7 @@ function A11y(userOptions: A11yOptionsType = {}): A11yType {
 
   function init(anyEmblaApi: EmblaCarouselType, optionsHandler: OptionsHandlerType): void {
     const emblaApi = asEmblaV9(anyEmblaApi)
+    if (emblaApi.internalEngine().isSsr) return
     const { mergeOptions, optionsAtMedia } = optionsHandler
     const options = optionsAtMedia(
       mergeOptions(mergeOptions(defaultOptions, A11y.globalOptions), userOptions)
