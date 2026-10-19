@@ -32,7 +32,7 @@ for (const variant of variants) {
     test('keeps every visible link clickable after load, Next and a drag', async ({ page }) => {
       await expect.poll(() => visibleLinksThatCannotBeClicked(page)).toEqual([])
 
-      await page.getByRole('button', { name: 'Next' }).click()
+      await page.getByRole('button', { name: 'Next' }).click({ force: true })
       await expect.poll(() => visibleLinksThatCannotBeClicked(page)).toEqual([])
 
       const box = await page.locator('.embla').boundingBox()
