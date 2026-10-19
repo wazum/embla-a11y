@@ -1,0 +1,50 @@
+import EmblaCarousel from 'embla-carousel'
+import A11y from '../../src/index.js'
+import { variants } from '../variants.js'
+
+const name = new URLSearchParams(location.search).get('variant')
+const variant = variants.find((candidate) => candidate.name === name)
+if (variant === undefined) throw new Error(`Unknown variant: ${String(name)}`)
+
+const root = document.querySelector<HTMLElement>('.embla')
+const container = document.querySelector<HTMLElement>('.embla__container')
+if (root === null || container === null) throw new Error('Carousel markup not found')
+
+document.title = `Carousel: ${variant.name}`
+setText('#title', `Carousel: ${variant.name}`)
+setText('#description', variant.description)
+
+root.style.setProperty('--per-view', String(variant.perView))
+root.classList.toggle('embla--vertical', variant.options.axis === 'y')
+if (variant.options.direction === 'rtl') root.dir = 'rtl'
+
+const productHref = `?variant=${variant.name}&product=`
+container.append(
+  ...Array.from({ length: variant.slides }, (_, index) => createSlide(productHref, index + 1))
+)
+
+EmblaCarousel(root, variant.options, [A11y({ label: 'Featured products' })])
+
+function createSlide(hrefPrefix: string, number: number): HTMLElement {
+  const slide = document.createElement('div')
+  slide.className = 'embla__slide'
+
+  const heading = document.createElement('h2')
+  heading.textContent = `Product ${number}`
+
+  const link = document.createElement('a')
+  link.href = `${hrefPrefix}${number}`
+  link.textContent = `Details for product ${number}`
+
+  const button = document.createElement('button')
+  button.type = 'button'
+  button.textContent = `Add product ${number} to cart`
+
+  slide.append(heading, link, ' ', button)
+  return slide
+}
+
+function setText(selector: string, text: string): void {
+  const element = document.querySelector(selector)
+  if (element !== null) element.textContent = text
+}

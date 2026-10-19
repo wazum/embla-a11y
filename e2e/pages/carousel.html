@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Carousel</title>
+    <style>
+      body {
+        font-family: system-ui, sans-serif;
+      }
+      .embla {
+        overflow: hidden;
+        max-width: 1000px;
+      }
+      .embla__container {
+        display: flex;
+      }
+      .embla__slide {
+        flex: 0 0 calc(100% / var(--per-view));
+        min-width: 0;
+        padding: 1rem;
+        box-sizing: border-box;
+        border: 1px solid #767676;
+      }
+      .embla--vertical {
+        height: 600px;
+      }
+      .embla--vertical .embla__container {
+        flex-direction: column;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1 id="title">Carousel</h1>
+      <p id="description"></p>
+      <div class="embla">
+        <div class="embla__container"></div>
+      </div>
+      <p><a href="index.html">All variants</a></p>
+    </main>
+    <script type="module" src="./carousel.ts"></script>
+  </body>
+</html>

@@ -15,7 +15,7 @@ export default defineConfig({
   },
   webServer: {
     command: 'vite --port 5173 --strictPort',
-    url: 'http://localhost:5173/e2e/pages/basic.html',
+    url: 'http://localhost:5173/e2e/pages/index.html',
     reuseExistingServer: !isCi
   },
   projects: [

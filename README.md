@@ -31,7 +31,7 @@ npm install
 npm test                 # unit tests in real browsers (Vitest browser mode)
 npm run test:e2e         # end-to-end tests with Playwright and axe
 npm run browsers:stop    # stop the browser container
-npm run demo             # demo pages, open /e2e/pages/basic.html
+npm run demo             # demo pages, open /e2e/pages/index.html
 npm run check            # formatting, lint, types, HTML, unused code, package exports
 npm run format           # fix formatting
 ```
