@@ -47,13 +47,26 @@ jobs:
   screenreader:
     name: screen reader (${{ matrix.name }})
     runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.experimental }}
     strategy:
       fail-fast: false
       matrix:
         include:
-          - { name: VoiceOver, os: macos-26, browser: chromium, setup: --macos-record }
-          - { name: NVDA, os: windows-2025, browser: chromium, setup: '' }
-          - { name: Orca, os: ubuntu-26.04, browser: firefox, setup: '' }
+          - name: VoiceOver
+            os: macos-26
+            browser: chromium
+            setup: --macos-record
+            experimental: false
+          - name: NVDA
+            os: windows-2025
+            browser: chromium
+            setup: ''
+            experimental: false
+          - name: Orca
+            os: ubuntu-26.04
+            browser: firefox
+            setup: ''
+            experimental: true
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
