@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Basic carousel</title>
+    <style>
+      .embla { overflow: hidden; max-width: 1000px }
+      .embla__container { display: flex }
+      .embla__slide { flex: 0 0 20%; min-width: 0; padding: 1rem; box-sizing: border-box }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Basic carousel</h1>
+      <div class="embla">
+        <div class="embla__container">
+          <div class="embla__slide"><a href="#product-1">Product 1</a></div>
+          <div class="embla__slide"><a href="#product-2">Product 2</a></div>
+          <div class="embla__slide"><a href="#product-3">Product 3</a></div>
+          <div class="embla__slide"><a href="#product-4">Product 4</a></div>
+          <div class="embla__slide"><a href="#product-5">Product 5</a></div>
+          <div class="embla__slide"><a href="#product-6">Product 6</a></div>
+          <div class="embla__slide"><a href="#product-7">Product 7</a></div>
+          <div class="embla__slide"><a href="#product-8">Product 8</a></div>
+        </div>
+      </div>
+      <p><a href="#after">Link after the carousel</a></p>
+    </main>
+    <script type="module" src="./basic.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,60 @@
+{
+  "name": "embla-carousel-a11y",
+  "version": "0.0.0",
+  "description": "Accessibility plugin for Embla Carousel v9. Keeps visible slides readable, puts users in control of motion, targets WCAG 2.2 AA.",
+  "keywords": [
+    "embla",
+    "embla-carousel",
+    "carousel",
+    "slider",
+    "accessibility",
+    "a11y",
+    "aria",
+    "wcag"
+  ],
+  "license": "MIT",
+  "author": "Wolfgang Klinger <wk@plan2.net>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wazum/embla-carousel-a11y.git"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "browsers": "docker compose up -d --wait playwright",
+    "browsers:stop": "docker compose down",
+    "test": "npm run browsers && vitest run",
+    "test:watch": "npm run browsers && vitest",
+    "test:e2e": "npm run browsers && playwright test --reporter=list",
+    "test:screenreader": "playwright test -c playwright.screenreader.config.ts --reporter=list",
+    "demo": "vite"
+  },
+  "peerDependencies": {
+    "embla-carousel": "^9.0.0-rc04"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
+    "@guidepup/guidepup": "0.36.4",
+    "@guidepup/playwright": "0.20.0",
+    "@playwright/test": "1.64.1",
+    "@types/node": "26.6.5",
+    "@vitest/browser-playwright": "5.0.5",
+    "axe-core": "4.14.0",
+    "embla-carousel": "9.0.0-rc04",
+    "playwright": "1.64.1",
+    "typescript": "7.0.2",
+    "vite": "8.3.4",
+    "vitest": "5.0.5"
+  }
+}

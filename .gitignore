@@ -1,0 +1,8 @@
+.idea
+node_modules
+dist
+.vitest
+__screenshots__
+playwright-report
+test-results
+recordings

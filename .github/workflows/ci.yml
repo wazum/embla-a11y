@@ -1,0 +1,74 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.64.1-noble
+    env:
+      HOME: /root
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npx vitest run
+      - run: npx playwright test
+      - run: npm run build
+      - uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: playwright-report
+          path: |
+            playwright-report
+            test-results
+
+  screenreader:
+    name: screen reader (${{ matrix.name }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { name: VoiceOver, os: macos-26, browser: chromium, setup: --macos-record }
+          - { name: NVDA, os: windows-2025, browser: chromium, setup: '' }
+          - { name: Orca, os: ubuntu-26.04, browser: firefox, setup: '' }
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npx -y --min-release-age=0 --ignore-scripts=false @guidepup/setup@0.29.3 setup --ci ${{ matrix.setup }}
+      - run: npm ci
+      - run: npx playwright install --with-deps ${{ matrix.browser }}
+      - run: npx -y --min-release-age=0 --ignore-scripts=false @guidepup/setup@0.29.3 install
+      - name: Run screen reader tests
+        if: matrix.name != 'Orca'
+        run: npm run test:screenreader
+        env:
+          SCREENREADER_BROWSER: ${{ matrix.browser }}
+      - name: Run screen reader tests
+        if: matrix.name == 'Orca'
+        run: xvfb-run dbus-run-session -- npm run test:screenreader
+        env:
+          SCREENREADER_BROWSER: ${{ matrix.browser }}
+      - uses: actions/upload-artifact@v7
+        if: always()
+        continue-on-error: true
+        with:
+          name: screenreader-${{ matrix.name }}
+          path: |
+            test-results
+            recordings

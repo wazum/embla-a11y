@@ -1,0 +1,16 @@
+services:
+  playwright:
+    image: mcr.microsoft.com/playwright:v1.64.1-noble
+    init: true
+    ipc: host
+    user: pwuser
+    working_dir: /home/pwuser
+    volumes:
+      - ./node_modules/playwright-core:/home/pwuser/playwright-core:ro
+    command: node playwright-core/cli.js run-server --port 3737 --host 0.0.0.0
+    ports:
+      - 127.0.0.1:3737:3737
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('net').connect(3737).on('connect', () => process.exit(0)).on('error', () => process.exit(1))"]
+      interval: 2s
+      retries: 30
