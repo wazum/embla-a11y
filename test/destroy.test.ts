@@ -1,13 +1,13 @@
 import { afterEach, expect, test } from 'vitest'
 import { page } from 'vitest/browser'
-import A11y from '../src/index.js'
+import emblaA11y from '../src/index.js'
 import { attributesOf, createCarousel, removeCarousels } from './fixture.js'
 
 afterEach(removeCarousels)
 
 test('restores the original markup on destroy', () => {
   const { wrapper, emblaApi } = createCarousel({
-    plugins: [A11y({ label: 'Featured products' })],
+    plugins: [emblaA11y({ label: 'Featured products' })],
     wrapperAttributes: { class: 'embla', 'data-carousel': 'products' }
   })
 
@@ -19,7 +19,7 @@ test('restores the original markup on destroy', () => {
 test('restores the previous and next buttons on destroy', () => {
   const { buttons, emblaApi } = createCarousel({
     plugins: ({ previous, next }) => [
-      A11y({ label: 'Featured products', previousButton: previous, nextButton: next })
+      emblaA11y({ label: 'Featured products', previousButton: previous, nextButton: next })
     ]
   })
 
@@ -34,7 +34,11 @@ test('rescues focus that was already inside the carousel when the plugin started
   buttons.next.focus()
 
   emblaApi.reInit({}, [
-    A11y({ label: 'Featured products', previousButton: buttons.previous, nextButton: buttons.next })
+    emblaA11y({
+      label: 'Featured products',
+      previousButton: buttons.previous,
+      nextButton: buttons.next
+    })
   ])
   buttons.next.disabled = true
   await new Promise((resolve) => setTimeout(resolve, 50))
@@ -45,7 +49,7 @@ test('rescues focus that was already inside the carousel when the plugin started
 test('stops moving focus after destroy', async () => {
   const { buttons, emblaApi } = createCarousel({
     plugins: ({ previous, next }) => [
-      A11y({ label: 'Featured products', previousButton: previous, nextButton: next })
+      emblaA11y({ label: 'Featured products', previousButton: previous, nextButton: next })
     ]
   })
   buttons.next.focus()
@@ -60,7 +64,7 @@ test('stops moving focus after destroy', async () => {
 test('makes hidden slides reachable again on destroy', () => {
   const { slides, emblaApi } = createCarousel({
     slideCount: 10,
-    plugins: [A11y({ label: 'Featured products', hideOffscreen: true })]
+    plugins: [emblaA11y({ label: 'Featured products', hideOffscreen: true })]
   })
   const lastLink = slides[9]?.querySelector('a')
 
@@ -71,7 +75,7 @@ test('makes hidden slides reachable again on destroy', () => {
 })
 
 test('keeps the region through reInit and removes it on destroy', async () => {
-  const { emblaApi } = createCarousel({ plugins: [A11y({ label: 'Featured products' })] })
+  const { emblaApi } = createCarousel({ plugins: [emblaA11y({ label: 'Featured products' })] })
 
   emblaApi.reInit()
   emblaApi.reInit()

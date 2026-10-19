@@ -1,10 +1,10 @@
-# embla-carousel-a11y
+# embla-a11y
 
 An accessibility plugin for [Embla Carousel](https://www.embla-carousel.com) 8.6 and 9. Work in progress, not published yet.
 
 The plugin never hides content that people can see. It aims at WCAG 2.2 AA, plus the AAA criteria a carousel can meet. Every change runs automated tests in Chromium, Firefox and WebKit against both Embla versions, and screen reader tests with VoiceOver, NVDA and Orca.
 
-Use it instead of the official `embla-carousel-accessibility` plugin, not together with it.
+Use it instead of the official `embla-carousel-accessibility` plugin or `@bluecadet/embla-carousel-a11y`, not together with them.
 
 ## Usage
 
@@ -39,7 +39,7 @@ Good markup does most of the work. The plugin fills in what markup cannot do on 
 
 ```ts
 import EmblaCarousel from 'embla-carousel'
-import A11y from 'embla-carousel-a11y'
+import emblaA11y from 'embla-a11y'
 
 const viewport = document.querySelector('.embla__viewport')
 const previous = document.querySelector('.embla__prev')
@@ -47,7 +47,7 @@ const next = document.querySelector('.embla__next')
 const dots = document.querySelector('.embla__dots')
 
 const emblaApi = EmblaCarousel(viewport, {}, [
-  A11y({ previousButton: previous, nextButton: next, dots })
+  emblaA11y({ previousButton: previous, nextButton: next, dots })
 ])
 
 previous.addEventListener('click', () => emblaApi.goToPrev())
@@ -190,7 +190,7 @@ The rotation button starts and stops the rotation. Its text always says what pre
 ```
 
 ```ts
-A11y({ rotationButton: document.querySelector('.embla__rotation') })
+emblaA11y({ rotationButton: document.querySelector('.embla__rotation') })
 ```
 
 For people who asked their system for reduced motion, use the `breakpoints` option of Embla and of each plugin. `duration: 0` makes the moves after a button press instant. Autoplay and AutoScroll keep moving the slides by themselves, so turn them off with `active: false`:
@@ -200,7 +200,7 @@ const reducedMotion = '(prefers-reduced-motion: reduce)'
 
 EmblaCarousel(viewport, { breakpoints: { [reducedMotion]: { duration: 0 } } }, [
   Autoplay({ breakpoints: { [reducedMotion]: { active: false } } }),
-  A11y({ rotationButton: document.querySelector('.embla__rotation') })
+  emblaA11y({ rotationButton: document.querySelector('.embla__rotation') })
 ])
 ```
 

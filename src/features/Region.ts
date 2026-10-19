@@ -18,7 +18,7 @@ export class Region implements Feature {
     if (element.hasAttribute('aria-label') || element.hasAttribute('aria-labelledby')) return
     if (!this.setName(element, name)) {
       console.warn(
-        'embla-carousel-a11y: the carousel has no name, so it is not a region. Add a visible heading and pass its id as labelledBy, or pass a label.'
+        'embla-a11y: the carousel has no name, so it is not a region. Add a visible heading and pass its id as labelledBy, or pass a label.'
       )
       return
     }

@@ -20,7 +20,7 @@ import {
 
 declare module 'embla-carousel' {
   interface EmblaPluginsType {
-    a11y: A11yType | undefined
+    emblaA11y: EmblaA11yType | undefined
   }
 }
 
@@ -36,9 +36,9 @@ type OptionsType = CreateOptionsType<{
   rotationLabel: RotationLabelType
 }>
 
-export type A11yType = CreatePluginType<{}, OptionsType>
+export type EmblaA11yType = CreatePluginType<{}, OptionsType>
 
-export type A11yOptionsType = A11yType['options']
+export type EmblaA11yOptionsType = EmblaA11yType['options']
 
 const defaultOptions: OptionsType = {
   active: true,
@@ -57,7 +57,7 @@ const defaultOptions: OptionsType = {
   rotationLabel: (playing) => (playing ? 'Stop slide rotation' : 'Start slide rotation')
 }
 
-function A11y(userOptions: A11yOptionsType = {}): A11yType {
+function emblaA11y(userOptions: EmblaA11yOptionsType = {}): EmblaA11yType {
   const focusMemory: FocusMemoryType = { focused: null }
   const rotationMemory: RotationMemoryType = { stoppedByUser: false, playing: null }
   let features: Feature[] = []
@@ -67,7 +67,7 @@ function A11y(userOptions: A11yOptionsType = {}): A11yType {
     if (emblaApi.internalEngine().isSsr) return
     const { mergeOptions, optionsAtMedia } = optionsHandler
     const options = optionsAtMedia(
-      mergeOptions(mergeOptions(defaultOptions, A11y.globalOptions), userOptions)
+      mergeOptions(mergeOptions(defaultOptions, emblaA11y.globalOptions), userOptions)
     )
 
     const viewport = emblaApi.rootNode()
@@ -91,13 +91,13 @@ function A11y(userOptions: A11yOptionsType = {}): A11yType {
   }
 
   return {
-    name: 'a11y',
+    name: 'emblaA11y',
     options: userOptions,
     init,
     destroy
   }
 }
 
-A11y.globalOptions = undefined as A11yOptionsType | undefined
+emblaA11y.globalOptions = undefined as EmblaA11yOptionsType | undefined
 
-export default A11y
+export default emblaA11y

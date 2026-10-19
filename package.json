@@ -1,7 +1,7 @@
 {
-  "name": "embla-carousel-a11y",
+  "name": "embla-a11y",
   "version": "0.0.0",
-  "description": "Accessibility plugin for Embla Carousel v9. Keeps visible slides readable, puts users in control of motion, targets WCAG 2.2 AA.",
+  "description": "Accessibility plugin for Embla Carousel 8.6 and 9. Keeps visible slides readable, puts users in control of motion, targets WCAG 2.2 AA.",
   "keywords": [
     "embla",
     "embla-carousel",
@@ -13,10 +13,10 @@
     "wcag"
   ],
   "license": "MIT",
-  "author": "Wolfgang Klinger <wk@plan2.net>",
+  "author": "Wolfgang Klinger <wolfgang@wazum.com>",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/wazum/embla-carousel-a11y.git"
+    "url": "git+https://github.com/wazum/embla-a11y.git"
   },
   "type": "module",
   "sideEffects": false,

@@ -1,5 +1,5 @@
 {
-  "name": "embla-carousel-a11y-v8-test-dependencies",
+  "name": "embla-a11y-v8-test-dependencies",
   "private": true,
   "description": "Embla Carousel 8.6 and its plugins, only for running the tests against Embla 8.6",
   "dependencies": {
