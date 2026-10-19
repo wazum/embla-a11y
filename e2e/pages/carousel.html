@@ -63,7 +63,10 @@
       <p id="description"></p>
       <section class="carousel" aria-labelledby="carousel-heading">
         <h2 id="carousel-heading">Featured products</h2>
-        <button type="button" class="embla__rotation" hidden>Stop slide rotation</button>
+        <button type="button" class="embla__rotation" hidden>
+          <span data-rotation-playing>Stop slide rotation</span>
+          <span data-rotation-stopped hidden>Start slide rotation</span>
+        </button>
         <div class="embla">
           <div class="embla__container"></div>
         </div>
@@ -71,7 +74,11 @@
           <button type="button" class="embla__prev">Previous</button>
           <button type="button" class="embla__next">Next</button>
         </div>
-        <div class="embla__dots"></div>
+        <div
+          class="embla__dots"
+          data-dot-label="Go to slide {first}"
+          data-dot-label-group="Go to slides {first} to {last}"
+        ></div>
         <p id="cart-status">Cart is empty</p>
       </section>
       <p><a href="index.html">All variants</a></p>

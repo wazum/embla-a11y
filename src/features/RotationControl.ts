@@ -1,5 +1,6 @@
 import type { EmblaCarouselType, EmblaEventListType } from 'embla-carousel'
 import type { Feature } from './Feature.js'
+import { RotationButtonText, type RotationLabelType } from './RotationButtonText.js'
 
 declare module 'embla-carousel' {
   interface EmblaEventListType {
@@ -18,11 +19,9 @@ export type RotationMemoryType = {
   playing: boolean | null
 }
 
-export type RotationLabelType = (playing: boolean) => string
-
 export type RotationButtonType = {
   rotationButton: HTMLElement | null
-  rotationLabel: RotationLabelType
+  rotationLabel: RotationLabelType | null
 }
 
 const rotationEvents: (keyof EmblaEventListType)[] = [
@@ -43,9 +42,7 @@ export class RotationControl implements Feature {
   private readonly area: HTMLElement
   private readonly memory: RotationMemoryType
   private readonly button: HTMLElement | null
-  private readonly rotationLabel: RotationLabelType
-  private readonly labelTarget: HTMLElement | null
-  private readonly originalLabel: string | null
+  private readonly buttonText: RotationButtonText
   private readonly onInteraction = (event: Event): void => {
     if (event.target instanceof Node && this.button?.contains(event.target) === true) return
     this.stopForGood()
@@ -73,10 +70,7 @@ export class RotationControl implements Feature {
     this.area = area
     this.memory = memory
     this.button = rotationButton
-    this.rotationLabel = rotationLabel
-    this.labelTarget =
-      rotationButton?.querySelector<HTMLElement>('[data-rotation-label]') ?? rotationButton
-    this.originalLabel = this.labelTarget?.textContent ?? null
+    this.buttonText = new RotationButtonText(rotationButton, rotationLabel)
     area.addEventListener('focusin', this.onInteraction, true)
     area.addEventListener('pointerdown', this.onInteraction, true)
     rotationButton?.addEventListener('click', this.onToggle)
@@ -92,9 +86,7 @@ export class RotationControl implements Feature {
     this.button?.removeEventListener('click', this.onToggle)
     for (const event of rotationEvents) this.emblaApi.off(event, this.onRotationChange)
     this.reducedMotion.removeEventListener('change', this.onReducedMotionChange)
-    if (this.labelTarget !== null && this.originalLabel !== null) {
-      this.labelTarget.textContent = this.originalLabel
-    }
+    this.buttonText.restore()
   }
 
   private stopForGood(): void {
@@ -106,8 +98,12 @@ export class RotationControl implements Feature {
   private start(): void {
     this.memory.stoppedByUser = false
     this.memory.startedByUser = true
-    for (const rotation of this.rotations()) rotation.play()
+    if (this.canRotate()) for (const rotation of this.rotations()) rotation.play()
     this.updateLabel()
+  }
+
+  private canRotate(): boolean {
+    return this.emblaApi.snapList().length > 1
   }
 
   private stopAll(): void {
@@ -134,15 +130,15 @@ export class RotationControl implements Feature {
     if (this.destroyed) return
     for (const rotation of this.rotations()) {
       if (this.mustStayStopped()) rotation.stop()
-      else if (this.memory.playing === true && !rotation.isPlaying()) rotation.play()
+      else if (this.memory.playing === true && !rotation.isPlaying() && this.canRotate()) {
+        rotation.play()
+      }
     }
     this.updateLabel()
   }
 
   private updateLabel(): void {
-    if (this.labelTarget === null || this.rotations().length === 0) return
-    const label = this.rotationLabel(this.isPlaying())
-    if (this.labelTarget.textContent !== label) this.labelTarget.textContent = label
+    if (this.rotations().length > 0) this.buttonText.show(this.isPlaying())
   }
 
   private isPlaying(): boolean {

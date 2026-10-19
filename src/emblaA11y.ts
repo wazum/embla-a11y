@@ -12,11 +12,8 @@ import { FollowFocus } from './features/FollowFocus.js'
 import { HideOffscreen } from './features/HideOffscreen.js'
 import { PreviousNextButtons } from './features/PreviousNextButtons.js'
 import { Region } from './features/Region.js'
-import {
-  RotationControl,
-  type RotationLabelType,
-  type RotationMemoryType
-} from './features/RotationControl.js'
+import type { RotationLabelType } from './features/RotationButtonText.js'
+import { RotationControl, type RotationMemoryType } from './features/RotationControl.js'
 
 declare module 'embla-carousel' {
   interface EmblaPluginsType {
@@ -31,9 +28,9 @@ type OptionsType = CreateOptionsType<{
   previousButton: HTMLElement | null
   nextButton: HTMLElement | null
   dots: HTMLElement | null
-  dotLabel: DotLabelType
+  dotLabel: DotLabelType | null
   rotationButton: HTMLElement | null
-  rotationLabel: RotationLabelType
+  rotationLabel: RotationLabelType | null
 }>
 
 export type EmblaA11yType = CreatePluginType<{}, OptionsType>
@@ -49,12 +46,9 @@ const defaultOptions: OptionsType = {
   previousButton: null,
   nextButton: null,
   dots: null,
-  dotLabel: (firstSlide, lastSlide) =>
-    firstSlide === lastSlide
-      ? `Go to slide ${firstSlide}`
-      : `Go to slides ${firstSlide} to ${lastSlide}`,
+  dotLabel: null,
   rotationButton: null,
-  rotationLabel: (playing) => (playing ? 'Stop slide rotation' : 'Start slide rotation')
+  rotationLabel: null
 }
 
 function emblaA11y(userOptions: EmblaA11yOptionsType = {}): EmblaA11yType {

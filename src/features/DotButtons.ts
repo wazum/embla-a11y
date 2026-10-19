@@ -8,20 +8,25 @@ const visuallyHidden =
   'position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; border: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap'
 
 /**
- * Names each dot button after the slides it shows, with visually hidden text that browser translation reaches.
- * It marks the current dot with aria-current, keeps a dot's own text or label, and never disables a dot.
+ * Names each dot button without a name of its own, with visually hidden text from the data-dot-label template in the markup or the dotLabel option.
+ * It marks the current dot with aria-current and never disables a dot. Without a template or option it names nothing and warns.
  */
 export class DotButtons implements Feature {
   private readonly emblaApi: EmblaCarouselType
   private readonly container: HTMLElement
-  private readonly dotLabel: DotLabelType
+  private readonly dotLabel: DotLabelType | null
+  private warned = false
   private readonly attributes = new AttributeStore()
   private readonly names = new Map<Element, HTMLSpanElement>()
   private readonly sources = new WeakMap<HTMLSpanElement, string>()
   private readonly observer = new MutationObserver(() => this.update())
   private readonly onSelect = (): void => this.update()
 
-  public constructor(emblaApi: EmblaCarouselType, container: HTMLElement, dotLabel: DotLabelType) {
+  public constructor(
+    emblaApi: EmblaCarouselType,
+    container: HTMLElement,
+    dotLabel: DotLabelType | null
+  ) {
     this.emblaApi = emblaApi
     this.container = container
     this.dotLabel = dotLabel
@@ -46,14 +51,26 @@ export class DotButtons implements Feature {
       const first = slides[0]
       const last = slides.at(-1)
       if (first !== undefined && last !== undefined) {
-        this.name(dot, this.dotLabel(first + 1, last + 1))
+        this.name(dot, this.labelFor(first + 1, last + 1))
       }
       if (snap === selectedSnap) this.attributes.set(dot, 'aria-current', 'true')
       else this.attributes.remove(dot, 'aria-current')
     })
   }
 
-  private name(dot: HTMLButtonElement, label: string): void {
+  private labelFor(firstSlide: number, lastSlide: number): string | null {
+    const single = this.container.getAttribute('data-dot-label')
+    const group = this.container.getAttribute('data-dot-label-group') ?? single
+    const template = firstSlide === lastSlide ? single : group
+    if (template !== null) {
+      return template
+        .replaceAll('{first}', String(firstSlide))
+        .replaceAll('{last}', String(lastSlide))
+    }
+    return this.dotLabel?.(firstSlide, lastSlide) ?? null
+  }
+
+  private name(dot: HTMLButtonElement, label: string | null): void {
     const name = this.names.get(dot)
     const ownName = name !== undefined && dot.contains(name) ? name : undefined
     if (name !== undefined && ownName === undefined) this.names.delete(dot)
@@ -61,6 +78,10 @@ export class DotButtons implements Feature {
     if (this.hasAuthorName(dot, ownName)) {
       ownName?.remove()
       this.names.delete(dot)
+      return
+    }
+    if (label === null) {
+      this.warnOnce()
       return
     }
     if (ownName !== undefined) {
@@ -77,10 +98,24 @@ export class DotButtons implements Feature {
     this.sources.set(created, label)
   }
 
+  private warnOnce(): void {
+    if (this.warned) return
+    this.warned = true
+    console.warn(
+      'embla-a11y: a dot button has no name. Give it text in the markup, add a data-dot-label template to the dots element, or pass dotLabel.'
+    )
+  }
+
   private hasAuthorName(dot: HTMLButtonElement, ownName: HTMLSpanElement | undefined): boolean {
     if (dot.hasAttribute('aria-label') || dot.hasAttribute('aria-labelledby')) return true
     return Array.from(dot.childNodes).some(
-      (node) => node !== ownName && (node.textContent ?? '').trim() !== ''
+      (node) => node !== ownName && exposedText(node).trim() !== ''
     )
   }
+}
+
+function exposedText(node: Node): string {
+  if (!(node instanceof Element)) return node.textContent ?? ''
+  if (node.matches('[aria-hidden="true"], [hidden]')) return ''
+  return Array.from(node.childNodes, exposedText).join('')
 }

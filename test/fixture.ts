@@ -22,7 +22,8 @@ export function createCarousel({
   wrapperTag = 'div',
   wrapperAttributes = {},
   heading,
-  dotTexts = []
+  dotTexts = [],
+  dotsAttributes = {}
 }: {
   slideCount?: number
   slideWidth?: string
@@ -32,6 +33,7 @@ export function createCarousel({
   wrapperAttributes?: Record<string, string>
   heading?: { id: string; text: string }
   dotTexts?: string[]
+  dotsAttributes?: Record<string, string>
 } = {}): CarouselFixture {
   const wrapper = document.createElement(wrapperTag)
   for (const [name, value] of Object.entries(wrapperAttributes)) wrapper.setAttribute(name, value)
@@ -59,6 +61,7 @@ export function createCarousel({
   container.append(...slides)
   viewport.append(container)
   const dots = document.createElement('div')
+  for (const [name, value] of Object.entries(dotsAttributes)) dots.setAttribute(name, value)
   dots.append(...dotTexts.map((text) => createButton(text)))
   const buttons = { previous: createButton('Previous'), next: createButton('Next'), dots }
   wrapper.append(viewport, buttons.previous, buttons.next, dots)
