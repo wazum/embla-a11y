@@ -36,6 +36,16 @@ If your markup has no name for the carousel, pass the id of a visible heading wi
 - It stops the browser from scrolling the carousel by itself when focus moves, which would otherwise shift the slides out of place.
 - When the plugin is destroyed or Embla re-initialises, every attribute it changed goes back to its original value.
 
+## Hiding slides that are off-screen
+
+By default every slide stays reachable. In a long carousel that means many Tab stops. With `hideOffscreen: true`, slides that are completely outside the viewport become `inert`: screen readers, the keyboard and the mouse skip them.
+
+```ts
+EmblaCarousel(viewport, {}, [A11y({ hideOffscreen: true })])
+```
+
+A slide stays reachable as soon as any part of it is on screen, also while the carousel moves, and while something inside it has focus. Screen reader users then only find the slides on screen in their heading and link lists, so use this mode only when the long Tab sequence is the bigger problem.
+
 ## Best practices
 
 These come from accessibility experts and from people who use screen readers, magnifiers, voice control or the keyboard.

@@ -8,6 +8,15 @@ export class AttributeStore {
     element.setAttribute(name, value)
   }
 
+  public reset(element: Element, name: string): void {
+    const attributes = this.originals.get(element)
+    if (attributes === undefined || !attributes.has(name)) return
+    const value = attributes.get(name) ?? null
+    attributes.delete(name)
+    if (value === null) element.removeAttribute(name)
+    else element.setAttribute(name, value)
+  }
+
   public restore(): void {
     for (const [element, attributes] of this.originals) {
       for (const [name, value] of attributes) {

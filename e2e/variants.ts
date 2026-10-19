@@ -6,6 +6,7 @@ export type Variant = {
   slides: number
   perView: number
   options: EmblaOptionsType
+  fade?: boolean
 }
 
 export const variants: Variant[] = [
@@ -85,6 +86,14 @@ export const variants: Variant[] = [
     slides: 10,
     perView: 3,
     options: { dragFree: true }
+  },
+  {
+    name: 'fade',
+    description: 'Ten slides stacked in one place, fading instead of sliding',
+    slides: 10,
+    perView: 1,
+    options: {},
+    fade: true
   },
   {
     name: 'vertical',

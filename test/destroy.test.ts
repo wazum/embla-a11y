@@ -16,6 +16,19 @@ test('restores the original markup on destroy', () => {
   expect(attributesOf(wrapper)).toEqual({ class: 'embla', 'data-carousel': 'products' })
 })
 
+test('makes hidden slides reachable again on destroy', () => {
+  const { slides, emblaApi } = createCarousel({
+    slideCount: 10,
+    plugins: [A11y({ label: 'Featured products', hideOffscreen: true })]
+  })
+  const lastLink = slides[9]?.querySelector('a')
+
+  emblaApi.destroy()
+  lastLink?.focus()
+
+  expect(document.activeElement).toBe(lastLink)
+})
+
 test('keeps the region through reInit and removes it on destroy', async () => {
   const { emblaApi } = createCarousel({ plugins: [A11y({ label: 'Featured products' })] })
 

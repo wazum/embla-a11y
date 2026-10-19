@@ -6,6 +6,7 @@ import type {
 } from 'embla-carousel'
 import type { Feature } from './features/Feature.js'
 import { FollowFocus } from './features/FollowFocus.js'
+import { HideOffscreen } from './features/HideOffscreen.js'
 import { Region } from './features/Region.js'
 
 declare module 'embla-carousel' {
@@ -17,6 +18,7 @@ declare module 'embla-carousel' {
 type OptionsType = CreateOptionsType<{
   label: string | null
   labelledBy: string | null
+  hideOffscreen: boolean
 }>
 
 export type A11yType = CreatePluginType<{}, OptionsType>
@@ -27,7 +29,8 @@ const defaultOptions: OptionsType = {
   active: true,
   breakpoints: {},
   label: null,
-  labelledBy: null
+  labelledBy: null,
+  hideOffscreen: false
 }
 
 function A11y(userOptions: A11yOptionsType = {}): A11yType {
@@ -41,6 +44,7 @@ function A11y(userOptions: A11yOptionsType = {}): A11yType {
 
     const viewport = emblaApi.rootNode()
     features = [new Region(viewport.parentElement ?? viewport, options), new FollowFocus(emblaApi)]
+    if (options.hideOffscreen) features.push(new HideOffscreen(emblaApi))
   }
 
   function destroy(): void {

@@ -1,8 +1,16 @@
-import EmblaCarousel from 'embla-carousel'
+import EmblaCarousel, { type EmblaCarouselType } from 'embla-carousel'
+import Fade from 'embla-carousel-fade'
 import A11y from '../../src/index.js'
 import { variants } from '../variants.js'
 
-const name = new URLSearchParams(location.search).get('variant')
+declare global {
+  interface Window {
+    emblaApi?: EmblaCarouselType
+  }
+}
+
+const parameters = new URLSearchParams(location.search)
+const name = parameters.get('variant')
 const variant = variants.find((candidate) => candidate.name === name)
 if (variant === undefined) throw new Error(`Unknown variant: ${String(name)}`)
 
@@ -17,13 +25,19 @@ setText('#description', variant.description)
 root.style.setProperty('--per-view', String(variant.perView))
 root.classList.toggle('embla--vertical', variant.options.axis === 'y')
 if (variant.options.direction === 'rtl') root.dir = 'rtl'
+const section = root.closest('section')
+if (section !== null) section.hidden = parameters.has('hidden')
 
 const productHref = `?variant=${variant.name}&product=`
 container.append(
   ...Array.from({ length: variant.slides }, (_, index) => createSlide(productHref, index + 1))
 )
 
-const emblaApi = EmblaCarousel(root, variant.options, [A11y()])
+const emblaApi = EmblaCarousel(root, variant.options, [
+  A11y({ hideOffscreen: parameters.has('hideOffscreen') }),
+  ...(variant.fade === true ? [Fade()] : [])
+])
+window.emblaApi = emblaApi
 
 document.querySelector('.embla__prev')?.addEventListener('click', () => emblaApi.goToPrev())
 document.querySelector('.embla__next')?.addEventListener('click', () => emblaApi.goToNext())
