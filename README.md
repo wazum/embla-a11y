@@ -193,15 +193,10 @@ The rotation button starts and stops the rotation. Its text always says what pre
 emblaA11y({ rotationButton: document.querySelector('.embla__rotation') })
 ```
 
-For people who asked their system for reduced motion, use the `breakpoints` option of Embla and of each plugin. `duration: 0` makes the moves after a button press instant. Autoplay and AutoScroll keep moving the slides by themselves, so turn them off with `active: false`:
+For people who asked their system for reduced motion, Autoplay and AutoScroll do not start, and they stop as soon as someone turns the setting on. The rotation button can still start them: pressing it is a clear choice. The moves after a button press stay animated, so make them instant with Embla's `breakpoints` option:
 
 ```ts
-const reducedMotion = '(prefers-reduced-motion: reduce)'
-
-EmblaCarousel(viewport, { breakpoints: { [reducedMotion]: { duration: 0 } } }, [
-  Autoplay({ breakpoints: { [reducedMotion]: { active: false } } }),
-  emblaA11y({ rotationButton: document.querySelector('.embla__rotation') })
-])
+EmblaCarousel(viewport, { breakpoints: { '(prefers-reduced-motion: reduce)': { duration: 0 } } })
 ```
 
 ### Hiding slides that are off-screen
