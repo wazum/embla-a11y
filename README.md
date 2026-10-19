@@ -32,7 +32,7 @@ If your markup has no name for the carousel, pass the id of a visible heading wi
 
 - It names the carousel region only where your markup leaves a gap. Without any name it adds no region and warns in the console.
 - Every slide stays readable for screen readers and reachable with the keyboard, including slides that are only partly on screen.
-- When something inside a slide gets focus, the carousel moves that slide into view. This works for the Tab key, screen readers, voice control and scripts. Embla on its own only reacts to Tab.
+- When something inside a slide gets focus, the carousel moves that slide into view. This works for the Tab key, screen readers, voice control and scripts. Embla on its own only reacts to Tab. A mouse or touch press on a partly visible slide does not move the carousel, so the click lands where you pressed.
 - It stops the browser from scrolling the carousel by itself when focus moves, which would otherwise shift the slides out of place.
 - When the plugin is destroyed or Embla re-initialises, every attribute it changed goes back to its original value.
 

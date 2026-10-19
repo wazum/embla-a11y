@@ -23,6 +23,20 @@ function focusState(page: Page): Promise<FocusState> {
 
 const visibleAndUnscrolled: FocusState = { nativeScroll: 0, focusedFullyVisible: true }
 
+test('a click on a partly visible button reaches that button', async ({ page }) => {
+  await page.goto('/e2e/pages/carousel.html?variant=peek')
+  const button = page.getByRole('button', { name: 'Add product 3 to cart' })
+  const buttonBox = await button.boundingBox()
+  const viewportBox = await page.locator('.embla').boundingBox()
+  if (buttonBox === null || viewportBox === null) throw new Error('Nothing to click')
+  const visibleRight = Math.min(buttonBox.x + buttonBox.width, viewportBox.x + viewportBox.width)
+  expect(visibleRight).toBeLessThan(buttonBox.x + buttonBox.width)
+
+  await page.mouse.click((buttonBox.x + visibleRight) / 2, buttonBox.y + buttonBox.height / 2)
+
+  await expect(page.getByText('Added product 3')).toBeVisible()
+})
+
 for (const variant of variants.filter((candidate) => candidate.slides > candidate.perView)) {
   test.describe(variant.name, () => {
     test.beforeEach(async ({ page }) => {

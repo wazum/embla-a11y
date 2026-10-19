@@ -19,7 +19,8 @@ export class FollowFocus implements Feature {
     root.scrollLeft = 0
     root.scrollTop = 0
 
-    if (!(target instanceof Element) || this.overflow(target) === 0) return
+    if (!(target instanceof Element) || !target.matches(':focus-visible')) return
+    if (this.overflow(target) === 0) return
     this.goToSlideOf(target)
 
     const clipped = this.overflow(target)

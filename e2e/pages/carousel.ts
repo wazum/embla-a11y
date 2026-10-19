@@ -56,6 +56,7 @@ function createSlide(hrefPrefix: string, number: number): HTMLElement {
   const button = document.createElement('button')
   button.type = 'button'
   button.textContent = `Add product ${number} to cart`
+  button.addEventListener('click', () => setText('#cart-status', `Added product ${number}`))
 
   slide.append(heading, link, ' ', button)
   return slide
