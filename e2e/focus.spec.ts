@@ -37,6 +37,70 @@ test('a click on a partly visible button reaches that button', async ({ page }) 
   await expect(page.getByText('Added product 3')).toBeVisible()
 })
 
+test('keeps the carousel still when Tab reaches an element that is already visible', async ({
+  page
+}) => {
+  await page.goto('/e2e/pages/carousel.html?variant=three-per-view')
+  await page.getByRole('button', { name: 'Add product 2 to cart' }).focus()
+
+  await page.keyboard.press('Tab')
+
+  await expect(page.getByRole('link', { name: 'Details for product 3' })).toBeFocused()
+  await page.waitForTimeout(300)
+  await expect(page.getByRole('heading', { name: 'Product 1', exact: true })).toBeInViewport()
+})
+
+test('keeps the carousel still when Shift+Tab reaches an element that is already visible', async ({
+  page
+}) => {
+  await page.goto('/e2e/pages/carousel.html?variant=three-per-view')
+  await page.getByRole('link', { name: 'Details for product 10' }).focus()
+  await expect(page.getByRole('heading', { name: 'Product 10' })).toBeInViewport()
+
+  await page.keyboard.press('Shift+Tab')
+
+  await expect(page.getByRole('button', { name: 'Add product 9 to cart' })).toBeFocused()
+  await page.waitForTimeout(300)
+  await expect(page.getByRole('heading', { name: 'Product 8' })).toBeInViewport()
+})
+
+test('stays put when the browser restores focus after the window was left', async ({ page }) => {
+  await page.goto('/e2e/pages/carousel.html?variant=three-per-view')
+  await page.getByRole('link', { name: 'Details for product 1', exact: true }).focus()
+  await page.evaluate(
+    () =>
+      new Promise((resolve) => {
+        window.emblaApi?.on('settle', resolve)
+        window.emblaApi?.goTo(5)
+      })
+  )
+
+  await page.evaluate(() => {
+    const link = document.activeElement
+    if (!(link instanceof HTMLElement)) throw new Error('Nothing focused')
+    window.dispatchEvent(new FocusEvent('blur'))
+    link.blur()
+    window.dispatchEvent(new FocusEvent('focus'))
+    link.focus()
+  })
+
+  await expect(page.getByRole('heading', { name: 'Product 6' })).toBeInViewport()
+  await expect(page.getByRole('heading', { name: 'Product 1', exact: true })).not.toBeInViewport()
+})
+
+test('follows focus again after the window was left with focus elsewhere', async ({ page }) => {
+  await page.goto('/e2e/pages/carousel.html?variant=three-per-view')
+  await page.evaluate(() => {
+    window.dispatchEvent(new FocusEvent('blur'))
+    window.dispatchEvent(new FocusEvent('focus'))
+  })
+  await page.evaluate(() => new Promise((resolve) => setTimeout(resolve, 50)))
+
+  await page.getByRole('link', { name: 'Details for product 8' }).focus()
+
+  await expect.poll(() => focusState(page)).toEqual(visibleAndUnscrolled)
+})
+
 for (const variant of variants.filter((candidate) => candidate.slides > candidate.perView)) {
   test.describe(variant.name, () => {
     test.beforeEach(async ({ page }) => {
