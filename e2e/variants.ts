@@ -7,6 +7,7 @@ export type Variant = {
   perView: number
   options: EmblaOptionsType
   fade?: boolean
+  rotation?: 'autoplay' | 'auto-scroll'
 }
 
 export const variants: Variant[] = [
@@ -94,6 +95,22 @@ export const variants: Variant[] = [
     perView: 1,
     options: {},
     fade: true
+  },
+  {
+    name: 'autoplay',
+    description: 'Ten slides, three per view, moves on by itself every second',
+    slides: 10,
+    perView: 3,
+    options: { loop: true },
+    rotation: 'autoplay'
+  },
+  {
+    name: 'auto-scroll',
+    description: 'Ten slides, three per view, scrolls on by itself all the time',
+    slides: 10,
+    perView: 3,
+    options: { loop: true },
+    rotation: 'auto-scroll'
   },
   {
     name: 'vertical',

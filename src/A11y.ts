@@ -12,6 +12,7 @@ import { FollowFocus } from './features/FollowFocus.js'
 import { HideOffscreen } from './features/HideOffscreen.js'
 import { PreviousNextButtons } from './features/PreviousNextButtons.js'
 import { Region } from './features/Region.js'
+import { RotationControl, type RotationMemoryType } from './features/RotationControl.js'
 
 declare module 'embla-carousel' {
   interface EmblaPluginsType {
@@ -50,6 +51,7 @@ const defaultOptions: OptionsType = {
 
 function A11y(userOptions: A11yOptionsType = {}): A11yType {
   const focusMemory: FocusMemoryType = { focused: null }
+  const rotationMemory: RotationMemoryType = { stoppedByUser: false, playingBeforeResize: null }
   let features: Feature[] = []
 
   function init(anyEmblaApi: EmblaCarouselType, optionsHandler: OptionsHandlerType): void {
@@ -64,6 +66,7 @@ function A11y(userOptions: A11yOptionsType = {}): A11yType {
     const area = viewport.parentElement ?? viewport
     features = [
       new Region(area, options),
+      new RotationControl(emblaApi, area, rotationMemory),
       new FollowFocus(emblaApi),
       new PreviousNextButtons(emblaApi, options),
       new FocusRescue(emblaApi, area, options, focusMemory)

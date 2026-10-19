@@ -1,4 +1,6 @@
 import EmblaCarousel, { type EmblaCarouselType } from 'embla-carousel'
+import AutoScroll from 'embla-carousel-auto-scroll'
+import Autoplay from 'embla-carousel-autoplay'
 import Fade from 'embla-carousel-fade'
 import { asEmblaV9 } from '../../src/compat/emblaV8.js'
 import A11y from '../../src/index.js'
@@ -42,10 +44,14 @@ const emblaApi = asEmblaV9(
       nextButton: document.querySelector<HTMLElement>('.embla__next'),
       dots: document.querySelector<HTMLElement>('.embla__dots')
     }),
-    ...(variant.fade === true ? [Fade()] : [])
+    ...(variant.fade === true ? [Fade()] : []),
+    ...(variant.rotation === 'autoplay' ? [Autoplay({ delay: 1000 })] : []),
+    ...(variant.rotation === 'auto-scroll' ? [AutoScroll({ speed: 2 })] : [])
   ])
 )
 window.emblaApi = emblaApi
+emblaApi.plugins().autoplay?.play()
+emblaApi.plugins().autoScroll?.play()
 
 document
   .querySelector('.embla__dots')

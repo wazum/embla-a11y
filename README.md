@@ -168,6 +168,13 @@ If your code disables, hides or removes the element that has focus, the plugin m
 
 - No configuration. For the buttons it uses `previousButton` and `nextButton`.
 
+### Autoplay and AutoScroll stop for good
+
+If you use the Autoplay or AutoScroll plugin, any focus or press inside the carousel stops it for good. That includes focus from a screen reader, voice control or a script, not only the Tab key. The carousel then stays where the user is, and the focused slide comes into view. A resize keeps the rotation as it was: once a user stopped it, it stays stopped, and a rotation nobody stopped keeps running.
+
+- No configuration. List the Autoplay or AutoScroll plugin together with this plugin.
+- A visible stop button is still your job for now. Put it before the slides.
+
 ### Hiding slides that are off-screen
 
 By default every slide stays reachable, which in a long carousel means many Tab stops. With this option, slides that are completely outside the viewport become `inert`: screen readers, the keyboard and the mouse skip them. A slide becomes reachable as soon as any part of it is on screen, and the slide that holds focus is never hidden. Screen reader users then only find the slides on screen in their heading and link lists, so use it only when the long Tab sequence is the bigger problem.
