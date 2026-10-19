@@ -52,6 +52,20 @@ export const variants: Variant[] = [
     options: { slidesToScroll: 'auto' }
   },
   {
+    name: 'grouped',
+    description: 'Ten slides, one per view, scrolls three at a time (group wider than the view)',
+    slides: 10,
+    perView: 1,
+    options: { slidesToScroll: 3 }
+  },
+  {
+    name: 'grouped-rtl',
+    description: 'Ten slides, one per view, scrolls three at a time, right to left',
+    slides: 10,
+    perView: 1,
+    options: { slidesToScroll: 3, direction: 'rtl' }
+  },
+  {
     name: 'loop',
     description: 'Ten slides, three per view, loops',
     slides: 10,
