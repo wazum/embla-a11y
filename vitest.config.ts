@@ -1,11 +1,12 @@
 import { defineConfig } from 'vitest/config'
 import { playwright } from '@vitest/browser-playwright'
-import { emblaAlias } from './emblaVersion.js'
+import { emblaAlias, usesEmblaV8 } from './emblaVersion.js'
 
 const isCi = process.env.CI === 'true'
 
 export default defineConfig({
   resolve: { alias: emblaAlias },
+  define: { USES_EMBLA_V8: JSON.stringify(usesEmblaV8) },
   test: {
     include: ['test/**/*.test.ts'],
     browser: {
