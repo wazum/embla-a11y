@@ -116,6 +116,38 @@ for (const variant of ['autoplay', 'auto-scroll']) {
   })
 }
 
+for (const variant of ['autoplay', 'auto-scroll']) {
+  test.describe(`${variant} with reduced motion`, () => {
+    test.beforeEach(async ({ page }) => {
+      await page.emulateMedia({ reducedMotion: 'reduce' })
+      await page.goto(`/e2e/pages/carousel.html?variant=${variant}`)
+    })
+
+    test('does not start by itself', async ({ page }) => {
+      await page.waitForTimeout(1500)
+
+      expect(await isRotating(page)).toBe(false)
+      await expect(page.getByRole('button', { name: 'Start slide rotation' })).toBeVisible()
+    })
+
+    test('starts when the user presses the button', async ({ page }) => {
+      await page.getByRole('button', { name: 'Start slide rotation' }).click()
+      await page.waitForTimeout(1500)
+
+      expect(await isRotating(page)).toBe(true)
+    })
+  })
+
+  test(`${variant} stops when the user turns on reduced motion`, async ({ page }) => {
+    await page.goto(`/e2e/pages/carousel.html?variant=${variant}`)
+    await expect.poll(() => isRotating(page)).toBe(true)
+
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+
+    await expect.poll(() => isRotating(page)).toBe(false)
+  })
+}
+
 test('keeps a rotation started with the button through a resize', async ({ page }) => {
   await page.goto('/e2e/pages/carousel.html?variant=autoplay-stopped')
   await page.getByRole('button', { name: 'Start slide rotation' }).click()

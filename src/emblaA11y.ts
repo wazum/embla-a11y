@@ -59,7 +59,11 @@ const defaultOptions: OptionsType = {
 
 function emblaA11y(userOptions: EmblaA11yOptionsType = {}): EmblaA11yType {
   const focusMemory: FocusMemoryType = { focused: null }
-  const rotationMemory: RotationMemoryType = { stoppedByUser: false, playing: null }
+  const rotationMemory: RotationMemoryType = {
+    stoppedByUser: false,
+    startedByUser: false,
+    playing: null
+  }
   let features: Feature[] = []
 
   function init(anyEmblaApi: EmblaCarouselType, optionsHandler: OptionsHandlerType): void {

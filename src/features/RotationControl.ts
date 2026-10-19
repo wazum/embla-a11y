@@ -12,7 +12,11 @@ declare module 'embla-carousel' {
 
 type RotationType = { stop: () => void; play: () => void; isPlaying: () => boolean }
 
-export type RotationMemoryType = { stoppedByUser: boolean; playing: boolean | null }
+export type RotationMemoryType = {
+  stoppedByUser: boolean
+  startedByUser: boolean
+  playing: boolean | null
+}
 
 export type RotationLabelType = (playing: boolean) => string
 
@@ -30,6 +34,7 @@ const rotationEvents: (keyof EmblaEventListType)[] = [
 
 /**
  * Stops the Autoplay and AutoScroll plugins for good as soon as someone focuses or presses anything in the carousel, and keeps them stopped.
+ * With reduced motion they stay stopped until the user starts them with the rotation button.
  * The rotation button starts and stops them, and its text always says what pressing it will do.
  * A reInit keeps the rotation as it was: stopped when the user stopped it, running when it ran.
  */
@@ -50,6 +55,12 @@ export class RotationControl implements Feature {
     else this.start()
   }
   private readonly onRotationChange = (): void => queueMicrotask(() => this.followRotation())
+  private readonly reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
+  private readonly onReducedMotionChange = (): void => {
+    if (!this.reducedMotion.matches) return
+    this.memory.startedByUser = false
+    this.stopAll()
+  }
   private destroyed = false
 
   public constructor(
@@ -70,6 +81,7 @@ export class RotationControl implements Feature {
     area.addEventListener('pointerdown', this.onInteraction, true)
     rotationButton?.addEventListener('click', this.onToggle)
     for (const event of rotationEvents) emblaApi.on(event, this.onRotationChange)
+    this.reducedMotion.addEventListener('change', this.onReducedMotionChange)
     queueMicrotask(() => this.restore())
   }
 
@@ -79,6 +91,7 @@ export class RotationControl implements Feature {
     this.area.removeEventListener('pointerdown', this.onInteraction, true)
     this.button?.removeEventListener('click', this.onToggle)
     for (const event of rotationEvents) this.emblaApi.off(event, this.onRotationChange)
+    this.reducedMotion.removeEventListener('change', this.onReducedMotionChange)
     if (this.labelTarget !== null && this.originalLabel !== null) {
       this.labelTarget.textContent = this.originalLabel
     }
@@ -86,20 +99,30 @@ export class RotationControl implements Feature {
 
   private stopForGood(): void {
     this.memory.stoppedByUser = true
-    for (const rotation of this.rotations()) rotation.stop()
-    this.updateLabel()
+    this.memory.startedByUser = false
+    this.stopAll()
   }
 
   private start(): void {
     this.memory.stoppedByUser = false
+    this.memory.startedByUser = true
     for (const rotation of this.rotations()) rotation.play()
     this.updateLabel()
+  }
+
+  private stopAll(): void {
+    for (const rotation of this.rotations()) rotation.stop()
+    this.updateLabel()
+  }
+
+  private mustStayStopped(): boolean {
+    return this.memory.stoppedByUser || (this.reducedMotion.matches && !this.memory.startedByUser)
   }
 
   private followRotation(): void {
     if (this.destroyed) return
     const playing = this.isPlaying()
-    if (playing && this.memory.stoppedByUser) {
+    if (playing && this.mustStayStopped()) {
       for (const rotation of this.rotations()) rotation.stop()
       return
     }
@@ -110,7 +133,7 @@ export class RotationControl implements Feature {
   private restore(): void {
     if (this.destroyed) return
     for (const rotation of this.rotations()) {
-      if (this.memory.stoppedByUser) rotation.stop()
+      if (this.mustStayStopped()) rotation.stop()
       else if (this.memory.playing === true && !rotation.isPlaying()) rotation.play()
     }
     this.updateLabel()
