@@ -34,6 +34,14 @@ Good markup does most of the work. The plugin fills in what markup cannot do on 
     <button type="button" class="embla__dot"><span class="visually-hidden">Slide 1</span></button>
     <button type="button" class="embla__dot"><span class="visually-hidden">Slide 2</span></button>
   </div>
+
+  <p
+    class="embla__announcer visually-hidden"
+    aria-live="polite"
+    aria-atomic="true"
+    data-announcement="Slide {first} of {total}"
+    data-announcement-group="Slides {first} to {last} of {total}"
+  ></p>
 </section>
 ```
 
@@ -45,9 +53,10 @@ const viewport = document.querySelector('.embla__viewport')
 const previous = document.querySelector('.embla__prev')
 const next = document.querySelector('.embla__next')
 const dots = document.querySelector('.embla__dots')
+const announcer = document.querySelector('.embla__announcer')
 
 const emblaApi = EmblaCarousel(viewport, {}, [
-  emblaA11y({ previousButton: previous, nextButton: next, dots })
+  emblaA11y({ previousButton: previous, nextButton: next, dots, announcer })
 ])
 
 previous.addEventListener('click', () => emblaApi.goToPrev())
@@ -173,6 +182,25 @@ Style the current dot with the attribute, and make each dot at least 24 by 24 pi
   background: currentColor;
 }
 ```
+
+### Position announcements
+
+After someone moves the carousel with a button, a dot or a drag, screen readers hear where they are now, for example "Slides 4 to 6 of 10". It is said once, politely, after the move ends. Nothing is said on load, on a resize, while Autoplay or AutoScroll move the carousel, or when focus brings a slide into view, because then the screen reader already reads the focused element.
+
+- Option: `announcer`, an element you put in the carousel area, outside the slides, with `aria-live="polite"` and `aria-atomic="true"`. Hide it visually.
+- Markup: the texts as templates in the page's language. `data-announcement` is for one slide on screen, `data-announcement-group` for several. The plugin fills in `{first}`, `{last}` and `{total}`, counting the slides that are actually on screen.
+
+```html
+<p
+  class="embla__announcer visually-hidden"
+  aria-live="polite"
+  aria-atomic="true"
+  data-announcement="Slide {first} of {total}"
+  data-announcement-group="Slides {first} to {last} of {total}"
+></p>
+```
+
+Put the element in the page from the start; screen readers only notice live regions that exist before their text changes. Never put `aria-live` on the slides themselves: then every move reads whole slides. In an app with its own translation library, pass `announcement(firstSlide, lastSlide, totalSlides)` instead of the templates. Without either, the plugin announces nothing and warns in the console.
 
 ### Focus never gets lost
 

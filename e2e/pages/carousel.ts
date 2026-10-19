@@ -40,25 +40,30 @@ container.append(
 )
 
 const emblaApi = asEmblaV9(
-  EmblaCarousel(root, variant.options, [
-    emblaA11y({
-      hideOffscreen: parameters.has('hideOffscreen'),
-      previousButton: document.querySelector<HTMLElement>('.embla__prev'),
-      nextButton: document.querySelector<HTMLElement>('.embla__next'),
-      dots: document.querySelector<HTMLElement>('.embla__dots'),
-      rotationButton
-    }),
-    ...(variant.fade === true ? [Fade()] : []),
-    ...(variant.rotation === 'autoplay'
-      ? [
-          Autoplay({
-            delay: 1000,
-            ...(variant.startsStopped === true ? { playOnInit: false } : {})
-          })
-        ]
-      : []),
-    ...(variant.rotation === 'auto-scroll' ? [AutoScroll({ speed: 2 })] : [])
-  ])
+  EmblaCarousel(
+    root,
+    { ...variant.options, breakpoints: { '(prefers-reduced-motion: reduce)': { duration: 0 } } },
+    [
+      emblaA11y({
+        hideOffscreen: parameters.has('hideOffscreen'),
+        previousButton: document.querySelector<HTMLElement>('.embla__prev'),
+        nextButton: document.querySelector<HTMLElement>('.embla__next'),
+        dots: document.querySelector<HTMLElement>('.embla__dots'),
+        announcer: document.querySelector<HTMLElement>('.embla__announcer'),
+        rotationButton
+      }),
+      ...(variant.fade === true ? [Fade()] : []),
+      ...(variant.rotation === 'autoplay'
+        ? [
+            Autoplay({
+              delay: 1000,
+              ...(variant.startsStopped === true ? { playOnInit: false } : {})
+            })
+          ]
+        : []),
+      ...(variant.rotation === 'auto-scroll' ? [AutoScroll({ speed: 2 })] : [])
+    ]
+  )
 )
 window.emblaApi = emblaApi
 if (variant.startsStopped !== true) {

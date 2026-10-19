@@ -1,5 +1,6 @@
 import type { EmblaCarouselType } from 'embla-carousel'
 import { AttributeStore } from '../AttributeStore.js'
+import { isOnScreen } from '../visibleSlides.js'
 import type { Feature } from './Feature.js'
 
 /**
@@ -67,12 +68,6 @@ export class HideOffscreen implements Feature {
   }
 
   private isVisible(slide: HTMLElement): boolean {
-    const slideRect = slide.getBoundingClientRect()
-    const viewportRect = this.emblaApi.rootNode().getBoundingClientRect()
-    const overlapWidth =
-      Math.min(slideRect.right, viewportRect.right) - Math.max(slideRect.left, viewportRect.left)
-    const overlapHeight =
-      Math.min(slideRect.bottom, viewportRect.bottom) - Math.max(slideRect.top, viewportRect.top)
-    return overlapWidth >= 1 && overlapHeight >= 1
+    return isOnScreen(slide, this.emblaApi.rootNode())
   }
 }
