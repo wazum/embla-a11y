@@ -2,6 +2,9 @@ import type { EmblaCarouselType } from 'embla-carousel'
 import { isOnScreen } from '../visibleSlides.js'
 import type { Feature, WarnType } from './Feature.js'
 
+// React and Vue often move the carousel in an effect after the click, not in the click itself.
+const userActionWindow = 1000
+
 export type AnnouncementType = (
   firstSlide: number,
   lastSlide: number,
@@ -45,6 +48,7 @@ export class Announcer implements Feature {
   }
   private readonly onSelect = (): void => {
     if (!this.userAction && !this.dragging) return
+    this.userAction = false
     this.pending = true
     this.nextFrame(() => {
       const engine = this.emblaApi.internalEngine()
@@ -58,6 +62,7 @@ export class Announcer implements Feature {
   }
   private readonly frames = new Set<number>()
   private userAction = false
+  private userActionTimeout: ReturnType<typeof setTimeout> | undefined
   private dragging = false
   private pending = false
   private written = false
@@ -88,6 +93,7 @@ export class Announcer implements Feature {
   }
 
   public destroy(): void {
+    clearTimeout(this.userActionTimeout)
     for (const control of this.controls) {
       control.removeEventListener('click', this.onControlClick, true)
     }
@@ -111,9 +117,10 @@ export class Announcer implements Feature {
 
   private markUserAction(): void {
     this.userAction = true
-    setTimeout(() => {
+    clearTimeout(this.userActionTimeout)
+    this.userActionTimeout = setTimeout(() => {
       this.userAction = false
-    })
+    }, userActionWindow)
   }
 
   private announce(): void {

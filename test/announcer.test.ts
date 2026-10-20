@@ -272,6 +272,42 @@ test('passes the headings of the slides on screen to announcement', async () => 
   await expect.poll(() => announcement.mock.lastCall?.[6]).toEqual([''])
 })
 
+test('announces a move a framework makes a moment after the click', async () => {
+  const announcer = createAnnouncer({ 'data-announcement': 'Folie {first} von {total}' })
+  const { buttons, emblaApi } = createCarousel({
+    slideCount: 3,
+    slideWidth: '100%',
+    plugins: ({ previous, next }) => [
+      emblaA11y({ label: 'Products', previousButton: previous, nextButton: next, announcer })
+    ]
+  })
+  buttons.next.addEventListener('click', () => {
+    setTimeout(() => emblaApi.goToNext(true), 100)
+  })
+
+  buttons.next.click()
+
+  await expect.poll(() => announcer.textContent).toBe('Folie 2 von 3')
+})
+
+test('stays silent for a move long after a click', async () => {
+  const announcer = createAnnouncer({ 'data-announcement': 'Folie {first} von {total}' })
+  const { buttons, emblaApi } = createCarousel({
+    slideCount: 3,
+    slideWidth: '100%',
+    plugins: ({ previous, next }) => [
+      emblaA11y({ label: 'Products', previousButton: previous, nextButton: next, announcer })
+    ]
+  })
+
+  buttons.next.click()
+  await new Promise((resolve) => setTimeout(resolve, 1500))
+  emblaApi.goToNext(true)
+  await new Promise((resolve) => setTimeout(resolve, 100))
+
+  expect(announcer.textContent).toBe('')
+})
+
 test('warns when the announcer has no text', () => {
   const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
   const announcer = createAnnouncer({})

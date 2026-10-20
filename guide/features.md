@@ -186,7 +186,7 @@ The plugin does not turn the dots into tabs (`role="tab"`), as the ARIA Authorin
 
 ## Position announcements
 
-After someone moves the carousel with a button, a dot or a drag, screen readers hear where they are now, for example "Slides 4 to 6 of 10". It is said once, politely, after the move ends. Nothing is said on load, on a resize, while Autoplay or AutoScroll move the carousel, or when focus brings a slide into view, because then the screen reader already reads the focused element.
+After someone moves the carousel with a button, a dot or a drag, screen readers hear where they are now, for example "Slides 4 to 6 of 10". It is said once, politely, after the move ends. This also works when your framework moves the carousel a moment after the click, for example in a React or Vue effect, as long as that is within a second. Nothing is said on load, on a resize, while Autoplay or AutoScroll move the carousel, or when focus brings a slide into view, because then the screen reader already reads the focused element.
 
 - Option: `announcer`, an element you put in the carousel area, outside the slides, with `aria-live="polite"` and `aria-atomic="true"`. Hide it visually.
 - Markup: the texts as templates in the page's language. `data-announcement` is for one slide on screen, `data-announcement-group` for several. The plugin fills in `{first}`, `{last}` and `{total}`, counting the slides that are actually on screen. For carousels that move a whole view at a time, `{page}` and `{pages}` give the current position and the number of positions, for example "Page 2 of 4".
