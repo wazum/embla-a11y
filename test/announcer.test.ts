@@ -308,6 +308,54 @@ test('stays silent for a move long after a click', async () => {
   expect(announcer.textContent).toBe('')
 })
 
+function recordTexts(announcer: HTMLElement): string[] {
+  const texts: string[] = []
+  new MutationObserver(() => texts.push(announcer.textContent)).observe(announcer, {
+    childList: true,
+    characterData: true,
+    subtree: true
+  })
+  return texts
+}
+
+test('announces a move exactly once', async () => {
+  const announcer = createAnnouncer({ 'data-announcement': 'Folie {first} von {total}' })
+  const { buttons, emblaApi } = createCarousel({
+    slideCount: 3,
+    slideWidth: '100%',
+    plugins: ({ previous, next }) => [
+      emblaA11y({ label: 'Products', previousButton: previous, nextButton: next, announcer })
+    ]
+  })
+  buttons.next.addEventListener('click', () => emblaApi.goToNext())
+  const texts = recordTexts(announcer)
+
+  buttons.next.click()
+  await expect.poll(() => announcer.textContent, { timeout: 3000 }).toBe('Folie 2 von 3')
+  await new Promise((resolve) => setTimeout(resolve, 300))
+
+  expect(texts).toEqual(['Folie 2 von 3'])
+})
+
+test('clears and rewrites identical text, so it is read again', async () => {
+  const announcer = createAnnouncer({ 'data-announcement': 'Folie gewechselt' })
+  const { buttons, emblaApi } = createCarousel({
+    slideCount: 3,
+    slideWidth: '100%',
+    plugins: ({ previous, next }) => [
+      emblaA11y({ label: 'Products', previousButton: previous, nextButton: next, announcer })
+    ]
+  })
+  buttons.next.addEventListener('click', () => emblaApi.goToNext(true))
+  const texts = recordTexts(announcer)
+
+  buttons.next.click()
+  await expect.poll(() => texts).toEqual(['Folie gewechselt'])
+  buttons.next.click()
+
+  await expect.poll(() => texts).toEqual(['Folie gewechselt', '', 'Folie gewechselt'])
+})
+
 test('warns when the announcer has no text', () => {
   const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
   const announcer = createAnnouncer({})
