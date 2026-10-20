@@ -8,6 +8,9 @@ export class SlideList implements Feature {
   public constructor(emblaApi: EmblaCarouselType, warn: WarnType) {
     const container = emblaApi.containerNode()
     const slides = emblaApi.slideNodes()
+    if (container.matches('ul:not([role]), ol:not([role])')) {
+      this.attributes.set(container, 'role', 'list')
+    }
     if (isList(container) || slides.every((slide) => slide.hasAttribute('role'))) return
     if (!isGeneric(container) || !slides.every(isGeneric)) {
       warn(
