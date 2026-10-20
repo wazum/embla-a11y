@@ -32,7 +32,9 @@ export class FocusRescue implements Feature {
   private readonly buttons: PreviousNextButtonsType
   private readonly memory: FocusMemoryType
   private readonly attributes = new AttributeStore()
-  private readonly observer = new MutationObserver(() => this.rescue())
+  private readonly observer = new MutationObserver((records) => {
+    if (records.some((record) => this.mayAffectFocused(record))) this.rescue()
+  })
   private readonly onFocusIn = (event: FocusEvent): void => this.remember(event.target)
   private readonly onFocusOut = (event: FocusEvent): void => this.forget(event)
 
@@ -89,6 +91,12 @@ export class FocusRescue implements Feature {
       const { focused } = this.memory
       if (focused?.element === target && canHoldFocus(focused.element)) this.memory.focused = null
     })
+  }
+
+  private mayAffectFocused({ target }: MutationRecord): boolean {
+    const element = this.memory.focused?.element
+    if (element === undefined) return false
+    return !element.isConnected || target.contains(element)
   }
 
   private rescue(): void {
