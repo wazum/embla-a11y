@@ -47,7 +47,7 @@ Slides that are completely outside the viewport become `inert`: the keyboard, sc
 Don't put `tabindex` on the slides themselves. Only real links, buttons and form fields should be Tab stops.
 
 > [!NOTE]
-> VoiceOver reads the full count, for example "list, 10 items". NVDA ignores `aria-setsize` and counts only the slides on screen, so it says "list, with 3 items". Both read the right content; only NVDA's count differs.
+> VoiceOver reads the full count, for example "list, 10 items". NVDA ignores `aria-setsize` and counts only the slides on screen, so for a carousel of 10 it says "list, with 3 items", which is wrong. The announcer gives the full count after the first move. If people need it before that, put it in the heading, for example "Featured products (10)", or [keep every slide reachable](#keeping-every-slide-reachable).
 
 > [!NOTE]
 > Slides that are off-screen are not in the heading list, the link list or the browser's find-in-page until they come into view. If people need to search or scan every item, link to a page that lists them all, for example "All 10 featured products".
@@ -95,7 +95,7 @@ When something inside a slide gets focus, the carousel moves until it is fully v
 
 ## Previous and next buttons
 
-At the start and the end, the previous or next button gets `aria-disabled="true"` instead of `disabled`. Screen readers announce it as unavailable, and a keyboard user who presses Next to the end keeps focus on the button. In a loop neither button is ever unavailable.
+At the start and the end, the previous or next button gets `aria-disabled="true"` instead of `disabled`. Screen readers announce it as unavailable, and a keyboard user who presses Next to the end keeps focus on the button. In a loop neither button is ever unavailable. Where a loop wraps around, the slides on screen can be 9, 10 and 1, but Tab follows the markup and reaches slide 1 first.
 
 - Options: `previousButton` and `nextButton`.
 - Markup: real `<button type="button">` elements with visible text. Don't set `disabled` yourself. The plugin never changes the button's name.
@@ -134,7 +134,7 @@ Style the unavailable state with the attribute, and keep focus visible:
 
 ## Dot buttons
 
-The current dot gets `aria-current="true"`. No dot is ever disabled, and dots you rebuild later get the same treatment.
+The current dot gets `aria-current="true"`. No dot is ever disabled, and dots you rebuild later get the same treatment. Focus stays on the dot after a press, unlike in the W3C carousel tutorial, which moves it to the slide: in user tests that move was "very disruptive", and the announcer says where the carousel is now.
 
 - Option: `dots`, the element that holds the dot buttons.
 - Markup: one `<button type="button">` per snap point, in order. The best name is your own hidden text, rendered on the server in the page's language, as in the README example. The plugin keeps it, and also a thumbnail image's `alt` text.
@@ -266,7 +266,7 @@ The plugin adds nothing on the server. The React, Vue and Solid wrappers also cr
 > The plugin works in the normal page DOM, not inside a shadow root. Inside a web component's shadow DOM it cannot see which element has focus, so focus could be lost when slides are hidden.
 
 - No configuration.
-- Markup: render the section, heading, list, buttons and dot names on the server. Then the carousel is accessible before JavaScript runs.
+- Markup: render the section, heading, list and slides on the server, so the named region and its content are there before JavaScript runs. The carousel does not work before that: the buttons do nothing, and slides beyond the first view can only be reached with Tab. Hide the buttons, dots and rotation button until Embla has started, for example with a class you add after creating the carousel, so nobody presses a button that does nothing.
 
 Pass the elements from refs. Embla's wrappers compare the plugin options on every render and re-initialise the carousel with a new plugin instance when an element changes, for example on the render after the first one, when the refs are filled. The plugin keeps what matters across that switch: a rotation the user stopped stays stopped, and a warning is not repeated. List `emblaA11y` last, as everywhere.
 
