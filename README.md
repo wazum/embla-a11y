@@ -98,7 +98,7 @@ The examples use a common `visually-hidden` class. It hides text on screen and k
 - [Named region](guide/features.md#named-region): screen reader users can find the carousel by its name.
 - [Only slides on screen are reachable](guide/features.md#only-slides-on-screen-are-reachable): Tab and screen readers move through the slides people see, and never jump to a slide nobody asked for. A slide that is partly on screen stays reachable.
 - [Focus brings its slide into view](guide/features.md#focus-brings-its-slide-into-view): Tab, screen readers and voice control never focus something you can't see.
-- [Previous and next buttons](guide/features.md#previous-and-next-buttons): unavailable at the ends without losing focus.
+- [Previous and next buttons](guide/features.md#previous-and-next-buttons): unavailable at the ends without losing focus, and easy to hide when everything fits in one view.
 - [Dot buttons](guide/features.md#dot-buttons): the current dot is marked, and every dot has a name.
 - [Position announcements](guide/features.md#position-announcements): after a move, screen readers hear "Slides 4 to 6 of 10".
 - [Focus never gets lost](guide/features.md#focus-never-gets-lost): when focused content disappears, focus moves to something nearby.

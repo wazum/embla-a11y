@@ -15,6 +15,7 @@ import { PreviousNextButtons } from './features/PreviousNextButtons.js'
 import { Region } from './features/Region.js'
 import type { RotationLabelType } from './features/RotationButtonText.js'
 import { RotationControl, type RotationMemoryType } from './features/RotationControl.js'
+import { SingleView } from './features/SingleView.js'
 import { SlideList } from './features/SlideList.js'
 
 declare module 'embla-carousel' {
@@ -98,6 +99,7 @@ function emblaA11y(userOptions: EmblaA11yOptionsType = {}): EmblaA11yType {
     features = [
       new Region(area, options, warn),
       new SlideList(emblaApi, warn),
+      new SingleView(emblaApi, area),
       new RotationControl(emblaApi, area, state.rotation, options, warn),
       new FollowFocus(emblaApi),
       new PreviousNextButtons(emblaApi, options),

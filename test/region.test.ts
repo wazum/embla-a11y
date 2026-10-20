@@ -19,6 +19,27 @@ test('takes options from globalOptions, and options per carousel win', async () 
   await expect.element(page.getByRole('region', { name: 'New arrivals' })).toBeVisible()
 })
 
+test('marks the carousel when everything fits in one view, and follows changes', () => {
+  const { wrapper, slides, emblaApi } = createCarousel({
+    slideCount: 3,
+    slideWidth: '20%',
+    plugins: [emblaA11y({ label: 'Products' })]
+  })
+
+  expect(wrapper.hasAttribute('data-single-view')).toBe(true)
+
+  for (const slide of slides) slide.style.flexBasis = '100%'
+  emblaApi.reInit()
+
+  expect(wrapper.hasAttribute('data-single-view')).toBe(false)
+
+  for (const slide of slides) slide.style.flexBasis = '20%'
+  emblaApi.reInit()
+  emblaApi.destroy()
+
+  expect(wrapper.hasAttribute('data-single-view')).toBe(false)
+})
+
 test('names the region after a visible heading', async () => {
   createCarousel({
     heading: { id: 'products-heading', text: 'Featured products' },

@@ -100,6 +100,13 @@ At the start and the end, the previous or next button gets `aria-disabled="true"
 - Options: `previousButton` and `nextButton`.
 - Markup: real `<button type="button">` elements with visible text. Don't set `disabled` yourself. The plugin never changes the button's name.
 - A carousel with more than one position needs buttons or dots. Without them it can only be dragged, which keyboard, screen reader and voice control users cannot do, and the plugin warns in the console.
+- When everything fits in one view, the buttons and dots have nothing to do, and controls without effect confuse people who cannot see that. The plugin then sets `data-single-view` on the carousel, and takes it away again when the view gets narrower. Hide your controls with it:
+
+```css
+[data-single-view] .embla__controls {
+  display: none;
+}
+```
 
 If your buttons show only an icon, hide the icon and give the button hidden text:
 
