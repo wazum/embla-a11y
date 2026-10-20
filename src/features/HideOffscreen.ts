@@ -19,8 +19,10 @@ export class HideOffscreen implements Feature {
     this.moving = false
     this.update()
   }
-  private readonly onFocusOut = (event: FocusEvent): void =>
-    this.refresh(event.relatedTarget instanceof Element ? event.relatedTarget : null)
+  private readonly onFocusOut = (event: FocusEvent): void => {
+    if (event.relatedTarget instanceof Element) this.refresh(event.relatedTarget)
+    else this.scheduleRefresh()
+  }
   private readonly scheduleRefresh = (): void => {
     cancelAnimationFrame(this.pendingFrame)
     this.pendingFrame = requestAnimationFrame(() => this.refresh())
