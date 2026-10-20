@@ -14,6 +14,7 @@ npm run test:e2e:v8      # end-to-end tests against Embla 8.6
 npm run browsers:stop    # stop the browser container
 npm run demo             # demo pages at /e2e/pages/index.html
 npm run check            # formatting, lint, types, HTML, unused code, package exports
+npm run package:install  # installs the packed package into fresh projects with Embla 9 and 8.6
 npm run format           # fix formatting
 ```
 

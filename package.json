@@ -44,6 +44,7 @@
     "knip": "knip",
     "package:check": "npm run build && publint --strict && attw --pack --profile esm-only && tsc -p v8",
     "check": "npm run format:check && npm run lint && npm run typecheck && npm run html && npm run knip && npm run package:check",
+    "package:install": "bash scripts/install-test.sh",
     "browsers": "docker compose up -d --wait playwright",
     "browsers:stop": "docker compose down",
     "test": "npm run browsers && vitest run",

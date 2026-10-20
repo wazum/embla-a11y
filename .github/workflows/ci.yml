@@ -22,6 +22,18 @@ jobs:
       - run: npm run check
       - run: npm run actionlint
 
+  install:
+    name: install from the packed package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npm run package:install
+
   test:
     name: test (Embla ${{ matrix.embla }})
     runs-on: ubuntu-latest
