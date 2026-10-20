@@ -24,6 +24,33 @@ test('the demo site logs no warnings or errors', async ({ page }) => {
   expect(messages).toEqual([])
 })
 
+test('the demo site does not move when the web font arrives late', async ({ page }) => {
+  const headingTops = () =>
+    page
+      .locator('h1, h2, .hero .button')
+      .evaluateAll((elements) => elements.map((element) => element.getBoundingClientRect().top))
+
+  await page.route('**/*.woff2', async (route) => {
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+    await route.continue()
+  })
+  const fontArrives = page.waitForResponse('**/*.woff2')
+  await page.goto('/demo/index.html', { waitUntil: 'commit' })
+  await expect(page.locator('.carousel__dot').first()).toBeAttached()
+  await page.waitForFunction(() =>
+    [...document.fonts].some(
+      (face) => face.family.includes('Inter fallback') && face.status === 'loaded'
+    )
+  )
+  const beforeFont = await headingTops()
+
+  await fontArrives
+  await page.evaluate(() => document.fonts.ready)
+  const afterFont = await headingTops()
+
+  expect(afterFont).toEqual(beforeFont)
+})
+
 for (const colorScheme of ['light', 'dark'] as const) {
   test(`the demo site has no axe violations up to AAA in ${colorScheme} mode`, async ({ page }) => {
     test.slow()

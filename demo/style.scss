@@ -1,13 +1,5 @@
 @use 'sass:list';
 
-@font-face {
-  font-family: 'Inter';
-  font-style: normal;
-  font-weight: 400 900;
-  font-display: swap;
-  src: url('./fonts/inter-latin.woff2') format('woff2');
-}
-
 $tints: (
   sky: (
     #dce7ef,
@@ -57,7 +49,8 @@ $tints: (
   --font-size-section-heading: clamp(1.953rem, 1.5rem + 1.6vw, 2.441rem);
   --font-size-display: clamp(2.441rem, 1.6rem + 3.4vw, 3.5rem);
 
-  --measure: 65ch;
+  /* 65ch of Inter in em, so the line length does not change with the fallback font */
+  --measure: 41em;
   --content-width: 75rem;
   --page-margin: clamp(var(--space-three-quarters), 4vw, var(--space-double));
 
@@ -70,7 +63,7 @@ $tints: (
   --touch-target-large: 3rem;
   --focus-width: 3px;
 
-  --font-body: 'Inter', system-ui, sans-serif;
+  --font-body: 'Inter', 'Inter fallback', system-ui, sans-serif;
   --font-code: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
 
   --page: #f5f6f8;
