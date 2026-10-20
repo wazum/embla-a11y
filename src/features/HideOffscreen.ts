@@ -61,7 +61,9 @@ export class HideOffscreen implements Feature {
 
   private refresh(focused: Element | null = document.activeElement): void {
     // Embla 8.6 emits no settle after an instant jump, so moving is also over once the scroll body has settled.
-    if (this.moving && !this.emblaApi.internalEngine().scrollBody.settled()) {
+    // AutoScroll never settles, and any interaction stops it, so it gets the full update on every frame.
+    const settled = this.emblaApi.internalEngine().scrollBody.settled()
+    if (this.moving && !settled && !this.autoScrolling()) {
       this.showVisibleSlides()
       return
     }
@@ -88,4 +90,15 @@ export class HideOffscreen implements Feature {
       if (visible[index] === true) this.attributes.reset(slide, 'inert')
     })
   }
+
+  private autoScrolling(): boolean {
+    return Object.entries(this.emblaApi.plugins()).some(
+      ([name, plugin]) => name === 'autoScroll' && isPlaying(plugin)
+    )
+  }
+}
+
+function isPlaying(plugin: unknown): boolean {
+  if (typeof plugin !== 'object' || plugin === null || !('isPlaying' in plugin)) return false
+  return typeof plugin.isPlaying === 'function' && plugin.isPlaying() === true
 }

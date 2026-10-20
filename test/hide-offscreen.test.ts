@@ -1,4 +1,6 @@
+import AutoScroll from 'embla-carousel-auto-scroll'
 import { afterEach, expect, test } from 'vitest'
+import { userEvent } from 'vitest/browser'
 import emblaA11y from '../src/index.js'
 import { createCarousel, removeCarousels } from './fixture.js'
 
@@ -16,6 +18,33 @@ test('hides slides that are fully off-screen by default', () => {
   })
 
   expect(slides.map((slide) => slide.hasAttribute('inert'))).toEqual([false, true, true])
+})
+
+test('keeps hiding slides that leave the screen while AutoScroll runs', async () => {
+  const { slides, emblaApi } = createCarousel({
+    slideCount: 6,
+    slideWidth: '50%',
+    options: { loop: true },
+    plugins: ({ previous, next }) => [
+      AutoScroll({ speed: 30, startDelay: 0 }),
+      emblaA11y({ label: 'Products', previousButton: previous, nextButton: next })
+    ]
+  })
+  const outside = document.createElement('p')
+  outside.textContent = 'Outside'
+  document.body.prepend(outside)
+  await userEvent.hover(outside)
+  emblaApi.plugins().autoScroll?.play()
+  await new Promise((resolve) => setTimeout(resolve, 1500))
+
+  const viewport = emblaApi.rootNode().getBoundingClientRect()
+  const offScreen = slides.filter((slide) => {
+    const rect = slide.getBoundingClientRect()
+    return rect.right <= viewport.left + 1 || rect.left >= viewport.right - 1
+  })
+  expect(emblaApi.plugins().autoScroll?.isPlaying()).toBe(true)
+  expect(offScreen.length).toBeGreaterThan(0)
+  expect(offScreen.map((slide) => slide.hasAttribute('inert'))).toEqual(offScreen.map(() => true))
 })
 
 test('keeps every slide reachable with hideOffscreen: false', () => {
