@@ -207,6 +207,8 @@ If your code disables, hides or removes the element that has focus, the plugin m
 
 If you use the Autoplay or AutoScroll plugin, any focus or press inside the carousel stops it for good. That includes focus from a screen reader on a link or button, voice control or a script, not only the Tab key. Reading with a screen reader does not move focus, so it does not stop the rotation; for those users the rotation button is the only way to stop it. The carousel then stays where the user is, and the focused slide comes into view. A resize keeps the rotation as it was: once a user stopped it, it stays stopped, and a rotation nobody stopped keeps running.
 
+While the mouse is over the carousel, the rotation pauses, and it goes on when the mouse leaves. This helps people who use a screen magnifier or read along with the mouse pointer. The button keeps saying "Stop" during the pause, and a press or the button still stops the rotation for good. Touch does not pause it: a tap is a press and stops it.
+
 The rotation button starts and stops the rotation. Its text always says what pressing it will do. The text follows every change, also a stop through focus or a call to `play()` or `stop()` in your code. Focus on the button itself does not stop the rotation.
 
 - No configuration for the stop on interaction. List the Autoplay or AutoScroll plugin before this plugin.

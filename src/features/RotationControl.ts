@@ -51,8 +51,19 @@ export class RotationControl implements Feature {
     this.stopForGood()
   }
   private readonly onToggle = (): void => {
-    if (this.isPlaying()) this.stopForGood()
+    if (this.isPlaying() || this.pausedByHover) this.stopForGood()
     else this.start()
+  }
+  private readonly onPointerEnter = (event: PointerEvent): void => {
+    if (event.pointerType !== 'mouse' || !this.isPlaying()) return
+    this.pausedByHover = true
+    for (const rotation of this.rotations()) rotation.stop()
+  }
+  private readonly onPointerLeave = (event: PointerEvent): void => {
+    if (event.pointerType !== 'mouse' || !this.pausedByHover) return
+    this.pausedByHover = false
+    if (this.mustStayStopped() || !this.canRotate()) return
+    for (const rotation of this.rotations()) rotation.play()
   }
   private readonly onRotationChange = (): void => queueMicrotask(() => this.followRotation())
   private readonly reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
@@ -61,6 +72,7 @@ export class RotationControl implements Feature {
     this.memory.startedByUser = false
     this.stopAll()
   }
+  private pausedByHover = false
   private destroyed = false
 
   public constructor(
@@ -78,6 +90,8 @@ export class RotationControl implements Feature {
     this.buttonText = new RotationButtonText(rotationButton, rotationLabel, warn)
     area.addEventListener('focusin', this.onInteraction, true)
     area.addEventListener('pointerdown', this.onInteraction, true)
+    area.addEventListener('pointerenter', this.onPointerEnter)
+    area.addEventListener('pointerleave', this.onPointerLeave)
     rotationButton?.addEventListener('click', this.onToggle)
     for (const event of rotationEvents) emblaApi.on(event, this.onRotationChange)
     this.reducedMotion.addEventListener('change', this.onReducedMotionChange)
@@ -88,6 +102,8 @@ export class RotationControl implements Feature {
     this.destroyed = true
     this.area.removeEventListener('focusin', this.onInteraction, true)
     this.area.removeEventListener('pointerdown', this.onInteraction, true)
+    this.area.removeEventListener('pointerenter', this.onPointerEnter)
+    this.area.removeEventListener('pointerleave', this.onPointerLeave)
     this.button?.removeEventListener('click', this.onToggle)
     for (const event of rotationEvents) this.emblaApi.off(event, this.onRotationChange)
     this.reducedMotion.removeEventListener('change', this.onReducedMotionChange)
@@ -98,6 +114,7 @@ export class RotationControl implements Feature {
   private stopForGood(): void {
     this.memory.stoppedByUser = true
     this.memory.startedByUser = false
+    this.pausedByHover = false
     this.stopAll()
   }
 
@@ -126,7 +143,7 @@ export class RotationControl implements Feature {
   }
 
   private followRotation(): void {
-    if (this.destroyed) return
+    if (this.destroyed || this.pausedByHover) return
     const playing = this.isPlaying()
     if (playing && this.mustStayStopped()) {
       for (const rotation of this.rotations()) rotation.stop()
@@ -171,7 +188,7 @@ export class RotationControl implements Feature {
   }
 
   private updateLabel(): void {
-    if (this.rotations().length > 0) this.buttonText.show(this.isPlaying())
+    if (this.rotations().length > 0) this.buttonText.show(this.isPlaying() || this.pausedByHover)
   }
 
   private isPlaying(): boolean {

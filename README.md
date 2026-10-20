@@ -102,7 +102,7 @@ The examples use a common `visually-hidden` class. It hides text on screen and k
 - [Dot buttons](guide/features.md#dot-buttons): the current dot is marked, and every dot has a name.
 - [Position announcements](guide/features.md#position-announcements): after a move, screen readers hear "Slides 4 to 6 of 10".
 - [Focus never gets lost](guide/features.md#focus-never-gets-lost): when focused content disappears, focus moves to something nearby.
-- [Autoplay, AutoScroll and the rotation button](guide/features.md#autoplay-autoscroll-and-the-rotation-button): stops for good on interaction, respects reduced motion, and keeps the button text right.
+- [Autoplay, AutoScroll and the rotation button](guide/features.md#autoplay-autoscroll-and-the-rotation-button): pauses while the mouse is over it, stops for good on interaction, respects reduced motion, and keeps the button text right.
 - [Server rendering and frameworks](guide/features.md#server-rendering-and-frameworks): safe with SSR and the React, Vue and Solid wrappers.
 - [Clean destroy and switching off](guide/features.md#clean-destroy-and-switching-off): everything the plugin added is taken back.
 
@@ -112,7 +112,7 @@ Use one of them, not both: they manage the same attributes. The official [Access
 
 - **Every slide people can see stays readable and reachable.** The official plugin hides every slide outside the selected snap from screen readers and the keyboard, also slides that are fully on screen. With three slides in view and the default `slidesToScroll: 1`, it hides one or two of them. The Embla team keeps this on purpose ([#1389](https://github.com/davidjerleke/embla-carousel/issues/1389)).
 - **All texts come from your page, in its language.** The official plugin writes English names over your own: a button that shows "Zurück" is announced as "Go to previous Slide", which voice control users cannot match, and the carousel is called "Carousel" instead of by your heading.
-- **Autoplay and AutoScroll that people can stop.** A stop button, stop on any interaction, and reduced motion. The official plugin leaves this to you.
+- **Autoplay and AutoScroll that people can stop.** A stop button, a pause while the mouse is over the carousel, a stop on any interaction, and reduced motion. The official plugin leaves this to you.
 - **Focus that is never lost or out of sight.** Focus from screen readers, voice control and scripts brings its slide into view, and moves on when the focused element disappears.
 - **Your markup back as it was.** On destroy, every attribute goes back to what you wrote. The official plugin removes names you wrote yourself.
 - **Embla 8.6 as well as 9.**

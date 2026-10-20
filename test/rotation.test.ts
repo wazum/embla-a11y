@@ -1,6 +1,6 @@
 import Autoplay from 'embla-carousel-autoplay'
 import { afterEach, expect, test, vi } from 'vitest'
-import { page } from 'vitest/browser'
+import { page, userEvent } from 'vitest/browser'
 import emblaA11y from '../src/index.js'
 import { createCarousel, removeCarousels, stageControl } from './fixture.js'
 
@@ -15,6 +15,76 @@ function createRotationButton(html: string): HTMLButtonElement {
   button.innerHTML = html
   return stageControl(button)
 }
+
+async function createHoverableCarousel() {
+  const rotationButton = createRotationButton(
+    '<span data-rotation-playing>Stop slide rotation</span><span data-rotation-stopped hidden>Start slide rotation</span>'
+  )
+  const carousel = createCarousel({
+    slideCount: 3,
+    slideWidth: '100%',
+    plugins: ({ previous, next }) => [
+      Autoplay({ delay: 1000 }),
+      emblaA11y({ label: 'Products', previousButton: previous, nextButton: next, rotationButton })
+    ]
+  })
+  carousel.emblaApi.plugins().autoplay?.play()
+  await expect.poll(() => carousel.emblaApi.plugins().autoplay?.isPlaying()).toBe(true)
+  const outside = document.createElement('p')
+  outside.textContent = 'Outside'
+  document.body.append(outside)
+  return { ...carousel, rotationButton, outside }
+}
+
+function buttonSays(rotationButton: HTMLElement): string {
+  const shown = rotationButton.querySelector<HTMLElement>('span:not([hidden])')
+  return shown?.textContent ?? ''
+}
+
+test('pauses while the mouse is over the carousel and resumes when it leaves', async () => {
+  const { slides, emblaApi, rotationButton, outside } = await createHoverableCarousel()
+
+  await userEvent.hover(slides[0] ?? outside)
+
+  await expect.poll(() => emblaApi.plugins().autoplay?.isPlaying()).toBe(false)
+  expect(buttonSays(rotationButton)).toBe('Stop slide rotation')
+
+  await userEvent.hover(outside)
+
+  await expect.poll(() => emblaApi.plugins().autoplay?.isPlaying()).toBe(true)
+  expect(buttonSays(rotationButton)).toBe('Stop slide rotation')
+})
+
+test('stops for good on a press while the mouse is over the carousel', async () => {
+  const { wrapper, emblaApi, rotationButton, outside } = await createHoverableCarousel()
+
+  await userEvent.click(wrapper, { position: { x: 5, y: 5 } })
+  await userEvent.hover(outside)
+  await new Promise((resolve) => setTimeout(resolve, 100))
+
+  expect(emblaApi.plugins().autoplay?.isPlaying()).toBe(false)
+  expect(buttonSays(rotationButton)).toBe('Start slide rotation')
+})
+
+test('stops for good with the rotation button while the mouse is over it', async () => {
+  const { emblaApi, rotationButton, outside } = await createHoverableCarousel()
+
+  await userEvent.click(rotationButton)
+  await userEvent.hover(outside)
+  await new Promise((resolve) => setTimeout(resolve, 100))
+
+  expect(emblaApi.plugins().autoplay?.isPlaying()).toBe(false)
+  expect(buttonSays(rotationButton)).toBe('Start slide rotation')
+})
+
+test('keeps rotating when a touch enters the carousel', async () => {
+  const { wrapper, emblaApi } = await createHoverableCarousel()
+
+  wrapper.dispatchEvent(new PointerEvent('pointerenter', { pointerType: 'touch' }))
+  await new Promise((resolve) => setTimeout(resolve, 50))
+
+  expect(emblaApi.plugins().autoplay?.isPlaying()).toBe(true)
+})
 
 test('takes the rotation button texts from the markup', async () => {
   const rotationButton = createRotationButton(
