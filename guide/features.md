@@ -3,14 +3,13 @@
 Each section says what the plugin does, which option turns it on, and what markup it expects. The markup examples use the `visually-hidden` class from the [README](../README.md#quick-start).
 
 - [Named region](#named-region)
-- [Every slide stays reachable](#every-slide-stays-reachable)
+- [Only slides on screen are reachable](#only-slides-on-screen-are-reachable)
 - [Focus brings its slide into view](#focus-brings-its-slide-into-view)
 - [Previous and next buttons](#previous-and-next-buttons)
 - [Dot buttons](#dot-buttons)
 - [Position announcements](#position-announcements)
 - [Focus never gets lost](#focus-never-gets-lost)
 - [Autoplay, AutoScroll and the rotation button](#autoplay-autoscroll-and-the-rotation-button)
-- [Hiding slides that are off-screen](#hiding-slides-that-are-off-screen)
 - [Server rendering and frameworks](#server-rendering-and-frameworks)
 - [Clean destroy and switching off](#clean-destroy-and-switching-off)
 
@@ -24,12 +23,12 @@ The element around the viewport and its buttons becomes a named region, so scree
 
 A visible heading is better than `label`: most screen reader users move through a page by headings, and browsers translate visible text but not an `aria-label` added by script.
 
-## Every slide stays reachable
+## Only slides on screen are reachable
 
-All slides stay readable for screen readers and reachable with the keyboard, including slides that are only partly on screen.
+Slides that are completely outside the viewport become `inert`: the keyboard, screen readers, voice control and the mouse skip them. A slide is reachable as soon as any part of it is on screen, and the slide that holds focus is never hidden. So whether someone tabs or reads with a screen reader, forwards or backwards, from the buttons into the slides, they land on the slides they see. The carousel never jumps to a slide nobody asked for. To reach other slides, people use the buttons or the dots, just as they would with their eyes.
 
-- No configuration.
-- Markup: make the slides a list. Screen readers then say "list, 10 items" and the position of each slide, in the user's language. Keep `role="list"`: Safari drops list semantics when a list has no bullets. Give each slide a heading, so it shows up in the heading list.
+- No configuration. To keep every slide reachable instead, see [Keeping every slide reachable](#keeping-every-slide-reachable).
+- Markup: make the slides a list. Screen readers then say "list" and the position of each slide, in the user's language. If the slides are list items, the plugin adds `aria-posinset` and `aria-setsize`, so the position and the full count stay right while slides are hidden. Keep `role="list"`: Safari drops list semantics when a list has no bullets. Give each slide a heading, so it shows up in the heading list.
 
 ```html
 <ul class="embla__container" role="list">
@@ -45,6 +44,35 @@ All slides stay readable for screen readers and reachable with the keyboard, inc
 ```
 
 Don't put `tabindex` on the slides themselves. Only real links, buttons and form fields should be Tab stops.
+
+> [!NOTE]
+> VoiceOver reads the full count, for example "list, 10 items". NVDA ignores `aria-setsize` and counts only the slides on screen, so it says "list, with 3 items". Both read the right content; only NVDA's count differs.
+
+> [!NOTE]
+> Slides that are off-screen are not in the heading list, the link list or the browser's find-in-page until they come into view. If people need to search or scan every item, link to a page that lists them all, for example "All 10 featured products".
+
+> [!TIP]
+> A slide that is only partly visible stays reachable, because people can see it. Stepping onto it moves the carousel just enough to show it in full. That is the only movement focus causes, and it always goes towards something already on screen.
+
+> [!IMPORTANT]
+> With Autoplay or AutoScroll, a slide that moves out of view becomes `inert`, also while a screen reader reads it. People who read without moving focus can only stop the rotation with the rotation button, so always pass [`rotationButton`](#autoplay-autoscroll-and-the-rotation-button).
+
+### Keeping every slide reachable
+
+Pass `hideOffscreen: false` when people must find every slide in the heading and link lists or with find-in-page, and the carousel has only a few slides. Then no slide is ever `inert`, and the plugin adds no list positions, because the browser counts the items itself.
+
+> [!WARNING]
+> With every slide reachable, the reading order runs through all slides, not only the ones on screen. Someone who pages to slides 4 to 6 with buttons placed after the slides and then reads backwards lands on slide 10, and the carousel moves there to show it. With buttons before the slides, reading forwards lands on slide 1. The carousel stays correct, since focus is never on something unseen, but the jump is confusing. Only switch this off when the reasons above outweigh it.
+
+Tab then also passes every link and button in every slide. Put a link before the carousel that skips past it, pointing at the content after it:
+
+```html
+<a class="skip-link" href="#after-products">Skip past featured products</a>
+<section class="embla" aria-labelledby="products-heading">…</section>
+<div id="after-products" tabindex="-1">…</div>
+```
+
+Make the skip link visible when it has focus.
 
 ## Focus brings its slide into view
 
@@ -185,25 +213,6 @@ const emblaApi = EmblaCarousel(
 
 emblaApi.plugins().autoplay.play()
 ```
-
-## Hiding slides that are off-screen
-
-By default every slide stays reachable, which in a long carousel means many Tab stops. With this option, slides that are completely outside the viewport become `inert`: screen readers, the keyboard and the mouse skip them. A slide becomes reachable as soon as any part of it is on screen, and the slide that holds focus is never hidden. If the slides are list items, the plugin gives each one its position and the full count with `aria-posinset` and `aria-setsize`. Screen reader users then only find the slides on screen in their heading and link lists, so use it only when the long Tab sequence is the bigger problem.
-
-> [!NOTE]
-> VoiceOver reads the full count, for example "list, 10 items". NVDA ignores `aria-setsize` and counts only the slides on screen, so it says "list, with 3 items".
-
-- Option: `hideOffscreen: true`.
-
-Often a link that skips past the carousel is the better answer. Put it before the carousel and point it at the content after it:
-
-```html
-<a class="skip-link" href="#after-products">Skip past featured products</a>
-<section class="embla" aria-labelledby="products-heading">…</section>
-<div id="after-products" tabindex="-1">…</div>
-```
-
-Make the skip link visible when it has focus.
 
 ## Server rendering and frameworks
 

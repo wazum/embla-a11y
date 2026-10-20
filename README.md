@@ -91,14 +91,13 @@ The examples use a common `visually-hidden` class. It hides text on screen and k
 ## What it does
 
 - [Named region](guide/features.md#named-region): screen reader users can find the carousel by its name.
-- [Every slide stays reachable](guide/features.md#every-slide-stays-reachable): no slide is hidden from screen readers or the keyboard just because it is partly off-screen.
+- [Only slides on screen are reachable](guide/features.md#only-slides-on-screen-are-reachable): Tab and screen readers move through the slides people see, and never jump to a slide nobody asked for. A slide that is partly on screen stays reachable.
 - [Focus brings its slide into view](guide/features.md#focus-brings-its-slide-into-view): Tab, screen readers and voice control never focus something you can't see.
 - [Previous and next buttons](guide/features.md#previous-and-next-buttons): unavailable at the ends without losing focus.
 - [Dot buttons](guide/features.md#dot-buttons): the current dot is marked, and every dot has a name.
 - [Position announcements](guide/features.md#position-announcements): after a move, screen readers hear "Slides 4 to 6 of 10".
 - [Focus never gets lost](guide/features.md#focus-never-gets-lost): when focused content disappears, focus moves to something nearby.
 - [Autoplay, AutoScroll and the rotation button](guide/features.md#autoplay-autoscroll-and-the-rotation-button): stops for good on interaction, respects reduced motion, and keeps the button text right.
-- [Hiding slides that are off-screen](guide/features.md#hiding-slides-that-are-off-screen): optional, for carousels with too many Tab stops.
 - [Server rendering and frameworks](guide/features.md#server-rendering-and-frameworks): safe with SSR and the React, Vue and Solid wrappers.
 - [Clean destroy and switching off](guide/features.md#clean-destroy-and-switching-off): everything the plugin added is taken back.
 
@@ -106,21 +105,21 @@ The examples use a common `visually-hidden` class. It hides text on screen and k
 
 All options are optional. Elements you don't pass turn their feature off.
 
-| Option           | Type                             | Purpose                                                                 |
-| ---------------- | -------------------------------- | ----------------------------------------------------------------------- |
-| `previousButton` | `HTMLElement`                    | Previous button, marked unavailable at the start                        |
-| `nextButton`     | `HTMLElement`                    | Next button, marked unavailable at the end                              |
-| `dots`           | `HTMLElement`                    | Element that holds the dot buttons                                      |
-| `announcer`      | `HTMLElement`                    | Live region for position announcements                                  |
-| `rotationButton` | `HTMLElement`                    | Button that starts and stops Autoplay or AutoScroll; needed with either |
-| `hideOffscreen`  | `boolean`                        | Makes slides that are fully off-screen `inert`                          |
-| `labelledBy`     | `string`                         | Id of a visible heading, if the markup has no name                      |
-| `label`          | `string`                         | Text name, if there is no visible heading                               |
-| `dotLabel`       | `(first, last) => string`        | Dot names from your translation library, instead of markup              |
-| `announcement`   | `(first, last, total) => string` | Announcement text from your translation library                         |
-| `rotationLabel`  | `(playing) => string`            | Rotation button text from your translation library                      |
-| `active`         | `boolean`                        | Switches the plugin off, also per media query                           |
-| `breakpoints`    | `Record<string, options>`        | Options per media query, as in Embla                                    |
+| Option           | Type                             | Default | Purpose                                                                                                                                |
+| ---------------- | -------------------------------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `previousButton` | `HTMLElement`                    | `null`  | Previous button, marked unavailable at the start                                                                                       |
+| `nextButton`     | `HTMLElement`                    | `null`  | Next button, marked unavailable at the end                                                                                             |
+| `dots`           | `HTMLElement`                    | `null`  | Element that holds the dot buttons                                                                                                     |
+| `announcer`      | `HTMLElement`                    | `null`  | Live region for position announcements                                                                                                 |
+| `rotationButton` | `HTMLElement`                    | `null`  | Button that starts and stops Autoplay or AutoScroll; needed with either                                                                |
+| `hideOffscreen`  | `boolean`                        | `true`  | Makes slides that are fully off-screen `inert`; [`false` keeps every slide reachable](guide/features.md#keeping-every-slide-reachable) |
+| `labelledBy`     | `string`                         | `null`  | Id of a visible heading, if the markup has no name                                                                                     |
+| `label`          | `string`                         | `null`  | Text name, if there is no visible heading                                                                                              |
+| `dotLabel`       | `(first, last) => string`        | `null`  | Dot names from your translation library, instead of markup                                                                             |
+| `announcement`   | `(first, last, total) => string` | `null`  | Announcement text from your translation library                                                                                        |
+| `rotationLabel`  | `(playing) => string`            | `null`  | Rotation button text from your translation library                                                                                     |
+| `active`         | `boolean`                        | `true`  | Switches the plugin off, also per media query                                                                                          |
+| `breakpoints`    | `Record<string, options>`        | `{}`    | Options per media query, as in Embla                                                                                                   |
 
 ## Best practices
 

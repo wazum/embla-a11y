@@ -45,7 +45,7 @@ const defaultOptions: OptionsType = {
   breakpoints: {},
   label: null,
   labelledBy: null,
-  hideOffscreen: false,
+  hideOffscreen: true,
   previousButton: null,
   nextButton: null,
   dots: null,

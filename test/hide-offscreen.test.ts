@@ -8,6 +8,26 @@ function nextFrame(): Promise<void> {
   return new Promise((resolve) => requestAnimationFrame(() => resolve()))
 }
 
+test('hides slides that are fully off-screen by default', () => {
+  const { slides } = createCarousel({
+    slideCount: 3,
+    slideWidth: '100%',
+    plugins: [emblaA11y({ label: 'Products' })]
+  })
+
+  expect(slides.map((slide) => slide.hasAttribute('inert'))).toEqual([false, true, true])
+})
+
+test('keeps every slide reachable with hideOffscreen: false', () => {
+  const { slides } = createCarousel({
+    slideCount: 3,
+    slideWidth: '100%',
+    plugins: [emblaA11y({ label: 'Products', hideOffscreen: false })]
+  })
+
+  expect(slides.map((slide) => slide.hasAttribute('inert'))).toEqual([false, false, false])
+})
+
 test('keeps focus in an off-screen slide when the window loses focus', async () => {
   const { slides, emblaApi } = createCarousel({
     slideCount: 3,

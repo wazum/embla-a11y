@@ -34,7 +34,7 @@ test('adds no list position while every slide stays reachable', () => {
   const { slides } = createCarousel({
     slideCount: 10,
     list: true,
-    plugins: [emblaA11y({ label: 'Products' })]
+    plugins: [emblaA11y({ label: 'Products', hideOffscreen: false })]
   })
 
   expect(positionsOf(slides)).toEqual(slides.map(() => [null, null]))

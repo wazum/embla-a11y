@@ -12,7 +12,7 @@ Hiding visible slides from screen readers locks out people who see the screen an
 
 ## Offer a way past long carousels
 
-Because every slide stays reachable, a keyboard user tabs through all of them. A [skip link](features.md#hiding-slides-that-are-off-screen) before the carousel saves them the trip.
+A keyboard user tabs through every link and button in the slides on screen, and with `hideOffscreen: false` through every slide. A [skip link](features.md#keeping-every-slide-reachable) before the carousel saves them the trip.
 
 ## Add buttons
 
