@@ -170,7 +170,7 @@ test('passes the page and the number of pages to announcement', async () => {
 
   buttons.next.click()
 
-  await expect.poll(() => announcement.mock.lastCall).toEqual([3, 4, 6, 2, 3, [3, 4]])
+  await expect.poll(() => announcement.mock.lastCall).toEqual([3, 4, 6, 2, 3, [3, 4], ['', '']])
 })
 
 function createLoopAtSeam(announcer: HTMLElement, announcement?: AnnouncementType) {
@@ -223,6 +223,53 @@ test('passes the slides on screen to announcement', async () => {
   createLoopAtSeam(announcer, announcement)
 
   await expect.poll(() => announcement.mock.lastCall?.[5]).toEqual([10, 1, 2])
+})
+
+function createCarouselWithHeadings(announcer: HTMLElement, announcement?: AnnouncementType) {
+  const carousel = createCarousel({
+    slideCount: 3,
+    slideWidth: '100%',
+    plugins: ({ previous, next }) => [
+      emblaA11y({
+        label: 'Products',
+        previousButton: previous,
+        nextButton: next,
+        announcer,
+        ...(announcement === undefined ? {} : { announcement })
+      })
+    ]
+  })
+  carousel.slides.forEach((slide, index) => {
+    if (index === 2) return
+    const heading = document.createElement('h3')
+    heading.textContent = `  Produkt   ${index + 1} `
+    slide.prepend(heading)
+  })
+  carousel.buttons.next.addEventListener('click', () => carousel.emblaApi.goToNext(true))
+  return carousel
+}
+
+test('fills in the heading of the first slide on screen', async () => {
+  const announcer = createAnnouncer({
+    'data-announcement': 'Folie {first} von {total}: {heading}'
+  })
+  const { buttons } = createCarouselWithHeadings(announcer)
+
+  buttons.next.click()
+
+  await expect.poll(() => announcer.textContent).toBe('Folie 2 von 3: Produkt 2')
+})
+
+test('passes the headings of the slides on screen to announcement', async () => {
+  const announcement = vi.fn<AnnouncementType>(() => 'Folie')
+  const announcer = createAnnouncer({})
+  const { buttons } = createCarouselWithHeadings(announcer, announcement)
+
+  buttons.next.click()
+  await expect.poll(() => announcement.mock.lastCall?.[6]).toEqual(['Produkt 2'])
+
+  buttons.next.click()
+  await expect.poll(() => announcement.mock.lastCall?.[6]).toEqual([''])
 })
 
 test('warns when the announcer has no text', () => {

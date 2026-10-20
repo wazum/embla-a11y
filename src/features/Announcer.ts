@@ -8,7 +8,8 @@ export type AnnouncementType = (
   totalSlides: number,
   page: number,
   pages: number,
-  slides: number[]
+  slides: number[],
+  headings: string[]
 ) => string
 
 export type AnnouncerOptionsType = {
@@ -150,9 +151,10 @@ export class Announcer implements Feature {
     if (first === undefined || last === undefined) return null
     const page = this.emblaApi.selectedSnap() + 1
     const pages = this.emblaApi.snapList().length
+    const headings = slides.map((slide) => this.headingOf(slide))
     const template = this.templateFor(slides)
     if (template === null) {
-      return this.announcement?.(first, last, total, page, pages, slides) ?? null
+      return this.announcement?.(first, last, total, page, pages, slides, headings) ?? null
     }
     return template
       .replaceAll('{first}', String(first))
@@ -161,6 +163,13 @@ export class Announcer implements Feature {
       .replaceAll('{page}', String(page))
       .replaceAll('{pages}', String(pages))
       .replaceAll('{slides}', this.listOf(slides))
+      .replaceAll('{heading}', headings[0] ?? '')
+  }
+
+  private headingOf(slide: number): string {
+    const node = this.emblaApi.slideNodes()[slide - 1]
+    const heading = node?.querySelector('h1, h2, h3, h4, h5, h6, [role="heading"]')
+    return heading?.textContent.replaceAll(/\s+/g, ' ').trim() ?? ''
   }
 
   private templateFor(slides: number[]): string | null {

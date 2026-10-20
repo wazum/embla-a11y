@@ -805,7 +805,7 @@
                 class="carousel__announcer visually-hidden"
                 aria-live="polite"
                 aria-atomic="true"
-                data-announcement="Slide {first} of {total}"
+                data-announcement="Slide {first} of {total}: {heading}"
                 data-announcement-group="Slides {first} to {last} of {total}"
               ></p>
             </section>
@@ -817,7 +817,11 @@
                   <kbd>Tab</kbd> into the slides and on: focus never stays on a slide that is faded
                   out.
                 </li>
-                <li>Press Next with a screen reader and you hear “Slide 2 of 10”.</li>
+                <li>
+                  Press Next with a screen reader and you hear “Slide 2 of 10: Berlin”: the
+                  announcement also says the slide's heading, with <code>{heading}</code> in the
+                  template.
+                </li>
               </ul>
               <p class="demo__more">
                 <a
