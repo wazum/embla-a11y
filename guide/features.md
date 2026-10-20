@@ -141,7 +141,7 @@ The plugin never writes text of its own, because only your page knows its langua
 ></div>
 ```
 
-`data-dot-label-group` is for dots that stand for several slides. In an app with its own translation library, pass `dotLabel(firstSlide, lastSlide)` instead. Without a name, a template or `dotLabel`, the plugin names nothing and warns in the console.
+`data-dot-label-group` is for dots that stand for several slides. Besides `{first}` and `{last}`, the templates know `{page}` and `{pages}`, the position of the dot and the number of dots, for carousels that move a whole view at a time: `data-dot-label-group="Page {page} of {pages}"`. In an app with its own translation library, pass `dotLabel(firstSlide, lastSlide, page, pages)` instead. Without a name, a template or `dotLabel`, the plugin names nothing and warns in the console.
 
 Style the current dot with the attribute, and make each dot at least 24 by 24 pixels:
 
@@ -161,7 +161,7 @@ Style the current dot with the attribute, and make each dot at least 24 by 24 pi
 After someone moves the carousel with a button, a dot or a drag, screen readers hear where they are now, for example "Slides 4 to 6 of 10". It is said once, politely, after the move ends. Nothing is said on load, on a resize, while Autoplay or AutoScroll move the carousel, or when focus brings a slide into view, because then the screen reader already reads the focused element.
 
 - Option: `announcer`, an element you put in the carousel area, outside the slides, with `aria-live="polite"` and `aria-atomic="true"`. Hide it visually.
-- Markup: the texts as templates in the page's language. `data-announcement` is for one slide on screen, `data-announcement-group` for several. The plugin fills in `{first}`, `{last}` and `{total}`, counting the slides that are actually on screen.
+- Markup: the texts as templates in the page's language. `data-announcement` is for one slide on screen, `data-announcement-group` for several. The plugin fills in `{first}`, `{last}` and `{total}`, counting the slides that are actually on screen. For carousels that move a whole view at a time, `{page}` and `{pages}` give the current position and the number of positions, for example "Page 2 of 4".
 
 ```html
 <p
@@ -173,7 +173,7 @@ After someone moves the carousel with a button, a dot or a drag, screen readers 
 ></p>
 ```
 
-Put the element in the page from the start; screen readers only notice live regions that exist before their text changes. Never put `aria-live` on the slides themselves: then every move reads whole slides. In an app with its own translation library, pass `announcement(firstSlide, lastSlide, totalSlides)` instead of the templates. Without either, the plugin announces nothing and warns in the console.
+Put the element in the page from the start; screen readers only notice live regions that exist before their text changes. Never put `aria-live` on the slides themselves: then every move reads whole slides. In an app with its own translation library, pass `announcement(firstSlide, lastSlide, totalSlides, page, pages)` instead of the templates. Without either, the plugin announces nothing and warns in the console.
 
 ## Focus never gets lost
 

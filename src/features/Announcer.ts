@@ -5,7 +5,9 @@ import type { Feature, WarnType } from './Feature.js'
 export type AnnouncementType = (
   firstSlide: number,
   lastSlide: number,
-  totalSlides: number
+  totalSlides: number,
+  page: number,
+  pages: number
 ) => string
 
 export type AnnouncerOptionsType = {
@@ -145,13 +147,17 @@ export class Announcer implements Feature {
   }
 
   private textFor(first: number, last: number, total: number): string | null {
+    const page = this.emblaApi.selectedSnap() + 1
+    const pages = this.emblaApi.snapList().length
     const single = this.element.getAttribute('data-announcement')
     const group = this.element.getAttribute('data-announcement-group') ?? single
     const template = first === last ? single : group
-    if (template === null) return this.announcement?.(first, last, total) ?? null
+    if (template === null) return this.announcement?.(first, last, total, page, pages) ?? null
     return template
       .replaceAll('{first}', String(first))
       .replaceAll('{last}', String(last))
       .replaceAll('{total}', String(total))
+      .replaceAll('{page}', String(page))
+      .replaceAll('{pages}', String(pages))
   }
 }

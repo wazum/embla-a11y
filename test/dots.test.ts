@@ -1,6 +1,6 @@
 import { afterEach, expect, test, vi } from 'vitest'
 import { page } from 'vitest/browser'
-import emblaA11y from '../src/index.js'
+import emblaA11y, { type DotLabelType } from '../src/index.js'
 import { attributesOf, createCarousel, removeCarousels } from './fixture.js'
 
 afterEach(() => {
@@ -44,6 +44,33 @@ test('names dots with dotLabel when the markup has no template', async () => {
 
   await expect.element(page.getByRole('button', { name: 'Folien 1 bis 2' })).toBeVisible()
   await expect.element(page.getByRole('button', { name: 'Folien 3 bis 4' })).toBeVisible()
+})
+
+test('fills in the page and the number of pages in dot names', async () => {
+  createCarousel({
+    slideCount: 4,
+    slideWidth: '50%',
+    options: { slidesToScroll: 2 },
+    dotTexts: ['', ''],
+    dotsAttributes: { 'data-dot-label-group': 'Seite {page} von {pages}' },
+    plugins: ({ dots }) => [emblaA11y({ label: 'Products', dots })]
+  })
+
+  await expect.element(page.getByRole('button', { name: 'Seite 1 von 2' })).toBeVisible()
+  await expect.element(page.getByRole('button', { name: 'Seite 2 von 2' })).toBeVisible()
+})
+
+test('passes the page and the number of pages to dotLabel', async () => {
+  const dotLabel = vi.fn<DotLabelType>(() => 'Seite')
+  createCarousel({
+    slideCount: 4,
+    slideWidth: '50%',
+    options: { slidesToScroll: 2 },
+    dotTexts: ['', ''],
+    plugins: ({ dots }) => [emblaA11y({ label: 'Products', dots, dotLabel })]
+  })
+
+  await expect.poll(() => dotLabel.mock.calls).toContainEqual([3, 4, 2, 2])
 })
 
 test('prefers the template from the markup over dotLabel', async () => {

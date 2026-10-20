@@ -126,22 +126,22 @@ To switch, remove `embla-carousel-accessibility` and its `setup…()` calls, mov
 
 All options are optional. Elements you don't pass turn their feature off.
 
-| Option           | Type                             | Default | Purpose                                                                                                                                |
-| ---------------- | -------------------------------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| `previousButton` | `HTMLElement`                    | `null`  | Previous button, marked unavailable at the start                                                                                       |
-| `nextButton`     | `HTMLElement`                    | `null`  | Next button, marked unavailable at the end                                                                                             |
-| `dots`           | `HTMLElement`                    | `null`  | Element that holds the dot buttons                                                                                                     |
-| `announcer`      | `HTMLElement`                    | `null`  | Live region for position announcements                                                                                                 |
-| `rotationButton` | `HTMLElement`                    | `null`  | Button that starts and stops Autoplay or AutoScroll; needed with either                                                                |
-| `hideOffscreen`  | `boolean`                        | `true`  | Makes slides that are fully off-screen `inert`; [`false` keeps every slide reachable](guide/features.md#keeping-every-slide-reachable) |
-| `labelledBy`     | `string`                         | `null`  | Id of a visible heading, if the markup has no name                                                                                     |
-| `label`          | `string`                         | `null`  | Text name, if there is no visible heading                                                                                              |
-| `dotLabel`       | `(first, last) => string`        | `null`  | Dot names from your translation library, instead of markup                                                                             |
-| `announcement`   | `(first, last, total) => string` | `null`  | Announcement text from your translation library                                                                                        |
-| `rotationLabel`  | `(playing) => string`            | `null`  | Rotation button text from your translation library                                                                                     |
-| `active`         | `boolean`                        | `true`  | Switches the plugin off, also per media query                                                                                          |
-| `breakpoints`    | `Record<string, options>`        | `{}`    | Options per media query, as in Embla                                                                                                   |
-| `warnings`       | `boolean`                        | `true`  | Console warnings about missing names, texts and buttons                                                                                |
+| Option           | Type                                          | Default | Purpose                                                                                                                                |
+| ---------------- | --------------------------------------------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `previousButton` | `HTMLElement`                                 | `null`  | Previous button, marked unavailable at the start                                                                                       |
+| `nextButton`     | `HTMLElement`                                 | `null`  | Next button, marked unavailable at the end                                                                                             |
+| `dots`           | `HTMLElement`                                 | `null`  | Element that holds the dot buttons                                                                                                     |
+| `announcer`      | `HTMLElement`                                 | `null`  | Live region for position announcements                                                                                                 |
+| `rotationButton` | `HTMLElement`                                 | `null`  | Button that starts and stops Autoplay or AutoScroll; needed with either                                                                |
+| `hideOffscreen`  | `boolean`                                     | `true`  | Makes slides that are fully off-screen `inert`; [`false` keeps every slide reachable](guide/features.md#keeping-every-slide-reachable) |
+| `labelledBy`     | `string`                                      | `null`  | Id of a visible heading, if the markup has no name                                                                                     |
+| `label`          | `string`                                      | `null`  | Text name, if there is no visible heading                                                                                              |
+| `dotLabel`       | `(first, last, page, pages) => string`        | `null`  | Dot names from your translation library, instead of markup                                                                             |
+| `announcement`   | `(first, last, total, page, pages) => string` | `null`  | Announcement text from your translation library                                                                                        |
+| `rotationLabel`  | `(playing) => string`                         | `null`  | Rotation button text from your translation library                                                                                     |
+| `active`         | `boolean`                                     | `true`  | Switches the plugin off, also per media query                                                                                          |
+| `breakpoints`    | `Record<string, options>`                     | `{}`    | Options per media query, as in Embla                                                                                                   |
+| `warnings`       | `boolean`                                     | `true`  | Console warnings about missing names, texts and buttons                                                                                |
 
 ## Best practices
 

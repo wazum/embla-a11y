@@ -2,7 +2,12 @@ import type { EmblaCarouselType } from 'embla-carousel'
 import { AttributeStore } from '../AttributeStore.js'
 import type { Feature, WarnType } from './Feature.js'
 
-export type DotLabelType = (firstSlide: number, lastSlide: number) => string
+export type DotLabelType = (
+  firstSlide: number,
+  lastSlide: number,
+  page: number,
+  pages: number
+) => string
 
 const visuallyHidden =
   'position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; border: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap'
@@ -55,7 +60,7 @@ export class DotButtons implements Feature {
       const first = slides[0]
       const last = slides.at(-1)
       if (first !== undefined && last !== undefined) {
-        this.name(dot, this.labelFor(first + 1, last + 1))
+        this.name(dot, this.labelFor(first + 1, last + 1, snap + 1, slidesBySnap.length))
       }
       if (snap === selectedSnap) this.attributes.set(dot, 'aria-current', 'true')
       else this.attributes.remove(dot, 'aria-current')
@@ -74,7 +79,12 @@ export class DotButtons implements Feature {
     }
   }
 
-  private labelFor(firstSlide: number, lastSlide: number): string | null {
+  private labelFor(
+    firstSlide: number,
+    lastSlide: number,
+    page: number,
+    pages: number
+  ): string | null {
     const single = this.container.getAttribute('data-dot-label')
     const group = this.container.getAttribute('data-dot-label-group') ?? single
     const template = firstSlide === lastSlide ? single : group
@@ -82,8 +92,10 @@ export class DotButtons implements Feature {
       return template
         .replaceAll('{first}', String(firstSlide))
         .replaceAll('{last}', String(lastSlide))
+        .replaceAll('{page}', String(page))
+        .replaceAll('{pages}', String(pages))
     }
-    return this.dotLabel?.(firstSlide, lastSlide) ?? null
+    return this.dotLabel?.(firstSlide, lastSlide, page, pages) ?? null
   }
 
   private name(dot: HTMLButtonElement, label: string | null): void {

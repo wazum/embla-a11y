@@ -1,5 +1,5 @@
 import { afterEach, expect, test, vi } from 'vitest'
-import emblaA11y from '../src/index.js'
+import emblaA11y, { type AnnouncementType } from '../src/index.js'
 import { createCarousel, removeCarousels, stageControl } from './fixture.js'
 
 afterEach(() => {
@@ -130,6 +130,47 @@ test('prefers the template from the markup over announcement', async () => {
   buttons.next.click()
 
   await expect.poll(() => announcer.textContent).toBe('Folie 2 von 3')
+})
+
+test('fills in the page and the number of pages', async () => {
+  const announcer = createAnnouncer({ 'data-announcement-group': 'Seite {page} von {pages}' })
+  const { buttons, emblaApi } = createCarousel({
+    slideCount: 6,
+    slideWidth: '50%',
+    options: { slidesToScroll: 'auto' },
+    plugins: ({ previous, next }) => [
+      emblaA11y({ label: 'Products', previousButton: previous, nextButton: next, announcer })
+    ]
+  })
+  buttons.next.addEventListener('click', () => emblaApi.goToNext(true))
+
+  buttons.next.click()
+
+  await expect.poll(() => announcer.textContent).toBe('Seite 2 von 3')
+})
+
+test('passes the page and the number of pages to announcement', async () => {
+  const announcement = vi.fn<AnnouncementType>((first, last) => `${first}-${last}`)
+  const announcer = createAnnouncer({})
+  const { buttons, emblaApi } = createCarousel({
+    slideCount: 6,
+    slideWidth: '50%',
+    options: { slidesToScroll: 'auto' },
+    plugins: ({ previous, next }) => [
+      emblaA11y({
+        label: 'Products',
+        previousButton: previous,
+        nextButton: next,
+        announcer,
+        announcement
+      })
+    ]
+  })
+  buttons.next.addEventListener('click', () => emblaApi.goToNext(true))
+
+  buttons.next.click()
+
+  await expect.poll(() => announcement.mock.lastCall).toEqual([3, 4, 6, 2, 3])
 })
 
 test('warns when the announcer has no text', () => {
