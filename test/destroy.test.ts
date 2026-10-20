@@ -102,6 +102,35 @@ test('leaves the rotation button alone after destroy', async () => {
   expect(rotationButton.innerHTML).toBe(before)
 })
 
+test('keeps a second carousel working when the first is destroyed', async () => {
+  const first = createCarousel({
+    slideCount: 3,
+    slideWidth: '100%',
+    plugins: ({ previous, next }) => [
+      emblaA11y({ label: 'Products', previousButton: previous, nextButton: next })
+    ]
+  })
+  const second = createCarousel({
+    slideCount: 3,
+    slideWidth: '100%',
+    plugins: ({ previous, next }) => [
+      emblaA11y({
+        label: 'News',
+        previousButton: previous,
+        nextButton: next,
+        hideOffscreen: false
+      })
+    ]
+  })
+
+  first.emblaApi.destroy()
+
+  expect(page.getByRole('region').elements()).toEqual([second.wrapper])
+  second.slides[2]?.querySelector('a')?.focus()
+  await expect.poll(() => second.emblaApi.selectedSnap()).toBe(2)
+  await expect.poll(() => second.buttons.next.getAttribute('aria-disabled')).toBe('true')
+})
+
 test('restores the original markup on destroy', () => {
   const { wrapper, emblaApi } = createCarousel({
     plugins: [emblaA11y({ label: 'Featured products' })],
