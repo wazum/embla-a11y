@@ -7,6 +7,7 @@ All notable changes to this project are listed here. The project follows [Semant
 ### Fixed
 
 - While AutoScroll runs, a slide that leaves the screen becomes `inert` in the same frame, not one frame later.
+- The rotation button no longer says "Stop" after reduced motion turns on while the mouse is over the carousel. Pressing it then started the rotation.
 
 ## 1.0.0 (2026-10-20)
 

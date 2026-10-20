@@ -167,6 +167,20 @@ for (const variant of ['autoplay', 'auto-scroll']) {
 
     await expect.poll(() => isRotating(page)).toBe(false)
   })
+
+  test(`${variant} offers to start after reduced motion turns on during a hover pause`, async ({
+    page
+  }) => {
+    await page.goto(`/e2e/pages/carousel.html?variant=${variant}`)
+    await expect.poll(() => isRotating(page)).toBe(true)
+    await page.locator('.embla').hover()
+    await expect.poll(() => isRotating(page)).toBe(false)
+
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+    await page.mouse.move(0, 0)
+
+    await expect(page.getByRole('button', { name: 'Start slide rotation' })).toBeVisible()
+  })
 }
 
 test('keeps a rotation started with the button through a resize', async ({ page }) => {

@@ -63,7 +63,10 @@ export class RotationControl implements Feature {
   private readonly onPointerLeave = (event: PointerEvent): void => {
     if (event.pointerType !== 'mouse' || !this.memory.pausedByHover) return
     this.memory.pausedByHover = false
-    if (this.mustStayStopped() || !this.canRotate()) return
+    if (this.mustStayStopped() || !this.canRotate()) {
+      this.updateLabel()
+      return
+    }
     for (const rotation of this.rotations()) rotation.play()
   }
   private readonly onRotationChange = (): void => queueMicrotask(() => this.followRotation())
