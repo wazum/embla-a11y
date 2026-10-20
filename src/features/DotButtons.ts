@@ -48,7 +48,9 @@ export class DotButtons implements Feature {
   private update(): void {
     const { slidesBySnap } = this.emblaApi.internalEngine().scrollSnapList
     const selectedSnap = this.emblaApi.selectedSnap()
-    this.container.querySelectorAll('button').forEach((dot, snap) => {
+    const dots = Array.from(this.container.querySelectorAll('button'))
+    this.releaseRemoved(dots)
+    dots.forEach((dot, snap) => {
       const slides = slidesBySnap[snap] ?? []
       const first = slides[0]
       const last = slides.at(-1)
@@ -58,6 +60,18 @@ export class DotButtons implements Feature {
       if (snap === selectedSnap) this.attributes.set(dot, 'aria-current', 'true')
       else this.attributes.remove(dot, 'aria-current')
     })
+  }
+
+  private releaseRemoved(dots: HTMLButtonElement[]): void {
+    const current = new Set<Element>(dots)
+    for (const [dot, name] of this.names) {
+      if (current.has(dot)) continue
+      name.remove()
+      this.names.delete(dot)
+    }
+    for (const dot of this.attributes.elements()) {
+      if (!current.has(dot)) this.attributes.release(dot)
+    }
   }
 
   private labelFor(firstSlide: number, lastSlide: number): string | null {

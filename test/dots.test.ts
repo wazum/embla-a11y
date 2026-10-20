@@ -195,6 +195,27 @@ test('keeps a dot name that the browser translated', async () => {
   await expect.element(page.getByRole('button', { name: 'Slide 1' })).toBeVisible()
 })
 
+test('gives a dot that was replaced its own markup back', async () => {
+  const { buttons } = createCarousel({
+    slideCount: 2,
+    slideWidth: '100%',
+    dotTexts: ['', ''],
+    dotsAttributes: germanTemplate,
+    plugins: ({ dots }) => [emblaA11y({ label: 'Products', dots })]
+  })
+  const [replaced] = Array.from(buttons.dots.children)
+  if (replaced === undefined) throw new Error('no dot')
+  expect(replaced.getAttribute('aria-current')).toBe('true')
+
+  const replacement = document.createElement('button')
+  replacement.type = 'button'
+  replaced.replaceWith(replacement)
+
+  await expect.poll(() => replacement.getAttribute('aria-current')).toBe('true')
+  expect(attributesOf(replaced)).toEqual({ type: 'button' })
+  expect(replaced.childNodes).toHaveLength(0)
+})
+
 test('restores the dots on destroy', () => {
   const { buttons, emblaApi } = createCarousel({
     slideCount: 2,

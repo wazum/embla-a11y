@@ -23,13 +23,26 @@ export class AttributeStore {
     else element.setAttribute(name, value)
   }
 
+  public release(element: Element): void {
+    const attributes = this.originals.get(element)
+    if (attributes === undefined) return
+    restoreAttributes(element, attributes)
+    this.originals.delete(element)
+  }
+
   public restore(): void {
-    for (const [element, attributes] of this.originals) {
-      for (const [name, value] of attributes) {
-        if (value === null) element.removeAttribute(name)
-        else element.setAttribute(name, value)
-      }
-    }
+    for (const [element, attributes] of this.originals) restoreAttributes(element, attributes)
     this.originals.clear()
+  }
+
+  public elements(): Element[] {
+    return Array.from(this.originals.keys())
+  }
+}
+
+function restoreAttributes(element: Element, attributes: Map<string, string | null>): void {
+  for (const [name, value] of attributes) {
+    if (value === null) element.removeAttribute(name)
+    else element.setAttribute(name, value)
   }
 }
