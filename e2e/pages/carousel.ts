@@ -17,6 +17,13 @@ const name = parameters.get('variant')
 const variant = variants.find((candidate) => candidate.name === name)
 if (variant === undefined) throw new Error(`Unknown variant: ${String(name)}`)
 
+const slideTag = parameters.get('markup') === 'div' ? 'div' : 'li'
+if (slideTag === 'div') {
+  const divContainer = document.createElement('div')
+  divContainer.className = 'embla__container'
+  document.querySelector('.embla__container')?.replaceWith(divContainer)
+}
+
 const root = document.querySelector<HTMLElement>('.embla')
 const container = document.querySelector<HTMLElement>('.embla__container')
 if (root === null || container === null) throw new Error('Carousel markup not found')
@@ -93,7 +100,7 @@ document.querySelector('.embla__prev')?.addEventListener('click', () => emblaApi
 document.querySelector('.embla__next')?.addEventListener('click', () => emblaApi.goToNext())
 
 function createSlide(hrefPrefix: string, number: number): HTMLElement {
-  const slide = document.createElement('li')
+  const slide = document.createElement(slideTag)
   slide.className = 'embla__slide'
 
   const heading = document.createElement('h3')

@@ -22,6 +22,11 @@ const setups = [
     create: () => createCarousel({ wrapperTag: null, plugins: [emblaA11y({ label: 'Products' })] })
   },
   {
+    warning: 'the slides are not a list',
+    create: () =>
+      createCarousel({ slideTag: 'article', plugins: [emblaA11y({ label: 'Products' })] })
+  },
+  {
     warning: 'a dot button has no name',
     create: () =>
       createCarousel({

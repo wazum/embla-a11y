@@ -29,6 +29,7 @@ Slides that are completely outside the viewport become `inert`: the keyboard, sc
 
 - No configuration. To keep every slide reachable instead, see [Keeping every slide reachable](#keeping-every-slide-reachable).
 - Markup: make the slides a list. Screen readers then say "list" and the position of each slide, in the user's language. If the slides are list items, the plugin adds `aria-posinset` and `aria-setsize`, so the position and the full count stay right while slides are hidden. Keep `role="list"`: Safari drops list semantics when a list has no bullets. Give each slide a heading, so it shows up in the heading list.
+- If your slides are plain `<div>` elements, as in Embla's own examples, the plugin turns them into a list with `role="list"` and `role="listitem"`, and takes the roles back on destroy. It never touches slides that already have a role. Other elements, such as `<article>`, keep their meaning, and the plugin warns in the console, because screen readers then cannot tell how many slides there are.
 
 ```html
 <ul class="embla__container" role="list">
@@ -56,6 +57,17 @@ Don't put `tabindex` on the slides themselves. Only real links, buttons and form
 
 > [!IMPORTANT]
 > With Autoplay or AutoScroll, a slide that moves out of view becomes `inert`, also while a screen reader reads it. People who read without moving focus can only stop the rotation with the rotation button, so always pass [`rotationButton`](#autoplay-autoscroll-and-the-rotation-button).
+
+### Why a list, and not "Slide 3 of 10"
+
+The carousel pattern of the [ARIA Authoring Practices](https://www.w3.org/WAI/ARIA/apg/patterns/carousel/) labels each slide as a group with `aria-roledescription="slide"` and a name like "Slide 3 of 10". The plugin uses a list instead:
+
+- A list gives the count and the position in the user's own language and verbosity settings, and lets people jump through the items with their screen reader's list commands. A group offers neither.
+- `aria-roledescription` replaces the role name that screen readers would translate themselves, so every page has to translate it. [MDN advises](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-roledescription) avoiding it, and the [Authoring Practices task force](https://www.w3.org/2020/01/28-aria-apg-minutes.html) found NVDA ignoring it on groups. A [tester on WebAIM](https://webaim.org/discussion/mail_message?id=49048) heard JAWS announce links as "slide".
+- A name on every slide is read before its content, each time someone enters a slide.
+
+> [!TIP]
+> If an audit asks for the Authoring Practices pattern exactly, write it in your markup: `role="group"`, `aria-roledescription` and a name on each slide, in your page's language. The plugin keeps roles you wrote and adds no list then.
 
 ### Keeping every slide reachable
 

@@ -15,6 +15,26 @@ test('previous and next buttons move the carousel', async ({ page }) => {
   await expect(productOne).toBeInViewport()
 })
 
+test.describe('slides as plain divs', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/e2e/pages/carousel.html?variant=three-per-view&markup=div&hideOffscreen')
+  })
+
+  test('has no axe violations', async ({ page }) => {
+    const results = await new AxeBuilder({ page }).analyze()
+
+    expect(results.violations).toEqual([])
+  })
+
+  test('exposes the slides as a list with the full count', async ({ page }) => {
+    const list = page.getByRole('region', { name: 'Featured products' }).getByRole('list')
+
+    await expect(list).toHaveCount(1)
+    await expect(list.locator('[role="listitem"]')).toHaveCount(10)
+    await expect(list.locator('[role="listitem"]').first()).toHaveAttribute('aria-setsize', '10')
+  })
+})
+
 for (const naming of ['labelledBy', 'label', 'named-div']) {
   test.describe(`region made by the plugin (${naming})`, () => {
     test.beforeEach(async ({ page }) => {
