@@ -35,6 +35,7 @@ type OptionsType = CreateOptionsType<{
   rotationLabel: RotationLabelType | null
   announcer: HTMLElement | null
   announcement: AnnouncementType | null
+  warnings: boolean
 }>
 
 export type EmblaA11yType = CreatePluginType<{}, OptionsType>
@@ -54,7 +55,8 @@ const defaultOptions: OptionsType = {
   rotationButton: null,
   rotationLabel: null,
   announcer: null,
-  announcement: null
+  announcement: null,
+  warnings: true
 }
 
 function emblaA11y(userOptions: EmblaA11yOptionsType = {}): EmblaA11yType {
@@ -65,10 +67,11 @@ function emblaA11y(userOptions: EmblaA11yOptionsType = {}): EmblaA11yType {
     playing: null
   }
   const warnings = new Set<string>()
+  let warningsOn = true
   let features: Feature[] = []
 
   function warn(message: string): void {
-    if (warnings.has(message)) return
+    if (!warningsOn || warnings.has(message)) return
     warnings.add(message)
     console.warn(`embla-a11y: ${message}`)
   }
@@ -81,6 +84,7 @@ function emblaA11y(userOptions: EmblaA11yOptionsType = {}): EmblaA11yType {
       mergeOptions(mergeOptions(defaultOptions, emblaA11y.globalOptions), userOptions)
     )
     if (!options.active) return
+    warningsOn = options.warnings
 
     const viewport = emblaApi.rootNode()
     const controls = [

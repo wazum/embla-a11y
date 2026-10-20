@@ -6,6 +6,7 @@ import { createCarousel, removeCarousels, stageControl } from './fixture.js'
 afterEach(() => {
   removeCarousels()
   vi.restoreAllMocks()
+  emblaA11y.globalOptions = undefined
 })
 
 function createElement(tag: string, text: string): HTMLElement {
@@ -77,4 +78,25 @@ test.each(setups)('warns once that $warning, also after a reInit', async ({ warn
   await new Promise((resolve) => setTimeout(resolve, 50))
 
   expect(warn.mock.calls.filter(([message]) => String(message).includes(warning))).toHaveLength(1)
+})
+
+test.each(setups)(
+  'stays silent about "$warning" with warnings switched off globally',
+  async ({ create }) => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    emblaA11y.globalOptions = { warnings: false }
+
+    create()
+    await new Promise((resolve) => setTimeout(resolve, 50))
+
+    expect(warn).not.toHaveBeenCalled()
+  }
+)
+
+test('stays silent with warnings switched off for one carousel', () => {
+  const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
+  createCarousel({ plugins: [emblaA11y({ warnings: false })] })
+
+  expect(warn).not.toHaveBeenCalled()
 })

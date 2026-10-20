@@ -70,6 +70,8 @@ The plugin treats the smallest element around the viewport and all the controls 
 
 > [!IMPORTANT]
 > Keep the browser console open while you build the carousel. When your markup or options keep the plugin from making the carousel accessible, for example a missing name, a dot without text or Autoplay without a stop button, it warns there once per carousel and says how to fix it. It never fails silently, and it never fills the gap with English text of its own.
+>
+> Switch the warnings off only after you have fixed what they say, for example for tests that fail on console output: `warnings: false` for one carousel, or `emblaA11y.globalOptions = { warnings: false }` for all of them.
 
 With Embla 8.6 the methods are `scrollPrev`, `scrollNext` and `scrollTo`. You keep your own click handlers; the plugin never moves the carousel on a click. With other Embla plugins, list `emblaA11y` last ([why](guide/features.md#focus-brings-its-slide-into-view)).
 
@@ -139,6 +141,7 @@ All options are optional. Elements you don't pass turn their feature off.
 | `rotationLabel`  | `(playing) => string`            | `null`  | Rotation button text from your translation library                                                                                     |
 | `active`         | `boolean`                        | `true`  | Switches the plugin off, also per media query                                                                                          |
 | `breakpoints`    | `Record<string, options>`        | `{}`    | Options per media query, as in Embla                                                                                                   |
+| `warnings`       | `boolean`                        | `true`  | Console warnings about missing names, texts and buttons                                                                                |
 
 ## Best practices
 
