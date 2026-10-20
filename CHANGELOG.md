@@ -8,6 +8,7 @@ All notable changes to this project are listed here. The project follows [Semant
 
 - A warning when the previous and next buttons or the dots have no announcer.
 - A warning when a dot or an announcement for several slides would use the template for one.
+- A warning when `labelledBy` points at no element.
 
 ### Fixed
 

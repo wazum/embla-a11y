@@ -50,6 +50,19 @@ test('names the region after a visible heading', async () => {
   await expect.element(page.getByRole('region', { name: 'Featured products' })).toBeVisible()
 })
 
+test('adds no region and warns when labelledBy points at no element', () => {
+  const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
+  const { wrapper } = createCarousel({
+    heading: { id: 'products-heading', text: 'Featured products' },
+    plugins: [emblaA11y({ labelledBy: 'product-heading' })]
+  })
+
+  expect(wrapper.hasAttribute('aria-labelledby')).toBe(false)
+  expect(page.getByRole('region').elements()).toHaveLength(0)
+  expect(warn).toHaveBeenCalledWith(expect.stringContaining('"product-heading"'))
+})
+
 test('names the region with a label when there is no heading', async () => {
   createCarousel({ plugins: [emblaA11y({ label: 'Featured products' })] })
 
