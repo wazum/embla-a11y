@@ -45,7 +45,7 @@ test('makes div slides a list with the full count, and takes the roles back on d
 test('keeps a list without bullets a list in Safari, and takes the role back on destroy', () => {
   const { slides, emblaApi } = createCarousel({
     list: true,
-    listRole: false,
+    listRole: null,
     plugins: [emblaA11y({ label: 'Products' })]
   })
   const container = slides[0]?.parentElement
@@ -55,6 +55,20 @@ test('keeps a list without bullets a list in Safari, and takes the role back on 
   emblaApi.destroy()
 
   expect(container?.hasAttribute('role')).toBe(false)
+})
+
+test('warns and adds no list position when the author took the list role away', () => {
+  const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+  const { slides } = createCarousel({
+    slideCount: 10,
+    list: true,
+    listRole: 'none',
+    plugins: [emblaA11y({ label: 'Products' })]
+  })
+
+  expect(slides[0]?.parentElement?.getAttribute('role')).toBe('none')
+  expect(positionsOf(slides)).toEqual(slides.map(() => [null, null]))
+  expect(warn).toHaveBeenCalledWith(expect.stringContaining('the slides are not a list'))
 })
 
 test('keeps the roles the author gave the slides', () => {

@@ -54,7 +54,9 @@ export class HideOffscreen implements Feature {
   private keepListCount(): void {
     const slides = this.emblaApi.slideNodes()
     slides.forEach((slide, index) => {
-      if (!slide.matches('li:not([role]), [role="listitem"]')) return
+      const listItem =
+        ':is(ul:not([role]), ol:not([role]), [role="list"]) > li:not([role]), [role="listitem"]'
+      if (!slide.matches(listItem)) return
       if (slide.hasAttribute('aria-setsize')) return
       this.attributes.set(slide, 'aria-posinset', String(index + 1))
       this.attributes.set(slide, 'aria-setsize', String(slides.length))

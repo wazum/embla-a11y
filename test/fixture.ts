@@ -28,7 +28,7 @@ export function createCarousel({
   dotTexts = [],
   dotsAttributes = {},
   list = false,
-  listRole = list,
+  listRole = list ? 'list' : null,
   slideTag = list ? 'li' : 'div',
   slideAttributes = {},
   viewportWrapper = false
@@ -43,7 +43,7 @@ export function createCarousel({
   dotTexts?: string[]
   dotsAttributes?: Record<string, string>
   list?: boolean
-  listRole?: boolean
+  listRole?: string | null
   slideTag?: 'div' | 'li' | 'article'
   slideAttributes?: Record<string, string>
   viewportWrapper?: boolean
@@ -62,7 +62,7 @@ export function createCarousel({
   viewport.style.cssText = 'overflow: hidden; width: 1000px'
   const container = document.createElement(list ? 'ul' : 'div')
   container.style.cssText = 'display: flex; margin: 0; padding: 0; list-style: none'
-  if (listRole) container.setAttribute('role', 'list')
+  if (listRole !== null) container.setAttribute('role', listRole)
   const slides = Array.from({ length: slideCount }, (_, index) => {
     const slide = document.createElement(slideTag)
     for (const [name, value] of Object.entries(slideAttributes)) slide.setAttribute(name, value)

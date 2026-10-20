@@ -28,11 +28,7 @@ export class SlideList implements Feature {
 }
 
 function isList(element: Element): boolean {
-  return (
-    element.localName === 'ul' ||
-    element.localName === 'ol' ||
-    element.getAttribute('role') === 'list'
-  )
+  return element.matches('ul:not([role]), ol:not([role]), [role="list"]')
 }
 
 function isGeneric(element: Element): boolean {

@@ -18,6 +18,7 @@ All notable changes to this project are listed here. The project follows [Semant
 - `role="region"` is only added to a `<div>`, not to elements such as `<li>` that cannot take it. The plugin warns instead.
 - Tab into an off-screen slide no longer cancels Embla's `slidefocus` event for later listeners.
 - No warning about a missing rotation button while everything fits in one view.
+- A `<ul>` or `<ol>` whose `role` takes away the list semantics, such as `role="none"`, no longer counts as a list. The plugin warns instead of adding list positions to its items.
 
 ## 1.0.0 (2026-10-20)
 
