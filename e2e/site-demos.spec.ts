@@ -600,8 +600,8 @@ function focusedSlideFullyVisible(page: Page): Promise<boolean> {
 
 async function visiblePoint(element: Locator): Promise<{ x: number; y: number }> {
   return element.evaluate((node) => {
-    node.closest('.demo')?.scrollIntoView({ block: 'center', behavior: 'instant' })
     const viewport = node.closest('.carousel__viewport') ?? node
+    viewport.scrollIntoView({ block: 'center', behavior: 'instant' })
     const outer = viewport.getBoundingClientRect()
     const inner = node.getBoundingClientRect()
     const left = Math.max(inner.left, outer.left)
