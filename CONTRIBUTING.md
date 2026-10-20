@@ -21,6 +21,8 @@ Git hooks check staged files before each commit and run `npm run check` before e
 
 Embla 9 is the main version. Everything for Embla 8.6 lives in `src/compat/`: it gives an 8.6 instance the Embla 9 methods the plugin uses. Embla 8.6 and its plugins for the tests are a separate package in `v8/`, because their peer dependencies cannot be installed next to Embla 9. With `EMBLA=8`, Vite and Vitest load them from there.
 
+Code examples in the README and the guides live in `examples/`. `test/examples.test.ts` runs them, and `test/docs.test.ts` fails when a `js`, `ts` or `html` block in the docs is not in one of those files word for word, apart from indentation. Blocks with `…` are left out. Change the example file and copy the block from there.
+
 When you update Playwright, use the same version in the image tag in `compose.yaml` and `.github/workflows/ci.yml`.
 
 ## Screen reader tests

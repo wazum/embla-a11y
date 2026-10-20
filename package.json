@@ -37,7 +37,7 @@
     "lint:fix": "oxlint --type-aware --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "html": "html-validate 'e2e/pages/**/*.html'",
+    "html": "html-validate 'e2e/pages/**/*.html' 'examples/*.html'",
     "actionlint": "docker run --rm -v \"$PWD:/repo\" -w /repo rhysd/actionlint:1.7.12 -color",
     "knip": "knip",
     "package:check": "npm run build && publint --strict && attw --pack --profile esm-only && tsc -p v8",

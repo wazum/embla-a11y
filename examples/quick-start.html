@@ -1,0 +1,32 @@
+<section class="embla" aria-labelledby="products-heading">
+  <h2 id="products-heading">Featured products</h2>
+
+  <div class="embla__viewport">
+    <ul class="embla__container" role="list">
+      <li class="embla__slide">
+        <h3>Product 1</h3>
+        <a href="/products/1">Details for product 1</a>
+      </li>
+      <li class="embla__slide">
+        <h3>Product 2</h3>
+        <a href="/products/2">Details for product 2</a>
+      </li>
+    </ul>
+  </div>
+
+  <button type="button" class="embla__prev">Previous</button>
+  <button type="button" class="embla__next">Next</button>
+
+  <div class="embla__dots">
+    <button type="button" class="embla__dot"><span class="visually-hidden">Slide 1</span></button>
+    <button type="button" class="embla__dot"><span class="visually-hidden">Slide 2</span></button>
+  </div>
+
+  <p
+    class="embla__announcer visually-hidden"
+    aria-live="polite"
+    aria-atomic="true"
+    data-announcement="Slide {first} of {total}"
+    data-announcement-group="Slides {first} to {last} of {total}"
+  ></p>
+</section>

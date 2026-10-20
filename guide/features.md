@@ -37,6 +37,10 @@ All slides stay readable for screen readers and reachable with the keyboard, inc
     <h3>Product 1</h3>
     <a href="/products/1">Details for product 1</a>
   </li>
+  <li class="embla__slide">
+    <h3>Product 2</h3>
+    <a href="/products/2">Details for product 2</a>
+  </li>
 </ul>
 ```
 
@@ -47,6 +51,7 @@ Don't put `tabindex` on the slides themselves. Only real links, buttons and form
 When something inside a slide gets focus, the carousel moves until it is fully visible. This works for the Tab key, screen readers, voice control and scripts. A mouse or touch press does not move the carousel, so the click lands where you pressed. Focus that the browser restores when someone comes back to the tab does not move it either. The plugin also stops the browser from scrolling the viewport by itself, which would push the slides out of place.
 
 - No configuration.
+- List `emblaA11y` after Embla's other plugins. When the focused slide is already fully visible, the plugin cancels Embla's `slidefocus` jump, and Embla 9 then skips every `slidefocus` listener registered after it. Plugins listed later miss the event, and so do listeners you add with `emblaApi.on('slidefocus', …)` after creating the carousel.
 
 ## Previous and next buttons
 
@@ -142,7 +147,8 @@ If you use the Autoplay or AutoScroll plugin, any focus or press inside the caro
 
 The rotation button starts and stops the rotation. Its text always says what pressing it will do. The text follows every change, also a stop through focus or a call to `play()` or `stop()` in your code. Focus on the button itself does not stop the rotation.
 
-- No configuration for the stop on interaction. List the Autoplay or AutoScroll plugin together with this plugin.
+- No configuration for the stop on interaction. List the Autoplay or AutoScroll plugin before this plugin.
+- With Embla 9, Autoplay and AutoScroll no longer start on their own. Call `play()` after creating the carousel, as in the example below. With Embla 8.6 they start by themselves.
 - Option: `rotationButton` for the button.
 - Markup: a real `<button type="button">` inside the carousel area, before the slides, so people reach it before the moving content. Put both texts in it, in the page's language: one element with `data-rotation-playing` for while it runs, one with `data-rotation-stopped` and `hidden` for while it is stopped. The plugin only switches `hidden` between them.
 
@@ -160,14 +166,23 @@ The rotation button starts and stops the rotation. Its text always says what pre
 
 In an app with its own translation library, pass `rotationLabel(playing)` instead. It writes the text into the button, or into an element with `data-rotation-label`. Without texts or `rotationLabel`, the plugin leaves the button alone and warns in the console.
 
-```ts
-emblaA11y({ rotationButton: document.querySelector('.embla__rotation') })
-```
-
 For people who asked their system for reduced motion, Autoplay and AutoScroll do not start, and they stop as soon as someone turns the setting on. The rotation button can still start them: pressing it is a clear choice. The moves after a button press stay animated, so make them instant with Embla's `breakpoints` option:
 
-```ts
-EmblaCarousel(viewport, { breakpoints: { '(prefers-reduced-motion: reduce)': { duration: 0 } } })
+```js
+import EmblaCarousel from 'embla-carousel'
+import Autoplay from 'embla-carousel-autoplay'
+import emblaA11y from 'embla-a11y'
+
+const viewport = document.querySelector('.embla__viewport')
+const rotationButton = document.querySelector('.embla__rotation')
+
+const emblaApi = EmblaCarousel(
+  viewport,
+  { breakpoints: { '(prefers-reduced-motion: reduce)': { duration: 0 } } },
+  [Autoplay(), emblaA11y({ rotationButton })]
+)
+
+emblaApi.plugins().autoplay.play()
 ```
 
 ## Hiding slides that are off-screen
@@ -200,8 +215,11 @@ The plugin adds nothing on the server. The React, Vue and Solid wrappers also cr
 
 When the plugin is destroyed or Embla re-initialises, every attribute and text the plugin added goes back to how it was. The same happens when you switch the plugin off, for example on wide screens where the carousel becomes a plain grid:
 
-```ts
-emblaA11y({ breakpoints: { '(min-width: 900px)': { active: false } } })
+```js
+emblaA11y({
+  previousButton: previous,
+  breakpoints: { '(min-width: 900px)': { active: false } }
+})
 ```
 
 - No configuration for the cleanup. Use `active: false`, directly or in `breakpoints`, to switch the plugin off.

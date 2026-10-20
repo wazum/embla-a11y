@@ -45,7 +45,7 @@ Good markup does most of the work. The plugin fills in what markup cannot do on 
 </section>
 ```
 
-```ts
+```js
 import EmblaCarousel from 'embla-carousel'
 import emblaA11y from 'embla-a11y'
 
@@ -66,7 +66,9 @@ dots.querySelectorAll('button').forEach((dot, index) => {
 })
 ```
 
-With Embla 8.6 the methods are `scrollPrev`, `scrollNext` and `scrollTo`. You keep your own click handlers; the plugin never moves the carousel on a click.
+With Embla 8.6 the methods are `scrollPrev`, `scrollNext` and `scrollTo`. You keep your own click handlers; the plugin never moves the carousel on a click. With other Embla plugins, list `emblaA11y` last ([why](guide/features.md#focus-brings-its-slide-into-view)).
+
+The JavaScript and the complete HTML examples in this README and the guides run in the test suite, from the files in [`examples/`](examples).
 
 The examples use a common `visually-hidden` class. It hides text on screen and keeps it for screen readers and browser translation:
 

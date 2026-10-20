@@ -44,14 +44,6 @@ const emblaApi = asEmblaV9(
     root,
     { ...variant.options, breakpoints: { '(prefers-reduced-motion: reduce)': { duration: 0 } } },
     [
-      emblaA11y({
-        hideOffscreen: parameters.has('hideOffscreen'),
-        previousButton: document.querySelector<HTMLElement>('.embla__prev'),
-        nextButton: document.querySelector<HTMLElement>('.embla__next'),
-        dots: document.querySelector<HTMLElement>('.embla__dots'),
-        announcer: document.querySelector<HTMLElement>('.embla__announcer'),
-        rotationButton
-      }),
       ...(variant.fade === true ? [Fade()] : []),
       ...(variant.rotation === 'autoplay'
         ? [
@@ -61,7 +53,15 @@ const emblaApi = asEmblaV9(
             })
           ]
         : []),
-      ...(variant.rotation === 'auto-scroll' ? [AutoScroll({ speed: 2 })] : [])
+      ...(variant.rotation === 'auto-scroll' ? [AutoScroll({ speed: 2 })] : []),
+      emblaA11y({
+        hideOffscreen: parameters.has('hideOffscreen'),
+        previousButton: document.querySelector<HTMLElement>('.embla__prev'),
+        nextButton: document.querySelector<HTMLElement>('.embla__next'),
+        dots: document.querySelector<HTMLElement>('.embla__dots'),
+        announcer: document.querySelector<HTMLElement>('.embla__announcer'),
+        rotationButton
+      })
     ]
   )
 )

@@ -2,6 +2,7 @@
   "extends": ["html-validate:recommended", "html-validate:a11y"],
   "rules": {
     "no-inline-style": "off",
+    "no-redundant-role": "off",
     "doctype-style": "off",
     "void-style": "off"
   }
