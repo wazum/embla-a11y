@@ -1,4 +1,5 @@
 import type { EmblaCarouselType, EmblaEventListType } from 'embla-carousel'
+import { AttributeStore } from '../AttributeStore.js'
 import type { Feature, WarnType } from './Feature.js'
 import { RotationButtonText, type RotationLabelType } from './RotationButtonText.js'
 
@@ -44,6 +45,7 @@ export class RotationControl implements Feature {
   private readonly button: HTMLElement | null
   private readonly buttonText: RotationButtonText
   private readonly warn: WarnType
+  private readonly attributes = new AttributeStore()
   private readonly onInteraction = (event: Event): void => {
     if (event.target instanceof Node && this.button?.contains(event.target) === true) return
     this.stopForGood()
@@ -90,6 +92,7 @@ export class RotationControl implements Feature {
     for (const event of rotationEvents) this.emblaApi.off(event, this.onRotationChange)
     this.reducedMotion.removeEventListener('change', this.onReducedMotionChange)
     this.buttonText.restore()
+    this.attributes.restore()
   }
 
   private stopForGood(): void {
@@ -107,6 +110,10 @@ export class RotationControl implements Feature {
 
   private canRotate(): boolean {
     return this.emblaApi.snapList().length > 1
+  }
+
+  private hasSomethingToRotate(): boolean {
+    return this.rotations().length > 0 && this.canRotate()
   }
 
   private stopAll(): void {
@@ -132,6 +139,8 @@ export class RotationControl implements Feature {
   private restore(): void {
     if (this.destroyed) return
     this.warnWithoutButton()
+    this.warnWithoutRotation()
+    this.updateAvailability()
     for (const rotation of this.rotations()) {
       if (this.mustStayStopped()) rotation.stop()
       else if (this.memory.playing === true && !rotation.isPlaying() && this.canRotate()) {
@@ -146,6 +155,19 @@ export class RotationControl implements Feature {
     this.warn(
       'Autoplay or AutoScroll runs without a rotation button. Screen reader users who read without moving focus cannot stop it. Pass rotationButton.'
     )
+  }
+
+  private warnWithoutRotation(): void {
+    if (this.button === null || this.rotations().length > 0) return
+    this.warn(
+      'there is a rotation button but no Autoplay or AutoScroll plugin, so the button does nothing. List Autoplay or AutoScroll before emblaA11y, or remove the button.'
+    )
+  }
+
+  private updateAvailability(): void {
+    if (this.button === null) return
+    if (this.hasSomethingToRotate()) this.attributes.reset(this.button, 'aria-disabled')
+    else this.attributes.set(this.button, 'aria-disabled', 'true')
   }
 
   private updateLabel(): void {

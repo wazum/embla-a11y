@@ -47,6 +47,18 @@ const setups = [
       })
   },
   {
+    warning: 'no Autoplay or AutoScroll plugin',
+    create: () =>
+      createCarousel({
+        plugins: [
+          emblaA11y({
+            label: 'Products',
+            rotationButton: createElement('button', '')
+          })
+        ]
+      })
+  },
+  {
     warning: 'without a rotation button',
     create: () => createCarousel({ plugins: [Autoplay(), emblaA11y({ label: 'Products' })] })
   }

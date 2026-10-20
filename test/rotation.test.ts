@@ -177,6 +177,57 @@ test('keeps rotating on a press outside the viewport when the viewport has no wr
   expect(emblaApi.plugins().autoplay?.isPlaying()).toBe(true)
 })
 
+test('marks a rotation button without Autoplay or AutoScroll unavailable and warns', async () => {
+  const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+  const rotationButton = createRotationButton(
+    '<span data-rotation-playing>Stop slide rotation</span><span data-rotation-stopped hidden>Start slide rotation</span>'
+  )
+  const { emblaApi } = createCarousel({
+    slideCount: 3,
+    slideWidth: '100%',
+    plugins: [emblaA11y({ label: 'Products', rotationButton })]
+  })
+  await new Promise((resolve) => setTimeout(resolve, 50))
+
+  expect(rotationButton.getAttribute('aria-disabled')).toBe('true')
+  expect(warn).toHaveBeenCalledWith(expect.stringContaining('no Autoplay or AutoScroll'))
+
+  emblaApi.destroy()
+
+  expect(rotationButton.hasAttribute('aria-disabled')).toBe(false)
+})
+
+test('marks the rotation button unavailable while there is only one snap', async () => {
+  const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+  const rotationButton = createRotationButton(
+    '<span data-rotation-playing>Stop slide rotation</span><span data-rotation-stopped hidden>Start slide rotation</span>'
+  )
+  createCarousel({
+    slideCount: 1,
+    slideWidth: '100%',
+    plugins: [Autoplay({ delay: 1000 }), emblaA11y({ label: 'Products', rotationButton })]
+  })
+  await new Promise((resolve) => setTimeout(resolve, 50))
+
+  expect(rotationButton.getAttribute('aria-disabled')).toBe('true')
+  expect(warn).not.toHaveBeenCalled()
+})
+
+test('leaves the rotation button available when the carousel can rotate', async () => {
+  const rotationButton = createRotationButton(
+    '<span data-rotation-playing>Stop slide rotation</span><span data-rotation-stopped hidden>Start slide rotation</span>'
+  )
+  const { emblaApi } = createCarousel({
+    slideCount: 3,
+    slideWidth: '100%',
+    plugins: [Autoplay({ delay: 1000 }), emblaA11y({ label: 'Products', rotationButton })]
+  })
+  emblaApi.plugins().autoplay?.play()
+  await new Promise((resolve) => setTimeout(resolve, 50))
+
+  expect(rotationButton.hasAttribute('aria-disabled')).toBe(false)
+})
+
 test('does not warn about a missing rotation button when there is one', async () => {
   const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
   const rotationButton = createRotationButton(

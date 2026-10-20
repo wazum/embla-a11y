@@ -74,7 +74,7 @@ const emblaApi = asEmblaV9(
         nextButton: document.querySelector<HTMLElement>('.embla__next'),
         dots: document.querySelector<HTMLElement>('.embla__dots'),
         announcer: document.querySelector<HTMLElement>('.embla__announcer'),
-        rotationButton
+        rotationButton: variant.rotation === undefined ? null : rotationButton
       })
     ]
   )
