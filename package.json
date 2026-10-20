@@ -34,6 +34,7 @@
   "scripts": {
     "prepare": "lefthook install",
     "build": "rm -rf dist && tsc -p tsconfig.build.json",
+    "prepack": "npm run build",
     "typecheck": "tsc --noEmit",
     "lint": "oxlint --type-aware --deny-warnings",
     "lint:fix": "oxlint --type-aware --fix",
