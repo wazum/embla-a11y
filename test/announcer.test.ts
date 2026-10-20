@@ -108,9 +108,8 @@ test('announces the text from announcement when the markup has no template', asy
   buttons.next.addEventListener('click', () => emblaApi.goToNext(true))
 
   buttons.next.click()
-  await new Promise((resolve) => setTimeout(resolve, 50))
 
-  expect(announcer.textContent).toBe('Folien 2 bis 2 von 3')
+  await expect.poll(() => announcer.textContent).toBe('Folien 2 bis 2 von 3')
 })
 
 test('prefers the template from the markup over announcement', async () => {
@@ -131,9 +130,8 @@ test('prefers the template from the markup over announcement', async () => {
   buttons.next.addEventListener('click', () => emblaApi.goToNext(true))
 
   buttons.next.click()
-  await new Promise((resolve) => setTimeout(resolve, 50))
 
-  expect(announcer.textContent).toBe('Folie 2 von 3')
+  await expect.poll(() => announcer.textContent).toBe('Folie 2 von 3')
 })
 
 test('warns when the announcer has no text', () => {
