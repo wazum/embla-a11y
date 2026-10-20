@@ -23,6 +23,10 @@ function focusState(page: Page): Promise<FocusState> {
 
 const visibleAndUnscrolled: FocusState = { nativeScroll: 0, focusedFullyVisible: true }
 
+function carouselLocation(page: Page): Promise<number | undefined> {
+  return page.evaluate(() => window.emblaApi?.internalEngine().location.get())
+}
+
 test('a click on a partly visible button reaches that button', async ({ page }) => {
   await page.goto('/e2e/pages/carousel.html?variant=peek')
   const button = page.getByRole('button', { name: 'Add product 3 to cart' })
@@ -69,12 +73,13 @@ test('keeps the carousel still when Tab reaches an element that is already visib
 }) => {
   await page.goto('/e2e/pages/carousel.html?variant=three-per-view')
   await page.getByRole('button', { name: 'Add product 2 to cart' }).focus()
+  const before = await carouselLocation(page)
 
   await page.keyboard.press('Tab')
 
   await expect(page.getByRole('link', { name: 'Details for product 3' })).toBeFocused()
   await page.waitForTimeout(300)
-  await expect(page.getByRole('heading', { name: 'Product 1', exact: true })).toBeInViewport()
+  expect(await carouselLocation(page)).toBe(before)
 })
 
 test('keeps the carousel still when Shift+Tab reaches an element that is already visible', async ({
@@ -83,12 +88,16 @@ test('keeps the carousel still when Shift+Tab reaches an element that is already
   await page.goto('/e2e/pages/carousel.html?variant=three-per-view')
   await page.getByRole('link', { name: 'Details for product 10' }).focus()
   await expect(page.getByRole('heading', { name: 'Product 10' })).toBeInViewport()
+  await expect
+    .poll(() => page.evaluate(() => window.emblaApi?.internalEngine().scrollBody.settled()))
+    .toBe(true)
+  const before = await carouselLocation(page)
 
   await page.keyboard.press('Shift+Tab')
 
   await expect(page.getByRole('button', { name: 'Add product 9 to cart' })).toBeFocused()
   await page.waitForTimeout(300)
-  await expect(page.getByRole('heading', { name: 'Product 8' })).toBeInViewport()
+  expect(await carouselLocation(page)).toBe(before)
 })
 
 test('stays put when the browser restores focus after the window was left', async ({ page }) => {

@@ -43,7 +43,7 @@ test('moves focus to Previous when the focused Next button becomes invisible', a
   await expect(page.getByRole('button', { name: 'Previous' })).toBeFocused()
 })
 
-test('leaves focus alone after the user moved it away on purpose', async ({ page }) => {
+test('forgets focus that left the page before the slide is removed', async ({ page }) => {
   await page.getByRole('link', { name: 'Details for product 3' }).focus()
   await page.evaluate(() => {
     if (document.activeElement instanceof HTMLElement) document.activeElement.blur()
@@ -53,6 +53,17 @@ test('leaves focus alone after the user moved it away on purpose', async ({ page
   await page.evaluate(() => new Promise((resolve) => setTimeout(resolve, 50)))
 
   expect(await page.evaluate(() => document.activeElement === document.body)).toBe(true)
+})
+
+test('leaves focus alone after the user moved it out of the carousel', async ({ page }) => {
+  await page.getByRole('link', { name: 'Details for product 3' }).focus()
+  const elsewhere = page.getByRole('link', { name: 'All variants' })
+  await elsewhere.focus()
+
+  await page.evaluate(() => document.querySelectorAll('.embla__slide')[2]?.remove())
+  await page.evaluate(() => new Promise((resolve) => setTimeout(resolve, 50)))
+
+  await expect(elsewhere).toBeFocused()
 })
 
 test('moves focus to the neighbour after earlier slides were removed', async ({ page }) => {
