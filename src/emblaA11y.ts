@@ -139,7 +139,7 @@ function stateOf(viewport: HTMLElement): CarouselStateType {
   const existing = carouselStates.get(viewport)
   if (existing !== undefined) return existing
   const created: CarouselStateType = {
-    rotation: { stoppedByUser: false, startedByUser: false, playing: null },
+    rotation: { stoppedByUser: false, startedByUser: false, playing: null, pausedByHover: false },
     warnings: new Set<string>()
   }
   carouselStates.set(viewport, created)

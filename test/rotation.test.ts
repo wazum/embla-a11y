@@ -55,6 +55,22 @@ test('pauses while the mouse is over the carousel and resumes when it leaves', a
   expect(buttonSays(rotationButton)).toBe('Stop slide rotation')
 })
 
+test('stays paused through a reInit while the mouse is over the carousel', async () => {
+  const { slides, emblaApi, outside } = await createHoverableCarousel()
+  await userEvent.hover(slides[0] ?? outside)
+  await expect.poll(() => emblaApi.plugins().autoplay?.isPlaying()).toBe(false)
+
+  emblaApi.reInit()
+  emblaApi.plugins().autoplay?.play()
+  await new Promise((resolve) => setTimeout(resolve, 100))
+
+  expect(emblaApi.plugins().autoplay?.isPlaying()).toBe(false)
+
+  await userEvent.hover(outside)
+
+  await expect.poll(() => emblaApi.plugins().autoplay?.isPlaying()).toBe(true)
+})
+
 test('stops for good on a press while the mouse is over the carousel', async () => {
   const { wrapper, emblaApi, rotationButton, outside } = await createHoverableCarousel()
 

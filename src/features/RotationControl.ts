@@ -18,6 +18,7 @@ export type RotationMemoryType = {
   stoppedByUser: boolean
   startedByUser: boolean
   playing: boolean | null
+  pausedByHover: boolean
 }
 
 export type RotationButtonType = {
@@ -51,17 +52,17 @@ export class RotationControl implements Feature {
     this.stopForGood()
   }
   private readonly onToggle = (): void => {
-    if (this.isPlaying() || this.pausedByHover) this.stopForGood()
+    if (this.isPlaying() || this.memory.pausedByHover) this.stopForGood()
     else this.start()
   }
   private readonly onPointerEnter = (event: PointerEvent): void => {
     if (event.pointerType !== 'mouse' || !this.isPlaying()) return
-    this.pausedByHover = true
+    this.memory.pausedByHover = true
     for (const rotation of this.rotations()) rotation.stop()
   }
   private readonly onPointerLeave = (event: PointerEvent): void => {
-    if (event.pointerType !== 'mouse' || !this.pausedByHover) return
-    this.pausedByHover = false
+    if (event.pointerType !== 'mouse' || !this.memory.pausedByHover) return
+    this.memory.pausedByHover = false
     if (this.mustStayStopped() || !this.canRotate()) return
     for (const rotation of this.rotations()) rotation.play()
   }
@@ -72,7 +73,6 @@ export class RotationControl implements Feature {
     this.memory.startedByUser = false
     this.stopAll()
   }
-  private pausedByHover = false
   private destroyed = false
 
   public constructor(
@@ -114,7 +114,7 @@ export class RotationControl implements Feature {
   private stopForGood(): void {
     this.memory.stoppedByUser = true
     this.memory.startedByUser = false
-    this.pausedByHover = false
+    this.memory.pausedByHover = false
     this.stopAll()
   }
 
@@ -143,12 +143,13 @@ export class RotationControl implements Feature {
   }
 
   private followRotation(): void {
-    if (this.destroyed || this.pausedByHover) return
+    if (this.destroyed) return
     const playing = this.isPlaying()
-    if (playing && this.mustStayStopped()) {
+    if (playing && (this.mustStayStopped() || this.memory.pausedByHover)) {
       for (const rotation of this.rotations()) rotation.stop()
       return
     }
+    if (this.memory.pausedByHover) return
     this.memory.playing = playing
     this.updateLabel()
   }
@@ -159,7 +160,7 @@ export class RotationControl implements Feature {
     this.warnWithoutRotation()
     this.updateAvailability()
     for (const rotation of this.rotations()) {
-      if (this.mustStayStopped()) rotation.stop()
+      if (this.mustStayStopped() || this.memory.pausedByHover) rotation.stop()
       else if (this.memory.playing === true && !rotation.isPlaying() && this.canRotate()) {
         rotation.play()
       }
@@ -188,7 +189,9 @@ export class RotationControl implements Feature {
   }
 
   private updateLabel(): void {
-    if (this.rotations().length > 0) this.buttonText.show(this.isPlaying() || this.pausedByHover)
+    if (this.rotations().length > 0) {
+      this.buttonText.show(this.isPlaying() || this.memory.pausedByHover)
+    }
   }
 
   private isPlaying(): boolean {
