@@ -2,14 +2,14 @@
 
 All notable changes to this project are listed here. The project follows [Semantic Versioning](https://semver.org).
 
-## Unreleased
+## 1.1.0 (2026-10-20)
 
 ### Added
 
 - A warning when the previous and next buttons or the dots have no announcer.
 - A warning when a dot or an announcement for several slides would use the template for one.
 - A warning when `labelledBy` points at no element.
-- A `<ul>` or `<ol>` without a role gets `role="list"`, so Safari keeps the list semantics.
+- A `<ul>` or `<ol>` without a `role` attribute gets an explicit `role="list"`, so Safari keeps the list semantics.
 
 ### Fixed
 
