@@ -1,3 +1,4 @@
+import Autoplay from 'embla-carousel-autoplay'
 import { afterEach, expect, test, vi } from 'vitest'
 import { page } from 'vitest/browser'
 import emblaA11y from '../src/index.js'
@@ -137,12 +138,37 @@ test('leaves the body alone and warns when the viewport has no wrapper', () => {
 })
 
 test("keeps the author's own role on a named div", () => {
+  const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
   const { wrapper } = createCarousel({
     wrapperAttributes: { role: 'group', 'aria-label': 'Featured products' },
-    plugins: [emblaA11y()]
+    plugins: ({ previous, next }) => [emblaA11y({ previousButton: previous, nextButton: next })]
   })
 
   expect(wrapper.getAttribute('role')).toBe('group')
+  expect(warn).not.toHaveBeenCalled()
+})
+
+test('takes a div the author made a region as the carousel', async () => {
+  const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+  const { wrapper, buttons, emblaApi } = createCarousel({
+    slideCount: 3,
+    slideWidth: '100%',
+    wrapperAttributes: { role: 'region', 'aria-label': 'Featured products' },
+    plugins: ({ previous, next }) => [
+      Autoplay({ delay: 1000 }),
+      emblaA11y({ previousButton: previous, nextButton: next })
+    ]
+  })
+  emblaApi.plugins().autoplay?.play()
+  await new Promise((resolve) => setTimeout(resolve, 50))
+
+  buttons.next.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }))
+
+  expect(emblaApi.plugins().autoplay?.isPlaying()).toBe(false)
+  expect(page.getByRole('region').elements()).toEqual([wrapper])
+  expect(
+    warn.mock.calls.filter(([message]) => !String(message).includes('rotation button'))
+  ).toEqual([])
 })
 
 test("keeps the author's own region name", async () => {

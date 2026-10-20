@@ -168,11 +168,22 @@ function carouselArea(viewport: HTMLElement, controls: HTMLElement[], warn: Warn
   return area
 }
 
+const landmarkElements = new Set(['main', 'nav', 'header', 'footer', 'aside', 'form'])
+const landmarkRoles = new Set([
+  'banner',
+  'complementary',
+  'contentinfo',
+  'form',
+  'main',
+  'navigation',
+  'search'
+])
+
 function isOffLimits(element: HTMLElement): boolean {
   return (
     element === element.ownerDocument.body ||
-    element.hasAttribute('role') ||
-    ['main', 'nav', 'header', 'footer', 'aside', 'form'].includes(element.localName)
+    landmarkElements.has(element.localName) ||
+    landmarkRoles.has(element.getAttribute('role') ?? '')
   )
 }
 
