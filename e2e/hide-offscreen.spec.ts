@@ -59,6 +59,19 @@ test.describe('three-per-view with hideOffscreen', () => {
     await expect(page.getByRole('button', { name: 'Previous' })).toBeFocused()
   })
 
+  test('Tab through the visible slides keeps the off-screen slides out of reach', async ({
+    page
+  }) => {
+    await page.getByRole('button', { name: 'Add product 2 to cart' }).focus()
+
+    await page.keyboard.press('Tab')
+    await expect(page.getByRole('link', { name: 'Details for product 3' })).toBeFocused()
+    await page.keyboard.press('Tab')
+    await page.keyboard.press('Tab')
+
+    await expect(page.getByRole('button', { name: 'Previous' })).toBeFocused()
+  })
+
   test('Next makes the newly visible slide reachable', async ({ page }) => {
     await page.getByRole('button', { name: 'Next' }).click()
     await expect(page.getByRole('heading', { name: 'Product 4' })).toBeInViewport()

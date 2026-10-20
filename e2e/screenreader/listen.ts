@@ -15,6 +15,15 @@ export async function openVariant(
   await screenReader.navigateToWebContent()
 }
 
+export async function openDemoSite(
+  page: Page,
+  screenReader: ScreenReaderPlaywright
+): Promise<void> {
+  await page.goto('/demo/index.html', { waitUntil: 'load' })
+  await page.locator('.carousel__dot').first().waitFor({ state: 'attached' })
+  await screenReader.navigateToWebContent()
+}
+
 export async function listen(
   screenReader: ScreenReaderPlaywright,
   command: Command,

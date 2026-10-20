@@ -13,7 +13,7 @@ export class HideOffscreen implements Feature {
   private readonly attributes = new AttributeStore()
   private readonly onScroll = (): void => {
     this.moving = true
-    this.showVisibleSlides()
+    this.scheduleRefresh()
   }
   private readonly onSettle = (): void => {
     this.moving = false
@@ -60,8 +60,13 @@ export class HideOffscreen implements Feature {
   }
 
   private refresh(focused: Element | null = document.activeElement): void {
-    if (this.moving) this.showVisibleSlides()
-    else this.update(focused)
+    // Embla 8.6 emits no settle after an instant jump, so moving is also over once the scroll body has settled.
+    if (this.moving && !this.emblaApi.internalEngine().scrollBody.settled()) {
+      this.showVisibleSlides()
+      return
+    }
+    this.moving = false
+    this.update(focused)
   }
 
   private update(focused: Element | null = document.activeElement): void {

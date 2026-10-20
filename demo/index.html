@@ -1,0 +1,1032 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>embla-a11y: accessible carousels for Embla</title>
+    <meta
+      name="description"
+      content="Live demos of embla-a11y, the accessibility plugin for Embla Carousel 8.6 and 9. Try every feature with your keyboard, screen reader or voice control."
+    />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="./style.scss" />
+    <script type="module" src="./main.ts"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#demos">Skip to demos</a>
+
+    <header class="site-header">
+      <p class="brand">
+        <span class="brand__mark" aria-hidden="true"><span></span><span></span><span></span></span>
+        embla<span class="brand__slash">/</span>a11y
+      </p>
+      <nav class="site-nav" aria-label="Main">
+        <ul role="list">
+          <li><a href="#demos">Demos</a></li>
+          <li><a href="#setup">Setup</a></li>
+          <li>
+            <a href="https://github.com/wazum/embla-a11y/blob/main/guide/features.md">Guide</a>
+          </li>
+          <li>
+            <a class="site-nav__github" href="https://github.com/wazum/embla-a11y">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path
+                  d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.9a3.4 3.4 0 0 0-.9-2.6c3.1-.3 6.4-1.5 6.4-7a5.4 5.4 0 0 0-1.5-3.8 5 5 0 0 0-.1-3.8s-1.2-.3-3.9 1.5a13.4 13.4 0 0 0-7 0C6.3 1.6 5.1 2 5.1 2a5 5 0 0 0-.1 3.8A5.4 5.4 0 0 0 3.5 9.6c0 5.4 3.3 6.6 6.4 7a3.4 3.4 0 0 0-.9 2.6V23"
+                />
+              </svg>
+              GitHub
+            </a>
+          </li>
+        </ul>
+      </nav>
+      <nav class="version-switch" aria-label="Embla version">
+        <ul role="list">
+          <li><a href="/embla-a11y/">Embla 9</a></li>
+          <li><a href="/embla-a11y/v8/">Embla 8.6</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="hero-heading">
+        <div class="hero__text">
+          <p class="badge">Accessibility plugin for Embla Carousel 8.6 and 9</p>
+          <h1 id="hero-heading">Accessible carousels everyone can use.</h1>
+          <p class="hero__lead">
+            embla-a11y adds accessibility to Embla Carousel (“a11y” is short for accessibility). It
+            keeps every visible slide readable, puts people in control of motion and never hides
+            content anyone can see. It targets WCAG 2.2 AA.
+          </p>
+          <p class="hero__lead">
+            Every demo on this page is a real carousel. Try them with the
+            <a href="https://webaim.org/techniques/keyboard/">keyboard</a>,
+            <a href="https://support.apple.com/guide/voiceover/welcome/mac">VoiceOver</a>,
+            <a href="https://www.nvaccess.org/">NVDA</a>,
+            <a href="https://support.google.com/accessibility/android/answer/6283677">TalkBack</a>
+            or <a href="https://support.apple.com/guide/mac-help/mh40719/mac">voice control</a>.
+          </p>
+          <ul class="hero__actions" role="list">
+            <li><a class="button button--accent" href="#demos">Browse demos</a></li>
+            <li>
+              <a
+                class="button button--plain"
+                href="https://github.com/wazum/embla-a11y/blob/main/guide/features.md"
+                >Read the guide</a
+              >
+            </li>
+          </ul>
+          <p class="hero__note">
+            An independent project, not made by or affiliated with the Embla Carousel team. Work in
+            progress, not on npm yet.
+          </p>
+        </div>
+        <div class="hero__art" aria-hidden="true">
+          <div class="hero__card">
+            <p class="hero__code"><span>aria-current="true"</span><span>4–6 / 10</span></p>
+            <p class="hero__quote">“Slides 4 to 6 of 10”</p>
+            <p class="hero__dots">
+              <span></span><span></span><span class="is-current"></span><span></span>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="features" aria-labelledby="why-heading">
+        <h2 id="why-heading">Why embla-a11y</h2>
+        <ul class="features__list" role="list">
+          <li class="feature feature--plain">
+            <h3>Tested with real screen readers</h3>
+            <p>
+              Every change runs VoiceOver, NVDA and Orca tests, plus automated tests in Chromium,
+              Firefox and WebKit against Embla 8.6 and 9.
+            </p>
+          </li>
+          <li class="feature feature--plain">
+            <h3>Built on research</h3>
+            <p>
+              Based on WCAG 2.2, the ARIA Authoring Practices and what disabled people report about
+              carousels. It aims at AA, plus the AAA criteria a carousel can meet.
+            </p>
+          </li>
+          <li class="feature feature--plain">
+            <h3>Your language, your markup</h3>
+            <p>
+              Every text comes from your page, in its language. Names and roles you wrote stay, and
+              everything the plugin added goes away on destroy.
+            </p>
+          </li>
+          <li class="feature feature--plain">
+            <h3>One plugin for Embla 8.6 and 9</h3>
+            <p>Works with the React, Vue and Solid wrappers and with server rendering.</p>
+          </li>
+        </ul>
+      </section>
+
+      <section class="features" aria-labelledby="features-heading">
+        <h2 id="features-heading">What it does</h2>
+        <ul class="features__list" role="list">
+          <li class="feature feature--sky">
+            <h3>Named region</h3>
+            <p>Screen reader users find the carousel by its visible heading.</p>
+          </li>
+          <li class="feature feature--sage">
+            <h3>Every slide reachable</h3>
+            <p>
+              No slide is hidden from screen readers or the keyboard just because it is partly
+              off-screen.
+            </p>
+          </li>
+          <li class="feature feature--sand">
+            <h3>Focus shows its slide</h3>
+            <p>Tab, screen readers and voice control never focus something you can't see.</p>
+          </li>
+          <li class="feature feature--slate">
+            <h3>Buttons keep focus</h3>
+            <p>At the ends, Previous and Next become unavailable without dropping focus.</p>
+          </li>
+          <li class="feature feature--mist">
+            <h3>Dots with names</h3>
+            <p>Every dot has a name, and the current one is marked.</p>
+          </li>
+          <li class="feature feature--stone">
+            <h3>Short announcements</h3>
+            <p>
+              After a move, screen readers hear “Slides 4 to 6 of 10”, and nothing while it moves by
+              itself.
+            </p>
+          </li>
+          <li class="feature feature--sky">
+            <h3>Focus never gets lost</h3>
+            <p>When focused content disappears, focus moves to something nearby.</p>
+          </li>
+          <li class="feature feature--sage">
+            <h3>You control motion</h3>
+            <p>
+              Autoplay stops for good on interaction, has a stop button and respects reduced motion.
+            </p>
+          </li>
+        </ul>
+      </section>
+
+      <section id="demos" class="demos" aria-labelledby="demos-heading" tabindex="-1">
+        <h2 id="demos-heading">Demos</h2>
+        <p class="demos__lead">
+          Use <kbd>Tab</kbd>, the buttons, a screen reader or your voice. There are no arrow key
+          shortcuts, on purpose: screen readers use the arrow keys to read.
+        </p>
+
+        <aside class="tips" aria-labelledby="tips-heading">
+          <h3 id="tips-heading">Testing with assistive technology</h3>
+          <ul>
+            <li>
+              <strong
+                ><a href="https://support.apple.com/guide/voiceover/welcome/mac"
+                  >VoiceOver on a Mac</a
+                >:</strong
+              >
+              turn it on with
+              <kbd><kbd>Command</kbd>+<kbd>F5</kbd></kbd
+              >. <kbd>VO</kbd> means <kbd><kbd>Control</kbd>+<kbd>Option</kbd></kbd
+              >. <kbd><kbd>VO</kbd>+<kbd>U</kbd></kbd> opens the rotor with headings and landmarks.
+            </li>
+            <li>
+              <strong
+                ><a href="https://support.apple.com/guide/iphone/iph3e2e415f/ios"
+                  >VoiceOver on iPhone or iPad</a
+                >:</strong
+              >
+              swipe right to move through a carousel, double-tap to press.
+            </li>
+            <li>
+              <strong><a href="https://www.nvaccess.org/">NVDA</a>:</strong> press <kbd>H</kbd> for
+              headings, <kbd>D</kbd> for landmarks.
+            </li>
+            <li>
+              <strong
+                ><a href="https://support.apple.com/guide/mac-help/mh40719/mac">Voice Control</a
+                >:</strong
+              >
+              say “Click Next” or “Click Save Vienna”. Every button is named by the text you see.
+            </li>
+          </ul>
+        </aside>
+
+        <ul class="demos__list" role="list">
+          <li class="demo demo--sky" id="basics">
+            <section class="carousel" aria-labelledby="basics-heading" data-demo="basics">
+              <header class="carousel__header">
+                <h3 id="basics-heading">Basics</h3>
+                <p class="carousel__tag">Start here</p>
+              </header>
+              <div class="carousel__viewport">
+                <ul class="carousel__slides" role="list"></ul>
+              </div>
+              <div class="carousel__controls">
+                <button type="button" class="carousel__button carousel__previous">
+                  <svg
+                    class="icon icon--previous"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    focusable="false"
+                  >
+                    <path d="m15 18-6-6 6-6" />
+                  </svg>
+                  Previous
+                </button>
+                <button type="button" class="carousel__button carousel__next">
+                  Next
+                  <svg
+                    class="icon icon--next"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    focusable="false"
+                  >
+                    <path d="m9 18 6-6-6-6" />
+                  </svg>
+                </button>
+                <div
+                  class="carousel__dots"
+                  data-dot-label="Slide {first}"
+                  data-dot-label-group="Slides {first} to {last}"
+                ></div>
+              </div>
+              <p
+                class="carousel__announcer visually-hidden"
+                aria-live="polite"
+                aria-atomic="true"
+                data-announcement="Slide {first} of {total}"
+                data-announcement-group="Slides {first} to {last} of {total}"
+              ></p>
+            </section>
+            <div class="demo__body">
+              <p>
+                Previous and next buttons, dots and position announcements, set up as in the quick
+                start.
+              </p>
+              <h4>Try it</h4>
+              <ul class="demo__steps">
+                <li>Press Next until the end. Next becomes unavailable, and focus stays on it.</li>
+                <li>
+                  With a screen reader you hear the new position after each press, for example
+                  “Slides 3 to 4 of 10”.
+                </li>
+                <li>
+                  Open the landmarks list (<kbd><kbd>VO</kbd>+<kbd>U</kbd></kbd
+                  >, or <kbd>D</kbd> in NVDA): the carousel is a region named “Basics”.
+                </li>
+                <li>
+                  The current dot is marked as current, and every dot says which slides it shows.
+                </li>
+              </ul>
+              <p class="demo__more">
+                <a
+                  href="https://github.com/wazum/embla-a11y/blob/main/guide/features.md#previous-and-next-buttons"
+                  >Guide: previous and next buttons</a
+                >
+              </p>
+            </div>
+          </li>
+
+          <li class="demo demo--sage" id="peek">
+            <section
+              class="carousel carousel--peek"
+              aria-labelledby="peek-heading"
+              data-demo="peek"
+            >
+              <header class="carousel__header">
+                <h3 id="peek-heading">Partly visible slides</h3>
+                <p class="carousel__tag">Focus</p>
+              </header>
+              <div class="carousel__viewport">
+                <ul class="carousel__slides" role="list"></ul>
+              </div>
+              <div class="carousel__controls">
+                <button type="button" class="carousel__button carousel__previous">
+                  <svg
+                    class="icon icon--previous"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    focusable="false"
+                  >
+                    <path d="m15 18-6-6 6-6" />
+                  </svg>
+                  Previous
+                </button>
+                <button type="button" class="carousel__button carousel__next">
+                  Next
+                  <svg
+                    class="icon icon--next"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    focusable="false"
+                  >
+                    <path d="m9 18 6-6-6-6" />
+                  </svg>
+                </button>
+              </div>
+              <p
+                class="carousel__announcer visually-hidden"
+                aria-live="polite"
+                aria-atomic="true"
+                data-announcement="Slide {first} of {total}"
+                data-announcement-group="Slides {first} to {last} of {total}"
+              ></p>
+            </section>
+            <div class="demo__body">
+              <p>
+                The next slide peeks in. It is not hidden from anyone: you can see it, so you can
+                reach it.
+              </p>
+              <h4>Try it</h4>
+              <ul class="demo__steps">
+                <li>
+                  Press <kbd>Tab</kbd> through the Save buttons. When focus reaches the half-visible
+                  slide, the carousel moves until that slide is fully visible.
+                </li>
+                <li>
+                  With VoiceOver, move through the slides with
+                  <kbd><kbd>VO</kbd>+<kbd>Right Arrow</kbd></kbd
+                  >: every slide is read, also the ones off-screen. When VoiceOver reaches a Save
+                  button, its slide comes into view.
+                </li>
+                <li>
+                  Click a half-visible slide with the mouse: it does not jump away, so your click
+                  lands where you pressed.
+                </li>
+              </ul>
+              <p class="demo__more">
+                <a
+                  href="https://github.com/wazum/embla-a11y/blob/main/guide/features.md#focus-brings-its-slide-into-view"
+                  >Guide: focus brings its slide into view</a
+                >
+              </p>
+            </div>
+          </li>
+
+          <li class="demo demo--sand" id="groups">
+            <section class="carousel" aria-labelledby="groups-heading" data-demo="groups">
+              <header class="carousel__header">
+                <h3 id="groups-heading">Scroll by view</h3>
+                <p class="carousel__tag">Navigation</p>
+              </header>
+              <div class="carousel__viewport">
+                <ul class="carousel__slides" role="list"></ul>
+              </div>
+              <div class="carousel__controls">
+                <button type="button" class="carousel__button carousel__previous">
+                  <svg
+                    class="icon icon--previous"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    focusable="false"
+                  >
+                    <path d="m15 18-6-6 6-6" />
+                  </svg>
+                  Previous
+                </button>
+                <button type="button" class="carousel__button carousel__next">
+                  Next
+                  <svg
+                    class="icon icon--next"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    focusable="false"
+                  >
+                    <path d="m9 18 6-6-6-6" />
+                  </svg>
+                </button>
+                <div
+                  class="carousel__dots"
+                  data-dot-label="Slide {first}"
+                  data-dot-label-group="Slides {first} to {last}"
+                ></div>
+              </div>
+              <p
+                class="carousel__announcer visually-hidden"
+                aria-live="polite"
+                aria-atomic="true"
+                data-announcement="Slide {first} of {total}"
+                data-announcement-group="Slides {first} to {last} of {total}"
+              ></p>
+            </section>
+            <div class="demo__body">
+              <p>Each press moves a full view. Each dot stands for a group of slides.</p>
+              <h4>Try it</h4>
+              <ul class="demo__steps">
+                <li>
+                  Move to the dots with a screen reader: they say “Slides 1 to 2”, “Slides 3 to 4”
+                  and so on.
+                </li>
+                <li>Press a dot and you hear the new range, for example “Slides 5 to 6 of 10”.</li>
+                <li>Make the window narrower: the groups and the dot names follow.</li>
+              </ul>
+              <p class="demo__more">
+                <a
+                  href="https://github.com/wazum/embla-a11y/blob/main/guide/features.md#dot-buttons"
+                  >Guide: dot buttons</a
+                >
+              </p>
+            </div>
+          </li>
+
+          <li class="demo demo--slate" id="loop">
+            <section class="carousel" aria-labelledby="loop-heading" data-demo="loop">
+              <header class="carousel__header">
+                <h3 id="loop-heading">Loop</h3>
+                <p class="carousel__tag">Navigation</p>
+              </header>
+              <div class="carousel__viewport">
+                <ul class="carousel__slides" role="list"></ul>
+              </div>
+              <div class="carousel__controls">
+                <button type="button" class="carousel__button carousel__previous">
+                  <svg
+                    class="icon icon--previous"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    focusable="false"
+                  >
+                    <path d="m15 18-6-6 6-6" />
+                  </svg>
+                  Previous
+                </button>
+                <button type="button" class="carousel__button carousel__next">
+                  Next
+                  <svg
+                    class="icon icon--next"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    focusable="false"
+                  >
+                    <path d="m9 18 6-6-6-6" />
+                  </svg>
+                </button>
+                <div
+                  class="carousel__dots"
+                  data-dot-label="Slide {first}"
+                  data-dot-label-group="Slides {first} to {last}"
+                ></div>
+              </div>
+              <p
+                class="carousel__announcer visually-hidden"
+                aria-live="polite"
+                aria-atomic="true"
+                data-announcement="Slide {first} of {total}"
+                data-announcement-group="Slides {first} to {last} of {total}"
+              ></p>
+            </section>
+            <div class="demo__body">
+              <p>The carousel has no ends, so neither button is ever unavailable.</p>
+              <h4>Try it</h4>
+              <ul class="demo__steps">
+                <li>
+                  Press Previous right away: the carousel moves to the last slides, and you hear
+                  where you are.
+                </li>
+                <li>
+                  <kbd>Tab</kbd> through all ten Save buttons: each slide comes into view in turn,
+                  also across the seam.
+                </li>
+              </ul>
+              <p class="demo__more">
+                <a
+                  href="https://github.com/wazum/embla-a11y/blob/main/guide/features.md#previous-and-next-buttons"
+                  >Guide: previous and next buttons</a
+                >
+              </p>
+            </div>
+          </li>
+
+          <li class="demo demo--mist" id="autoplay">
+            <section class="carousel" aria-labelledby="autoplay-heading" data-demo="autoplay">
+              <header class="carousel__header">
+                <h3 id="autoplay-heading">Autoplay</h3>
+                <p class="carousel__tag">Motion</p>
+              </header>
+              <button type="button" class="carousel__button carousel__rotation">
+                <span data-rotation-playing>
+                  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M8 5v14M16 5v14" />
+                  </svg>
+                  Stop slide rotation
+                </span>
+                <span data-rotation-stopped hidden>
+                  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="m7 4 13 8-13 8z" />
+                  </svg>
+                  Start slide rotation
+                </span>
+              </button>
+              <div class="carousel__viewport">
+                <ul class="carousel__slides" role="list"></ul>
+              </div>
+              <div class="carousel__controls">
+                <button type="button" class="carousel__button carousel__previous">
+                  <svg
+                    class="icon icon--previous"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    focusable="false"
+                  >
+                    <path d="m15 18-6-6 6-6" />
+                  </svg>
+                  Previous
+                </button>
+                <button type="button" class="carousel__button carousel__next">
+                  Next
+                  <svg
+                    class="icon icon--next"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    focusable="false"
+                  >
+                    <path d="m9 18 6-6-6-6" />
+                  </svg>
+                </button>
+              </div>
+              <p
+                class="carousel__announcer visually-hidden"
+                aria-live="polite"
+                aria-atomic="true"
+                data-announcement="Slide {first} of {total}"
+                data-announcement-group="Slides {first} to {last} of {total}"
+              ></p>
+            </section>
+            <div class="demo__body">
+              <p>
+                Moves on every four seconds. The stop button comes before the slides, so you reach
+                it first.
+              </p>
+              <h4>Try it</h4>
+              <ul class="demo__steps">
+                <li>
+                  <kbd>Tab</kbd> to the rotation button: focus on the button alone does not stop the
+                  rotation. Press it to stop or start.
+                </li>
+                <li>
+                  <kbd>Tab</kbd> on into a slide, or press anywhere in the carousel: the rotation
+                  stops for good, and the button now says “Start slide rotation”.
+                </li>
+                <li>Nothing is announced while the carousel moves by itself.</li>
+                <li>
+                  Turn on Reduce motion in your system settings and reload: the rotation does not
+                  start. The button can still start it.
+                </li>
+              </ul>
+              <p class="demo__more">
+                <a
+                  href="https://github.com/wazum/embla-a11y/blob/main/guide/features.md#autoplay-autoscroll-and-the-rotation-button"
+                  >Guide: Autoplay, AutoScroll and the rotation button</a
+                >
+              </p>
+            </div>
+          </li>
+
+          <li class="demo demo--stone" id="auto-scroll">
+            <section class="carousel" aria-labelledby="auto-scroll-heading" data-demo="auto-scroll">
+              <header class="carousel__header">
+                <h3 id="auto-scroll-heading">AutoScroll</h3>
+                <p class="carousel__tag">Motion</p>
+              </header>
+              <button type="button" class="carousel__button carousel__rotation">
+                <span data-rotation-playing>
+                  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M8 5v14M16 5v14" />
+                  </svg>
+                  Stop slide rotation
+                </span>
+                <span data-rotation-stopped hidden>
+                  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="m7 4 13 8-13 8z" />
+                  </svg>
+                  Start slide rotation
+                </span>
+              </button>
+              <div class="carousel__viewport">
+                <ul class="carousel__slides" role="list"></ul>
+              </div>
+            </section>
+            <div class="demo__body">
+              <p>
+                Scrolls slowly and without a pause, like a ticker. The same rules apply as for
+                Autoplay.
+              </p>
+              <h4>Try it</h4>
+              <ul class="demo__steps">
+                <li>Press the rotation button to stop the scrolling, and again to start it.</li>
+                <li>
+                  <kbd>Tab</kbd> into a slide: the scrolling stops for good, and the focused slide
+                  comes fully into view.
+                </li>
+                <li>
+                  Voice control works too: say “Click Save Paris”, and the carousel stops where it
+                  is.
+                </li>
+              </ul>
+              <p class="demo__more">
+                <a
+                  href="https://github.com/wazum/embla-a11y/blob/main/guide/features.md#autoplay-autoscroll-and-the-rotation-button"
+                  >Guide: Autoplay, AutoScroll and the rotation button</a
+                >
+              </p>
+            </div>
+          </li>
+
+          <li class="demo demo--sky" id="fade">
+            <section
+              class="carousel carousel--single"
+              aria-labelledby="fade-heading"
+              data-demo="fade"
+            >
+              <header class="carousel__header">
+                <h3 id="fade-heading">Fade</h3>
+                <p class="carousel__tag">Effects</p>
+              </header>
+              <div class="carousel__viewport">
+                <ul class="carousel__slides" role="list"></ul>
+              </div>
+              <div class="carousel__controls">
+                <button type="button" class="carousel__button carousel__previous">
+                  <svg
+                    class="icon icon--previous"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    focusable="false"
+                  >
+                    <path d="m15 18-6-6 6-6" />
+                  </svg>
+                  Previous
+                </button>
+                <button type="button" class="carousel__button carousel__next">
+                  Next
+                  <svg
+                    class="icon icon--next"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    focusable="false"
+                  >
+                    <path d="m9 18 6-6-6-6" />
+                  </svg>
+                </button>
+                <div
+                  class="carousel__dots"
+                  data-dot-label="Slide {first}"
+                  data-dot-label-group="Slides {first} to {last}"
+                ></div>
+              </div>
+              <p
+                class="carousel__announcer visually-hidden"
+                aria-live="polite"
+                aria-atomic="true"
+                data-announcement="Slide {first} of {total}"
+                data-announcement-group="Slides {first} to {last} of {total}"
+              ></p>
+            </section>
+            <div class="demo__body">
+              <p>The slides lie on top of each other and fade instead of sliding.</p>
+              <h4>Try it</h4>
+              <ul class="demo__steps">
+                <li>
+                  <kbd>Tab</kbd> into the slides: each Save button that gets focus fades its own
+                  slide in. Focus never sits on an invisible slide.
+                </li>
+                <li>Press Next with a screen reader and you hear “Slide 2 of 10”.</li>
+              </ul>
+              <p class="demo__more">
+                <a
+                  href="https://github.com/wazum/embla-a11y/blob/main/guide/features.md#focus-brings-its-slide-into-view"
+                  >Guide: focus brings its slide into view</a
+                >
+              </p>
+            </div>
+          </li>
+
+          <li class="demo demo--sage" id="focus-rescue">
+            <section
+              class="carousel"
+              aria-labelledby="focus-rescue-heading"
+              data-demo="focus-rescue"
+            >
+              <header class="carousel__header">
+                <h3 id="focus-rescue-heading">Removing slides</h3>
+                <p class="carousel__tag">Focus</p>
+              </header>
+              <div class="carousel__viewport">
+                <ul class="carousel__slides" role="list"></ul>
+              </div>
+              <div class="carousel__controls">
+                <button type="button" class="carousel__button carousel__previous">
+                  <svg
+                    class="icon icon--previous"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    focusable="false"
+                  >
+                    <path d="m15 18-6-6 6-6" />
+                  </svg>
+                  Previous
+                </button>
+                <button type="button" class="carousel__button carousel__next">
+                  Next
+                  <svg
+                    class="icon icon--next"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    focusable="false"
+                  >
+                    <path d="m9 18 6-6-6-6" />
+                  </svg>
+                </button>
+                <div
+                  class="carousel__dots"
+                  data-dot-label="Slide {first}"
+                  data-dot-label-group="Slides {first} to {last}"
+                ></div>
+              </div>
+              <p
+                class="carousel__announcer visually-hidden"
+                aria-live="polite"
+                aria-atomic="true"
+                data-announcement="Slide {first} of {total}"
+                data-announcement-group="Slides {first} to {last} of {total}"
+              ></p>
+            </section>
+            <div class="demo__body">
+              <p>
+                Each slide has a Remove button. Without the plugin, removing the focused slide would
+                send focus back to the top of the page.
+              </p>
+              <h4>Try it</h4>
+              <ul class="demo__steps">
+                <li>Press “Remove Vienna”: focus moves into the next slide.</li>
+                <li>Go to the last slide and remove it: focus moves to the slide before.</li>
+                <li>Remove every city: the carousel itself takes focus.</li>
+              </ul>
+              <p>
+                <button type="button" class="button button--plain demo__restore">
+                  Bring back all cities
+                </button>
+              </p>
+              <p class="demo__more">
+                <a
+                  href="https://github.com/wazum/embla-a11y/blob/main/guide/features.md#focus-never-gets-lost"
+                  >Guide: focus never gets lost</a
+                >
+              </p>
+            </div>
+          </li>
+
+          <li class="demo demo--sand" id="hide-offscreen">
+            <a class="skip-link skip-link--inline" href="#after-hide-offscreen"
+              >Skip past the hidden-slides demo</a
+            >
+            <section
+              class="carousel carousel--whole"
+              aria-labelledby="hide-offscreen-heading"
+              data-demo="hide-offscreen"
+            >
+              <header class="carousel__header">
+                <h3 id="hide-offscreen-heading">Hiding off-screen slides</h3>
+                <p class="carousel__tag">Option</p>
+              </header>
+              <div class="carousel__viewport">
+                <ul class="carousel__slides" role="list"></ul>
+              </div>
+              <div class="carousel__controls">
+                <button type="button" class="carousel__button carousel__previous">
+                  <svg
+                    class="icon icon--previous"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    focusable="false"
+                  >
+                    <path d="m15 18-6-6 6-6" />
+                  </svg>
+                  Previous
+                </button>
+                <button type="button" class="carousel__button carousel__next">
+                  Next
+                  <svg
+                    class="icon icon--next"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    focusable="false"
+                  >
+                    <path d="m9 18 6-6-6-6" />
+                  </svg>
+                </button>
+              </div>
+              <p
+                class="carousel__announcer visually-hidden"
+                aria-live="polite"
+                aria-atomic="true"
+                data-announcement="Slide {first} of {total}"
+                data-announcement-group="Slides {first} to {last} of {total}"
+              ></p>
+            </section>
+            <div class="demo__body" id="after-hide-offscreen" tabindex="-1">
+              <p>
+                With <code>hideOffscreen: true</code>, slides that are completely off-screen become
+                inert. Use it only when a long Tab sequence is the bigger problem.
+              </p>
+              <h4>Try it</h4>
+              <ul class="demo__steps">
+                <li>
+                  Press <kbd>Tab</kbd> before this demo: a skip link appears. It jumps past the
+                  carousel.
+                </li>
+                <li><kbd>Tab</kbd> through: only the Save buttons on screen are Tab stops.</li>
+                <li>
+                  VoiceOver still says “list, 10 items”. NVDA counts only the slides on screen.
+                </li>
+              </ul>
+              <p class="demo__more">
+                <a
+                  href="https://github.com/wazum/embla-a11y/blob/main/guide/features.md#hiding-slides-that-are-off-screen"
+                  >Guide: hiding slides that are off-screen</a
+                >
+              </p>
+            </div>
+          </li>
+
+          <li class="demo demo--slate" id="vertical">
+            <section
+              class="carousel carousel--vertical"
+              aria-labelledby="vertical-heading"
+              data-demo="vertical"
+            >
+              <header class="carousel__header">
+                <h3 id="vertical-heading">Vertical</h3>
+                <p class="carousel__tag">Layout</p>
+              </header>
+              <div class="carousel__viewport">
+                <ul class="carousel__slides" role="list"></ul>
+              </div>
+              <div class="carousel__controls">
+                <button type="button" class="carousel__button carousel__previous">
+                  <svg
+                    class="icon icon--up"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    focusable="false"
+                  >
+                    <path d="m18 15-6-6-6 6" />
+                  </svg>
+                  Previous
+                </button>
+                <button type="button" class="carousel__button carousel__next">
+                  Next
+                  <svg
+                    class="icon icon--down"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    focusable="false"
+                  >
+                    <path d="m6 9 6 6 6-6" />
+                  </svg>
+                </button>
+                <div
+                  class="carousel__dots"
+                  data-dot-label="Slide {first}"
+                  data-dot-label-group="Slides {first} to {last}"
+                ></div>
+              </div>
+              <p
+                class="carousel__announcer visually-hidden"
+                aria-live="polite"
+                aria-atomic="true"
+                data-announcement="Slide {first} of {total}"
+                data-announcement-group="Slides {first} to {last} of {total}"
+              ></p>
+            </section>
+            <div class="demo__body">
+              <p>The same features on the vertical axis.</p>
+              <h4>Try it</h4>
+              <ul class="demo__steps">
+                <li><kbd>Tab</kbd> through the Save buttons: the slides move up into view.</li>
+                <li>Press Next until the end: Next becomes unavailable and keeps focus.</li>
+              </ul>
+              <p class="demo__more">
+                <a
+                  href="https://github.com/wazum/embla-a11y/blob/main/guide/features.md#focus-brings-its-slide-into-view"
+                  >Guide: focus brings its slide into view</a
+                >
+              </p>
+            </div>
+          </li>
+
+          <li class="demo demo--mist" id="german">
+            <section class="carousel" lang="de" aria-labelledby="german-heading" data-demo="german">
+              <header class="carousel__header">
+                <h3 id="german-heading">Städte in Europa</h3>
+                <p class="carousel__tag">Deutsch</p>
+              </header>
+              <div class="carousel__viewport">
+                <ul class="carousel__slides" role="list"></ul>
+              </div>
+              <div class="carousel__controls">
+                <button type="button" class="carousel__button carousel__previous">
+                  <svg
+                    class="icon icon--previous"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    focusable="false"
+                  >
+                    <path d="m15 18-6-6 6-6" />
+                  </svg>
+                  Zurück
+                </button>
+                <button type="button" class="carousel__button carousel__next">
+                  Weiter
+                  <svg
+                    class="icon icon--next"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    focusable="false"
+                  >
+                    <path d="m9 18 6-6-6-6" />
+                  </svg>
+                </button>
+                <div
+                  class="carousel__dots"
+                  data-dot-label="Folie {first}"
+                  data-dot-label-group="Folien {first} bis {last}"
+                ></div>
+              </div>
+              <p
+                class="carousel__announcer visually-hidden"
+                aria-live="polite"
+                aria-atomic="true"
+                data-announcement="Folie {first} von {total}"
+                data-announcement-group="Folien {first} bis {last} von {total}"
+              ></p>
+            </section>
+            <div class="demo__body">
+              <p>
+                All texts come from the markup, here in German. The plugin never writes English of
+                its own.
+              </p>
+              <h4>Try it</h4>
+              <ul class="demo__steps">
+                <li>
+                  Press “Weiter” with a screen reader: it switches to a German voice and says
+                  “Folien 3 bis 4 von 10”.
+                </li>
+                <li>
+                  Translate the page in your browser: the dot names are translated too, because they
+                  are text in the page.
+                </li>
+              </ul>
+              <p class="demo__more">
+                <a
+                  href="https://github.com/wazum/embla-a11y/blob/main/guide/features.md#position-announcements"
+                  >Guide: position announcements</a
+                >
+              </p>
+            </div>
+          </li>
+        </ul>
+      </section>
+
+      <section id="setup" class="setup" aria-labelledby="setup-heading" tabindex="-1">
+        <div class="setup__text">
+          <h2 id="setup-heading">Drop it in</h2>
+          <p>
+            Register it like any other Embla plugin, last in the list. Pass the elements you have;
+            every element you leave out turns its feature off.
+          </p>
+          <p>
+            <a href="https://github.com/wazum/embla-a11y#quick-start"
+              >Quick start with the full markup</a
+            >
+          </p>
+        </div>
+        <div class="code-block">
+          <pre
+            class="code"
+          ><code><span class="code__keyword">import</span> EmblaCarousel <span class="code__keyword">from</span> <span class="code__string">'embla-carousel'</span>
+<span class="code__keyword">import</span> emblaA11y <span class="code__keyword">from</span> <span class="code__string">'embla-a11y'</span>
+
+<span class="code__keyword">const</span> emblaApi = EmblaCarousel(viewport, {}, [
+  emblaA11y({ previousButton, nextButton, dots, announcer })
+])
+
+previousButton.addEventListener(<span class="code__string">'click'</span>, () =&gt; emblaApi.goToPrev())
+nextButton.addEventListener(<span class="code__string">'click'</span>, () =&gt; emblaApi.goToNext())</code></pre>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>
+        MIT licensed · Made by Wolfgang Klinger · An independent plugin for
+        <a href="https://www.embla-carousel.com/">Embla Carousel</a>, which is made by David Jerleke
+      </p>
+      <p>
+        No cookies, no tracking, no requests to other sites. The Inter font is served from this site
+        (<a href="OFL.txt">font license</a>).
+      </p>
+    </footer>
+  </body>
+</html>

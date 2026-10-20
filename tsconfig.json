@@ -11,5 +11,5 @@
     "skipLibCheck": true,
     "types": ["@vitest/browser-playwright", "node", "vite/client"]
   },
-  "include": ["src", "test", "e2e", "*.config.ts"]
+  "include": ["src", "test", "e2e", "demo", "*.config.ts"]
 }

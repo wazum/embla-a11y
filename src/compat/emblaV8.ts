@@ -17,6 +17,7 @@ type EmblaV8Type = {
 type SlideFocusListenerType = () => unknown
 
 const eventNamesV8: Record<string, string> = {
+  reinit: 'reInit',
   'autoscroll:play': 'autoScroll:play',
   'autoscroll:stop': 'autoScroll:stop'
 }
