@@ -1,6 +1,6 @@
 import type { EmblaCarouselType } from 'embla-carousel'
 import { AttributeStore } from '../AttributeStore.js'
-import { isOnScreen } from '../visibleSlides.js'
+import { slidesOnScreen } from '../visibleSlides.js'
 import type { Feature } from './Feature.js'
 
 /**
@@ -65,22 +65,22 @@ export class HideOffscreen implements Feature {
   }
 
   private update(focused: Element | null = document.activeElement): void {
-    for (const slide of this.emblaApi.slideNodes()) {
-      if (this.isVisible(slide) || slide.contains(focused)) {
+    const slides = this.emblaApi.slideNodes()
+    const visible = slidesOnScreen(slides, this.emblaApi.rootNode())
+    slides.forEach((slide, index) => {
+      if (visible[index] === true || slide.contains(focused)) {
         this.attributes.reset(slide, 'inert')
       } else {
         this.attributes.set(slide, 'inert', '')
       }
-    }
+    })
   }
 
   private showVisibleSlides(): void {
-    for (const slide of this.emblaApi.slideNodes()) {
-      if (this.isVisible(slide)) this.attributes.reset(slide, 'inert')
-    }
-  }
-
-  private isVisible(slide: HTMLElement): boolean {
-    return isOnScreen(slide, this.emblaApi.rootNode())
+    const slides = this.emblaApi.slideNodes()
+    const visible = slidesOnScreen(slides, this.emblaApi.rootNode())
+    slides.forEach((slide, index) => {
+      if (visible[index] === true) this.attributes.reset(slide, 'inert')
+    })
   }
 }

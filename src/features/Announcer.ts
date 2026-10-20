@@ -130,14 +130,14 @@ export class Announcer implements Feature {
   }
 
   private slidesInScreenOrder(): number[] {
-    const viewport = this.emblaApi.rootNode()
+    const viewportRect = this.emblaApi.rootNode().getBoundingClientRect()
     const { axis } = this.emblaApi.internalEngine()
     const readingDirection = axis.direction(1)
     return this.emblaApi
       .slideNodes()
       .flatMap((slide, index) => {
-        if (!isOnScreen(slide, viewport)) return []
         const rect = slide.getBoundingClientRect()
+        if (!isOnScreen(rect, viewportRect)) return []
         return [{ number: index + 1, start: axis.scroll === 'x' ? rect.left : rect.top }]
       })
       .toSorted((a, b) => (a.start - b.start) * readingDirection)
