@@ -9,6 +9,7 @@ export type FocusMemoryType = { focused: FocusedType | null }
 
 const focusableSelector = [
   'a[href]',
+  'area[href]',
   'button',
   'input',
   'select',
@@ -148,6 +149,14 @@ function canHoldFocus(element: Element): boolean {
 }
 
 function isVisible(element: Element): boolean {
-  if (!('checkVisibility' in element)) return true
-  return element.checkVisibility({ visibilityProperty: true })
+  const shown = element instanceof HTMLAreaElement ? imageOf(element) : element
+  if (shown === null) return false
+  if (!('checkVisibility' in shown)) return true
+  return shown.checkVisibility({ visibilityProperty: true })
+}
+
+function imageOf(area: HTMLAreaElement): Element | null {
+  const map = area.closest('map')
+  if (map === null || map.name === '') return null
+  return area.ownerDocument.querySelector(`img[usemap="#${CSS.escape(map.name)}"]`)
 }
