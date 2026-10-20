@@ -49,10 +49,10 @@
     </header>
 
     <main>
-      <section class="hero" aria-labelledby="hero-heading">
+      <section class="hero">
         <div class="hero__text">
           <p class="badge">Accessibility plugin for Embla Carousel 8.6 and 9</p>
-          <h1 id="hero-heading">Accessible carousels everyone can use.</h1>
+          <h1>Accessible carousels everyone can use.</h1>
           <p class="hero__lead">
             embla-a11y adds accessibility to Embla Carousel (“a11y” is short for accessibility). It
             keeps every visible slide readable, puts people in control of motion and never hides
@@ -91,8 +91,8 @@
         </div>
       </section>
 
-      <section class="features" aria-labelledby="why-heading">
-        <h2 id="why-heading">Why embla-a11y</h2>
+      <section class="features">
+        <h2>Why embla-a11y</h2>
         <ul class="features__list" role="list">
           <li class="feature feature--plain">
             <h3>Tested with real screen readers</h3>
@@ -122,8 +122,8 @@
         </ul>
       </section>
 
-      <section class="features" aria-labelledby="features-heading">
-        <h2 id="features-heading">What it does</h2>
+      <section class="features">
+        <h2>What it does</h2>
         <ul class="features__list" role="list">
           <li class="feature feature--sky">
             <h3>Named region</h3>
@@ -506,10 +506,15 @@
                 </button>
                 <div
                   class="carousel__dots"
+                  role="group"
+                  aria-label="Slides"
+                  aria-describedby="dot-keys-hint"
                   data-dot-label="Slide {first}"
                   data-dot-label-group="Slides {first} to {last}"
                 ></div>
-                <p class="carousel__hint">Use the arrow keys to choose a slide.</p>
+                <p id="dot-keys-hint" class="carousel__hint">
+                  Use the arrow keys to choose a slide.
+                </p>
               </div>
               <p
                 class="carousel__announcer visually-hidden"

@@ -37,6 +37,42 @@ $tints: (
 
 :root {
   color-scheme: light dark;
+
+  /* unit 24px = 1rem × 1.5, type ratio 1.25 */
+  --leading: 1.5;
+  --unit: calc(1rem * var(--leading));
+  --space-quarter: calc(var(--unit) / 4);
+  --space-half: calc(var(--unit) / 2);
+  --space-three-quarters: calc(var(--unit) * 0.75);
+  --space-unit: var(--unit);
+  --space-one-and-a-half: calc(var(--unit) * 1.5);
+  --space-double: calc(var(--unit) * 2);
+  --space-triple: calc(var(--unit) * 3);
+
+  --font-size-small: 0.875rem;
+  --font-size-body: 1rem;
+  --font-size-large: 1.25rem;
+  --font-size-larger: 1.5625rem;
+  --font-size-highlight: 1.953rem;
+  --font-size-section-heading: clamp(1.953rem, 1.5rem + 1.6vw, 2.441rem);
+  --font-size-display: clamp(2.441rem, 1.6rem + 3.4vw, 3.5rem);
+
+  --measure: 65ch;
+  --content-width: 75rem;
+  --page-margin: clamp(var(--space-three-quarters), 4vw, var(--space-double));
+
+  --radius-small: var(--space-quarter);
+  --radius-medium: var(--space-half);
+  --radius-large: var(--space-three-quarters);
+  --radius-larger: var(--space-unit);
+  --radius-round: 999px;
+  --touch-target: 2.75rem;
+  --touch-target-large: 3rem;
+  --focus-width: 3px;
+
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-code: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+
   --page: #f5f6f8;
   --surface: #ffffff;
   --text: #18212b;
@@ -48,22 +84,29 @@ $tints: (
   --link-hover: #10384a;
   --focus: #1f5e78;
   --accent: #b9d3df;
+  --on-accent: #18212b;
   --badge: #ddebe3;
   --badge-text: #1f4d3a;
-  --tag: #eef1f4;
   --inverse: #18212b;
   --inverse-text: #ffffff;
+  --mark-bar: #ffffff;
+  --mark-bar-first: #18212b;
+  --band: #18212b;
+  --band-text: #f5f6f8;
+  --band-muted: #c5cdd5;
+  --band-link: #b9d3df;
+  --band-link-hover: #ffffff;
   --code: #24303b;
   --code-text: #f5f6f8;
   --code-keyword: #b9d3df;
   --code-string: #a8d5c0;
+  --code-control: #2f3c48;
+  --code-control-hover: #3a4856;
+  --code-control-border: #9aa6b2;
 
   @each $name, $colors in $tints {
     --tint-#{$name}: #{list.nth($colors, 1)};
   }
-
-  --font-body: 'Inter', system-ui, sans-serif;
-  --font-code: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
 }
 
 @mixin dark {
@@ -80,9 +123,9 @@ $tints: (
   --accent: #9fcbe0;
   --badge: #1c2b24;
   --badge-text: #a8d5c0;
-  --tag: #26303a;
   --inverse: #eef1f4;
   --inverse-text: #11171d;
+  --band: #0b1015;
   --code: #0b1015;
 
   @each $name, $colors in $tints {
@@ -113,8 +156,8 @@ body {
   background: var(--page);
   color: var(--text);
   font-family: var(--font-body);
-  font-size: 1rem;
-  line-height: 1.55;
+  font-size: var(--font-size-body);
+  line-height: var(--leading);
 }
 
 h1,
@@ -124,14 +167,16 @@ h4 {
   margin: 0;
   font-family: var(--font-body);
   line-height: 1.15;
+  text-wrap: balance;
 }
 
 p {
   margin: 0;
+  text-wrap: pretty;
 }
 
 a {
-  border-radius: 0.25rem;
+  border-radius: var(--radius-small);
   color: var(--link);
   text-underline-offset: 0.15em;
 
@@ -141,8 +186,8 @@ a {
 }
 
 :focus-visible {
-  outline: 3px solid var(--focus);
-  outline-offset: 3px;
+  outline: var(--focus-width) solid var(--focus);
+  outline-offset: var(--focus-width);
 }
 
 [tabindex='-1']:focus {
@@ -152,16 +197,16 @@ a {
 code,
 kbd {
   font-family: var(--font-code);
-  font-size: 0.9em;
+  font-size: var(--font-size-small);
   font-variant-ligatures: none;
 }
 
 kbd kbd,
 :not(kbd) > kbd:not(:has(kbd)) {
-  padding: 0.0625rem 0.375rem;
+  padding: 0 var(--space-quarter);
   border: 1px solid var(--control-border);
   border-bottom-width: 2px;
-  border-radius: 0.375rem;
+  border-radius: var(--radius-small);
   background: var(--surface);
   color: var(--text);
   white-space: nowrap;
@@ -198,11 +243,11 @@ kbd kbd,
 
 .skip-link {
   position: absolute;
-  top: 1rem;
-  left: 1rem;
+  top: var(--space-unit);
+  left: var(--space-unit);
   z-index: 10;
-  padding: 0.75rem 1rem;
-  border-radius: 0.75rem;
+  padding: var(--space-half) var(--space-unit);
+  border-radius: var(--radius-medium);
   background: var(--inverse);
   color: var(--inverse-text);
   font-weight: 600;
@@ -220,39 +265,36 @@ kbd kbd,
   }
 
   &--inline {
-    top: 0.5rem;
-    left: 0.5rem;
+    top: var(--space-half);
+    left: var(--space-half);
   }
 }
-
-$gutter: clamp(1rem, 4vw, 2rem);
 
 .site-header,
 .hero,
 .features,
-.demos,
-.site-footer {
-  max-width: 75rem;
+.demos {
+  max-width: var(--content-width);
   margin-inline: auto;
-  padding-inline: $gutter;
+  padding-inline: var(--page-margin);
 }
 
 .site-header {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 1rem 1.5rem;
-  padding-block: 1.5rem;
+  gap: var(--space-half) var(--space-unit);
+  padding-block: var(--space-unit);
 }
 
 .brand {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: var(--space-half);
   margin-inline-end: auto;
   font-family: var(--font-body);
   font-weight: 700;
-  font-size: 1.25rem;
+  font-size: var(--font-size-large);
   letter-spacing: -0.01em;
 
   &__slash {
@@ -263,20 +305,20 @@ $gutter: clamp(1rem, 4vw, 2rem);
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 4px;
-    width: 40px;
-    height: 40px;
-    border-radius: 12px;
+    gap: var(--space-quarter);
+    width: var(--touch-target);
+    height: var(--touch-target);
+    border-radius: var(--radius-medium);
     background: var(--accent);
 
     span {
       width: 8px;
       height: 20px;
-      border-radius: 4px;
-      background: #ffffff;
+      border-radius: var(--radius-small);
+      background: var(--mark-bar);
 
       &:first-child {
-        background: #18212b;
+        background: var(--mark-bar-first);
       }
     }
   }
@@ -287,16 +329,16 @@ $gutter: clamp(1rem, 4vw, 2rem);
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--space-quarter);
 }
 
 .site-nav a {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  min-height: 44px;
-  padding: 0.5rem 0.875rem;
-  border-radius: 0.625rem;
+  gap: var(--space-quarter);
+  min-height: var(--touch-target);
+  padding: var(--space-quarter) var(--space-half);
+  border-radius: var(--radius-medium);
   color: var(--text);
   font-weight: 500;
   text-decoration: none;
@@ -319,17 +361,17 @@ $gutter: clamp(1rem, 4vw, 2rem);
 .version-switch {
   ul {
     gap: 0;
-    padding: 0.25rem;
+    padding: var(--space-quarter);
     border: 1px solid var(--control-border);
-    border-radius: 0.75rem;
+    border-radius: var(--radius-large);
   }
 
   a {
     display: inline-flex;
     align-items: center;
-    min-height: 44px;
-    padding: 0.5rem 0.875rem;
-    border-radius: 0.5rem;
+    min-height: var(--touch-target);
+    padding: var(--space-quarter) var(--space-half);
+    border-radius: var(--radius-medium);
     color: var(--text);
     font-weight: 600;
     text-decoration: none;
@@ -341,6 +383,7 @@ $gutter: clamp(1rem, 4vw, 2rem);
     &[aria-current='page'] {
       background: var(--inverse);
       color: var(--inverse-text);
+      text-decoration: underline;
     }
   }
 }
@@ -349,37 +392,38 @@ $gutter: clamp(1rem, 4vw, 2rem);
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 27.5rem), 1fr));
   align-items: center;
-  gap: 3rem;
-  padding-block: 3.5rem 2.5rem;
+  gap: var(--space-double);
+  padding-block: var(--space-double) var(--space-triple);
 
   &__text {
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;
+    gap: var(--space-unit);
   }
 
   h1 {
     font-weight: 800;
-    font-size: clamp(2.25rem, 4.5vw, 3.5rem);
+    font-size: var(--font-size-display);
     line-height: 1.02;
     letter-spacing: -0.03em;
   }
 
   &__lead {
-    max-width: 34rem;
+    max-width: var(--measure);
     color: var(--muted);
-    font-size: 1.1875rem;
+    font-size: var(--font-size-large);
+    line-height: 1.45;
   }
 
   &__actions {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.75rem;
+    gap: var(--space-half);
   }
 
   &__note {
     color: var(--muted);
-    font-size: 0.9375rem;
+    font-size: var(--font-size-small);
   }
 
   &__art {
@@ -394,10 +438,10 @@ $gutter: clamp(1rem, 4vw, 2rem);
   &__art::after {
     content: '';
     position: absolute;
-    top: 3rem;
+    top: var(--space-double);
     width: 46%;
     height: 13.75rem;
-    border-radius: 1.5rem;
+    border-radius: var(--radius-larger);
   }
 
   &__art::before {
@@ -418,12 +462,12 @@ $gutter: clamp(1rem, 4vw, 2rem);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    gap: 1.5rem;
+    gap: var(--space-unit);
     width: 58%;
     min-height: 16.25rem;
-    padding: 1.5rem;
+    padding: var(--space-unit);
     border: 1px solid var(--border);
-    border-radius: 1.5rem;
+    border-radius: var(--radius-larger);
     background: var(--surface);
   }
 
@@ -431,28 +475,28 @@ $gutter: clamp(1rem, 4vw, 2rem);
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    gap: 0.5rem;
+    gap: var(--space-half);
     color: var(--muted);
     font-family: var(--font-code);
-    font-size: 0.8125rem;
+    font-size: var(--font-size-small);
   }
 
   &__quote {
     font-family: var(--font-body);
     font-weight: 700;
-    font-size: 1.75rem;
+    font-size: var(--font-size-highlight);
     line-height: 1.15;
   }
 
   &__dots {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: var(--space-half);
 
     span {
       width: 10px;
       height: 10px;
-      border-radius: 999px;
+      border-radius: var(--radius-round);
       background: var(--control-border);
     }
 
@@ -465,32 +509,32 @@ $gutter: clamp(1rem, 4vw, 2rem);
 
 .badge {
   align-self: flex-start;
-  padding: 0.375rem 0.75rem;
-  border-radius: 999px;
+  padding: var(--space-quarter) var(--space-half);
+  border-radius: var(--radius-medium);
   background: var(--badge);
   color: var(--badge-text);
-  font-size: 0.875rem;
+  font-size: var(--font-size-small);
   font-weight: 600;
 }
 
 .button {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  min-height: 48px;
-  padding: 0.75rem 1.25rem;
-  border-radius: 0.75rem;
-  font: 600 1rem var(--font-body);
+  gap: var(--space-half);
+  min-height: var(--touch-target-large);
+  padding: var(--space-half) var(--space-unit);
+  border-radius: var(--radius-medium);
+  font: 600 var(--font-size-body) var(--font-body);
   text-decoration: none;
   cursor: pointer;
 
   &--accent {
-    border: 2px solid transparent;
+    border: 2px solid var(--control-border);
     background: var(--accent);
 
     &,
     &:hover {
-      color: #18212b;
+      color: var(--on-accent);
     }
   }
 
@@ -510,36 +554,32 @@ $gutter: clamp(1rem, 4vw, 2rem);
 }
 
 .features {
-  padding-block: 1rem 3.5rem;
+  padding-block-end: var(--space-triple);
 
   h2 {
-    margin-block-end: 1.25rem;
+    margin-block-end: var(--space-unit);
     font-weight: 800;
-    font-size: 1.75rem;
+    font-size: var(--font-size-section-heading);
     letter-spacing: -0.02em;
   }
 
   &__list {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
-    gap: 1rem;
+    gap: var(--space-unit);
   }
 }
 
 .feature {
   display: flex;
   flex-direction: column;
-  gap: 0.375rem;
-  padding: 1.25rem;
-  border-radius: 1.125rem;
+  gap: var(--space-quarter);
+  padding: var(--space-unit);
+  border-radius: var(--radius-large);
 
   h3 {
     font-weight: 700;
-    font-size: 1.125rem;
-  }
-
-  p {
-    font-size: 0.9375rem;
+    font-size: var(--font-size-large);
   }
 
   &--plain {
@@ -556,53 +596,53 @@ $gutter: clamp(1rem, 4vw, 2rem);
 }
 
 .demos {
-  padding-block: 1.5rem 4rem;
+  padding-block-end: var(--space-triple);
 
   h2 {
     font-weight: 800;
-    font-size: 2.5rem;
+    font-size: var(--font-size-section-heading);
     letter-spacing: -0.02em;
   }
 
   &__lead {
-    max-width: 48rem;
-    margin-block: 0.375rem 1.75rem;
+    max-width: var(--measure);
+    margin-block: var(--space-half) var(--space-one-and-a-half);
     color: var(--muted);
   }
 
   &__list {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(min(100%, 32rem), 1fr));
-    gap: 1.5rem;
+    gap: var(--space-unit);
   }
 }
 
 .demo-index {
-  margin-block-end: 1.75rem;
+  margin-block-end: var(--space-one-and-a-half);
 
   h3 {
-    font-size: 1.125rem;
+    font-size: var(--font-size-large);
   }
 
   p {
-    margin-block: 0.25rem 0.75rem;
+    margin-block: var(--space-quarter) var(--space-three-quarters);
     color: var(--muted);
   }
 
   ul {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
+    gap: var(--space-half);
   }
 
   a {
     display: inline-flex;
     align-items: center;
-    gap: 0.3em;
-    min-height: 44px;
-    padding: 0.5rem 0.875rem;
+    gap: var(--space-quarter);
+    min-height: var(--touch-target);
+    padding: var(--space-quarter) var(--space-three-quarters);
     border: 1px solid var(--control-border);
-    border-radius: 999px;
+    border-radius: var(--radius-round);
     background: var(--surface);
     color: var(--text);
     font-weight: 600;
@@ -616,28 +656,28 @@ $gutter: clamp(1rem, 4vw, 2rem);
 }
 
 .demo:focus {
-  outline: 3px solid var(--focus);
-  outline-offset: 3px;
+  outline: var(--focus-width) solid var(--focus);
+  outline-offset: var(--focus-width);
 }
 
 .tips {
-  max-width: 48rem;
-  margin-block-end: 1.75rem;
-  padding: 1.25rem 1.5rem;
+  max-width: var(--measure);
+  margin-block-end: var(--space-one-and-a-half);
+  padding: var(--space-unit);
   border: 1px solid var(--border);
-  border-radius: 1.125rem;
+  border-radius: var(--radius-large);
   background: var(--surface);
 
   h3 {
-    font-size: 1.125rem;
+    font-size: var(--font-size-large);
   }
 
   ul {
     display: flex;
     flex-direction: column;
-    gap: 0.375rem;
-    margin: 0.75rem 0 0;
-    padding-inline-start: 1.25rem;
+    gap: var(--space-half);
+    margin: var(--space-three-quarters) 0 0;
+    padding-inline-start: var(--space-unit);
   }
 }
 
@@ -647,68 +687,68 @@ $gutter: clamp(1rem, 4vw, 2rem);
   flex-direction: column;
   overflow: hidden;
   border: 1px solid var(--border);
-  border-radius: 1.375rem;
+  border-radius: var(--radius-larger);
   background: var(--surface);
 
   &__body {
     display: flex;
     flex: 1;
     flex-direction: column;
-    gap: 0.625rem;
-    padding: 1.25rem 1.375rem 1.375rem;
+    gap: var(--space-half);
+    padding: var(--space-unit);
     color: var(--muted);
 
     h4 {
-      margin-block-start: 0.25rem;
+      margin-block-start: var(--space-half);
       color: var(--text);
-      font-size: 1.0625rem;
+      font-size: var(--font-size-body);
     }
   }
 
   &__steps {
     display: flex;
     flex-direction: column;
-    gap: 0.375rem;
+    gap: var(--space-half);
     margin: 0;
-    padding-inline-start: 1.25rem;
+    padding-inline-start: var(--space-unit);
   }
 
   &__more {
     margin-block-start: auto;
-    padding-block-start: 0.5rem;
+    padding-block-start: var(--space-half);
     font-weight: 600;
   }
 }
 
 .carousel {
   --per-view: 1.15;
-  --gap: 0.75rem;
+  --gap: var(--space-half);
 
   container-type: inline-size;
   display: flex;
   flex-direction: column;
-  gap: 0.875rem;
-  padding: 1.25rem;
+  gap: var(--space-three-quarters);
+  padding: var(--space-unit);
 
   &__header {
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
     justify-content: space-between;
-    gap: 0.5rem 0.75rem;
+    gap: var(--space-quarter) var(--space-half);
 
     h3 {
       font-weight: 700;
-      font-size: 1.3125rem;
+      font-size: var(--font-size-large);
     }
   }
 
   &__tag {
-    padding: 0.125rem 0.625rem;
-    border-radius: 999px;
+    padding: 0 var(--space-half);
+    border-radius: var(--radius-round);
     background: var(--surface);
     color: var(--muted);
-    font-size: 0.8125rem;
+    font-size: var(--font-size-small);
     font-weight: 600;
   }
 
@@ -726,7 +766,7 @@ $gutter: clamp(1rem, 4vw, 2rem);
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 0.5rem;
+    gap: var(--space-half);
   }
 
   &[data-single-view] &__controls {
@@ -736,14 +776,14 @@ $gutter: clamp(1rem, 4vw, 2rem);
   &__button {
     display: inline-flex;
     align-items: center;
-    gap: 0.375rem;
-    min-height: 44px;
-    padding: 0.5rem 0.875rem;
+    gap: var(--space-quarter);
+    min-height: var(--touch-target);
+    padding: var(--space-quarter) var(--space-half);
     border: 1px solid var(--control-border);
-    border-radius: 0.75rem;
+    border-radius: var(--radius-medium);
     background: var(--control);
     color: var(--text);
-    font: 600 0.9375rem var(--font-body);
+    font: 600 var(--font-size-body) var(--font-body);
     cursor: pointer;
 
     &[aria-disabled='true'] {
@@ -755,7 +795,7 @@ $gutter: clamp(1rem, 4vw, 2rem);
     span:not([hidden]) {
       display: inline-flex;
       align-items: center;
-      gap: 0.375rem;
+      gap: var(--space-quarter);
     }
   }
 
@@ -766,14 +806,14 @@ $gutter: clamp(1rem, 4vw, 2rem);
   &__dots {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.125rem;
+    gap: var(--space-quarter);
     margin-inline-start: auto;
   }
 
   &__hint {
     flex-basis: 100%;
     text-align: end;
-    font-size: 0.875rem;
+    font-size: var(--font-size-small);
   }
 
   &__dot {
@@ -781,11 +821,11 @@ $gutter: clamp(1rem, 4vw, 2rem);
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 24px;
-    height: 24px;
+    width: var(--space-unit);
+    height: var(--space-unit);
     padding: 0;
     border: 0;
-    border-radius: 999px;
+    border-radius: var(--radius-round);
     background: none;
     cursor: pointer;
 
@@ -794,7 +834,7 @@ $gutter: clamp(1rem, 4vw, 2rem);
       width: 10px;
       height: 10px;
       border: 2px solid var(--control-border);
-      border-radius: 999px;
+      border-radius: var(--radius-round);
       background: var(--control);
     }
 
@@ -856,29 +896,29 @@ $gutter: clamp(1rem, 4vw, 2rem);
     flex: 1;
     flex-direction: column;
     align-items: flex-start;
-    gap: 0.25rem;
-    padding: 0.875rem;
-    border-radius: 0.875rem;
+    gap: var(--space-quarter);
+    padding: var(--space-three-quarters);
+    border-radius: var(--radius-large);
     background: var(--surface);
   }
 
   &__number {
     color: var(--muted);
     font-family: var(--font-code);
-    font-size: 0.8125rem;
+    font-size: var(--font-size-small);
   }
 
   &__city {
-    margin-block-start: 1rem;
+    margin-block-start: var(--space-three-quarters);
     font-weight: 800;
-    font-size: 1.75rem;
+    font-size: var(--font-size-larger);
     line-height: 1.1;
     overflow-wrap: anywhere;
   }
 
   &__country {
     margin-block-end: auto;
-    padding-block-end: 0.75rem;
+    padding-block-end: var(--space-half);
     color: var(--muted);
   }
 }
@@ -886,14 +926,14 @@ $gutter: clamp(1rem, 4vw, 2rem);
 .slide__action {
   display: inline-flex;
   align-items: center;
-  gap: 0.375rem;
-  min-height: 44px;
-  padding: 0.5rem 0.875rem;
+  gap: var(--space-quarter);
+  min-height: var(--touch-target);
+  padding: var(--space-quarter) var(--space-half);
   border: 1px solid var(--control-border);
-  border-radius: 0.75rem;
+  border-radius: var(--radius-medium);
   background: var(--control);
   color: var(--text);
-  font: 600 0.9375rem var(--font-body);
+  font: 600 var(--font-size-body) var(--font-body);
   cursor: pointer;
 
   &[aria-pressed='true'] {
@@ -920,51 +960,51 @@ $gutter: clamp(1rem, 4vw, 2rem);
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 23.75rem), 1fr));
   align-items: center;
-  gap: 2rem;
-  width: min(100% - 2 * $gutter, 71rem);
-  margin: 0 auto 4.5rem;
-  padding: clamp(1.5rem, 4vw, 2.5rem);
-  border-radius: 1.5rem;
-  background: #18212b;
-  color: #f5f6f8;
+  gap: var(--space-double);
+  width: min(100% - 2 * var(--page-margin), var(--content-width) - 2 * var(--page-margin));
+  margin: 0 auto var(--space-triple);
+  padding: clamp(var(--space-unit), 4vw, var(--space-double));
+  border-radius: var(--radius-larger);
+  background: var(--band);
+  color: var(--band-text);
 
   &__text {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: var(--space-half);
 
     h2 {
       font-weight: 800;
-      font-size: 2.125rem;
+      font-size: var(--font-size-section-heading);
       letter-spacing: -0.02em;
     }
 
     p {
-      color: #c5cdd5;
+      color: var(--band-muted);
     }
 
     a {
-      color: #b9d3df;
+      color: var(--band-link);
 
       &:hover {
-        color: #ffffff;
+        color: var(--band-link-hover);
       }
     }
   }
 
   :focus-visible {
-    outline-color: #b9d3df;
+    outline-color: var(--band-link);
   }
 }
 
 .code {
   margin: 0;
-  padding: 1.5rem;
-  border-radius: 1rem;
+  padding: var(--space-unit);
+  border-radius: var(--radius-large);
   background: var(--code);
   color: var(--code-text);
   font-family: var(--font-code);
-  font-size: 0.875rem;
+  font-size: var(--font-size-small);
   line-height: 1.7;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
@@ -982,28 +1022,28 @@ $gutter: clamp(1rem, 4vw, 2rem);
   position: relative;
 
   .code {
-    padding-block-start: 3.5rem;
+    padding-block-start: var(--space-triple);
   }
 }
 
 .copy-button {
   position: absolute;
-  top: 0.625rem;
-  right: 0.625rem;
+  top: var(--space-half);
+  right: var(--space-half);
   display: inline-flex;
   align-items: center;
-  gap: 0.375rem;
-  min-height: 36px;
-  padding: 0.375rem 0.75rem;
-  border: 1px solid #9aa6b2;
-  border-radius: 0.5rem;
-  background: #2f3c48;
-  color: #f5f6f8;
-  font: 600 0.875rem var(--font-body);
+  gap: var(--space-quarter);
+  min-height: var(--touch-target);
+  padding: var(--space-quarter) var(--space-half);
+  border: 1px solid var(--code-control-border);
+  border-radius: var(--radius-medium);
+  background: var(--code-control);
+  color: var(--code-text);
+  font: 600 var(--font-size-small) var(--font-body);
   cursor: pointer;
 
   &:hover {
-    background: #3a4856;
+    background: var(--code-control-hover);
   }
 
   &__check,
@@ -1020,11 +1060,13 @@ $gutter: clamp(1rem, 4vw, 2rem);
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  gap: 0.75rem 2rem;
-  padding-block: 1.5rem 3rem;
+  gap: var(--space-half) var(--space-double);
+  width: min(100% - 2 * var(--page-margin), var(--content-width) - 2 * var(--page-margin));
+  margin-inline: auto;
+  padding-block: var(--space-unit) var(--space-double);
   border-top: 1px solid var(--border);
   color: var(--muted);
-  font-size: 0.875rem;
+  font-size: var(--font-size-small);
 }
 
 @media (forced-colors: active) {
@@ -1041,5 +1083,9 @@ $gutter: clamp(1rem, 4vw, 2rem);
 
   .slide__action[aria-pressed='true'] {
     border-width: 3px;
+  }
+
+  .site-nav__github {
+    border: 1px solid;
   }
 }
