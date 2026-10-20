@@ -162,6 +162,7 @@ After someone moves the carousel with a button, a dot or a drag, screen readers 
 
 - Option: `announcer`, an element you put in the carousel area, outside the slides, with `aria-live="polite"` and `aria-atomic="true"`. Hide it visually.
 - Markup: the texts as templates in the page's language. `data-announcement` is for one slide on screen, `data-announcement-group` for several. The plugin fills in `{first}`, `{last}` and `{total}`, counting the slides that are actually on screen. For carousels that move a whole view at a time, `{page}` and `{pages}` give the current position and the number of positions, for example "Page 2 of 4".
+- Loops: where a loop wraps around, the slides on screen can be 9, 10 and 1. Add `data-announcement-wrapped="Slides {slides} of {total}"` for that case. `{slides}` lists the slide numbers in screen order, joined in the language of the page, for example "Slides 9, 10, and 1 of 10", or "Folien 9, 10 und 1 von 10" on a German page. Without it, a looping carousel says "Slides 9 to 1 of 10" and the plugin warns in the console. `{page}` and `{pages}` avoid the question altogether.
 
 ```html
 <p
@@ -173,7 +174,7 @@ After someone moves the carousel with a button, a dot or a drag, screen readers 
 ></p>
 ```
 
-Put the element in the page from the start; screen readers only notice live regions that exist before their text changes. Never put `aria-live` on the slides themselves: then every move reads whole slides. In an app with its own translation library, pass `announcement(firstSlide, lastSlide, totalSlides, page, pages)` instead of the templates. Without either, the plugin announces nothing and warns in the console.
+Put the element in the page from the start; screen readers only notice live regions that exist before their text changes. Never put `aria-live` on the slides themselves: then every move reads whole slides. In an app with its own translation library, pass `announcement(firstSlide, lastSlide, totalSlides, page, pages, slides)` instead of the templates; `slides` holds the slide numbers on screen in screen order. Without either, the plugin announces nothing and warns in the console.
 
 ## Focus never gets lost
 

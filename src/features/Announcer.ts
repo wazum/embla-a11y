@@ -7,7 +7,8 @@ export type AnnouncementType = (
   lastSlide: number,
   totalSlides: number,
   page: number,
-  pages: number
+  pages: number,
+  slides: number[]
 ) => string
 
 export type AnnouncerOptionsType = {
@@ -27,6 +28,7 @@ export class Announcer implements Feature {
   private readonly announcement: AnnouncementType | null
   private readonly controls: HTMLElement[]
   private readonly originalNodes: ChildNode[]
+  private readonly warn: WarnType
   private readonly onControlClick = (): void => this.markUserAction()
   private readonly onPointerDown = (): void => {
     this.dragging = true
@@ -68,6 +70,7 @@ export class Announcer implements Feature {
     this.emblaApi = emblaApi
     this.element = announcer
     this.announcement = announcement
+    this.warn = warn
     this.originalNodes = Array.from(announcer.childNodes)
     this.controls = [previousButton, nextButton, dots].filter((control) => control !== null)
     for (const control of this.controls) {
@@ -113,12 +116,7 @@ export class Announcer implements Feature {
   }
 
   private announce(): void {
-    const slides = this.emblaApi.slideNodes()
-    const shown = this.slidesInScreenOrder()
-    const first = shown[0]
-    const last = shown.at(-1)
-    if (first === undefined || last === undefined) return
-    const text = this.textFor(first, last, slides.length)
+    const text = this.textFor(this.slidesInScreenOrder(), this.emblaApi.slideNodes().length)
     if (text === null) return
     this.written = true
     if (this.element.textContent !== text) {
@@ -146,18 +144,51 @@ export class Announcer implements Feature {
       .map(({ number }) => number)
   }
 
-  private textFor(first: number, last: number, total: number): string | null {
+  private textFor(slides: number[], total: number): string | null {
+    const first = slides[0]
+    const last = slides.at(-1)
+    if (first === undefined || last === undefined) return null
     const page = this.emblaApi.selectedSnap() + 1
     const pages = this.emblaApi.snapList().length
-    const single = this.element.getAttribute('data-announcement')
-    const group = this.element.getAttribute('data-announcement-group') ?? single
-    const template = first === last ? single : group
-    if (template === null) return this.announcement?.(first, last, total, page, pages) ?? null
+    const template = this.templateFor(slides)
+    if (template === null) {
+      return this.announcement?.(first, last, total, page, pages, slides) ?? null
+    }
     return template
       .replaceAll('{first}', String(first))
       .replaceAll('{last}', String(last))
       .replaceAll('{total}', String(total))
       .replaceAll('{page}', String(page))
       .replaceAll('{pages}', String(pages))
+      .replaceAll('{slides}', this.listOf(slides))
   }
+
+  private templateFor(slides: number[]): string | null {
+    const single = this.element.getAttribute('data-announcement')
+    const group = this.element.getAttribute('data-announcement-group') ?? single
+    if (slides.length === 1) return single
+    if (!wrapsAround(slides)) return group
+    const wrapped = this.element.getAttribute('data-announcement-wrapped')
+    if (wrapped !== null) return wrapped
+    if (group !== null) {
+      this.warn(
+        'the carousel loops, and the slides on screen can wrap around from the last to the first. Add a data-announcement-wrapped template such as "Slides {slides} of {total}" to the announcer, otherwise it says "Slides 10 to 2".'
+      )
+    }
+    return group
+  }
+
+  private listOf(slides: number[]): string {
+    const numbers = slides.map(String)
+    const language = this.element.closest('[lang]')?.getAttribute('lang') ?? undefined
+    try {
+      return new Intl.ListFormat(language, { type: 'conjunction' }).format(numbers)
+    } catch {
+      return new Intl.ListFormat(undefined, { type: 'conjunction' }).format(numbers)
+    }
+  }
+}
+
+function wrapsAround(slides: number[]): boolean {
+  return slides.some((slide, index) => index > 0 && slide < (slides[index - 1] ?? 0))
 }

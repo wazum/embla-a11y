@@ -170,7 +170,59 @@ test('passes the page and the number of pages to announcement', async () => {
 
   buttons.next.click()
 
-  await expect.poll(() => announcement.mock.lastCall).toEqual([3, 4, 6, 2, 3])
+  await expect.poll(() => announcement.mock.lastCall).toEqual([3, 4, 6, 2, 3, [3, 4]])
+})
+
+function createLoopAtSeam(announcer: HTMLElement, announcement?: AnnouncementType) {
+  const { buttons, emblaApi } = createCarousel({
+    slideCount: 10,
+    slideWidth: '33.333%',
+    options: { loop: true, align: 'start' },
+    wrapperAttributes: { lang: 'de' },
+    plugins: ({ previous, next }) => [
+      emblaA11y({
+        label: 'Products',
+        previousButton: previous,
+        nextButton: next,
+        announcer,
+        ...(announcement === undefined ? {} : { announcement })
+      })
+    ]
+  })
+  buttons.previous.addEventListener('click', () => emblaApi.goToPrev(true))
+  buttons.previous.click()
+}
+
+test('lists the slides in the page language where a loop wraps around', async () => {
+  const announcer = createAnnouncer({
+    'data-announcement-group': 'Folien {first} bis {last} von {total}',
+    'data-announcement-wrapped': 'Folien {slides} von {total}'
+  })
+
+  createLoopAtSeam(announcer)
+
+  await expect.poll(() => announcer.textContent).toBe('Folien 10, 1 und 2 von 10')
+})
+
+test('warns where a loop wraps around and the announcer has no template for it', async () => {
+  const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+  const announcer = createAnnouncer({
+    'data-announcement-group': 'Folien {first} bis {last} von {total}'
+  })
+
+  createLoopAtSeam(announcer)
+
+  await expect.poll(() => announcer.textContent).toBe('Folien 10 bis 2 von 10')
+  expect(warn).toHaveBeenCalledWith(expect.stringContaining('data-announcement-wrapped'))
+})
+
+test('passes the slides on screen to announcement', async () => {
+  const announcement = vi.fn<AnnouncementType>(() => 'Folien')
+  const announcer = createAnnouncer({})
+
+  createLoopAtSeam(announcer, announcement)
+
+  await expect.poll(() => announcement.mock.lastCall?.[5]).toEqual([10, 1, 2])
 })
 
 test('warns when the announcer has no text', () => {

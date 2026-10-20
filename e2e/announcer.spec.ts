@@ -20,7 +20,7 @@ test('announces the shown slides in screen order across the loop seam', async ({
 
   await page.getByRole('button', { name: 'Previous' }).click()
 
-  await expect(page.locator('.embla__announcer')).toHaveText('Slides 9 to 1 of 10')
+  await expect(page.locator('.embla__announcer')).toHaveText('Slides 9, 10, and 1 of 10')
   const productNine = await page.getByRole('heading', { name: 'Product 9' }).boundingBox()
   const productOne = await page
     .getByRole('heading', { name: 'Product 1', exact: true })
