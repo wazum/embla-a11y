@@ -94,3 +94,42 @@ test('leaves a rotation button without texts alone and warns', async () => {
   expect(rotationButton.textContent).toBe('Pause')
   expect(warn).toHaveBeenCalledOnce()
 })
+
+test('warns once when Autoplay runs without a rotation button, also after a reInit', async () => {
+  const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+  const { emblaApi } = createCarousel({
+    slideCount: 3,
+    slideWidth: '100%',
+    plugins: [Autoplay({ delay: 1000 }), emblaA11y({ label: 'Products' })]
+  })
+  await new Promise((resolve) => setTimeout(resolve, 50))
+
+  emblaApi.reInit()
+  await new Promise((resolve) => setTimeout(resolve, 50))
+
+  expect(warn).toHaveBeenCalledOnce()
+  expect(warn).toHaveBeenCalledWith(expect.stringContaining('without a rotation button'))
+})
+
+test('does not warn about a missing rotation button when there is one', async () => {
+  const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+  const rotationButton = createRotationButton(
+    '<span data-rotation-playing>Rotation stoppen</span><span data-rotation-stopped hidden>Rotation starten</span>'
+  )
+  createCarousel({
+    slideCount: 3,
+    slideWidth: '100%',
+    plugins: [Autoplay({ delay: 1000 }), emblaA11y({ label: 'Products', rotationButton })]
+  })
+  await new Promise((resolve) => setTimeout(resolve, 50))
+
+  expect(warn).not.toHaveBeenCalled()
+})
+
+test('does not warn about a missing rotation button without Autoplay or AutoScroll', async () => {
+  const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+  createCarousel({ slideCount: 3, slideWidth: '100%', plugins: [emblaA11y({ label: 'Products' })] })
+  await new Promise((resolve) => setTimeout(resolve, 50))
+
+  expect(warn).not.toHaveBeenCalled()
+})

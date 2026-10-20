@@ -61,7 +61,8 @@ function emblaA11y(userOptions: EmblaA11yOptionsType = {}): EmblaA11yType {
   const rotationMemory: RotationMemoryType = {
     stoppedByUser: false,
     startedByUser: false,
-    playing: null
+    playing: null,
+    warnedMissingButton: false
   }
   let features: Feature[] = []
 

@@ -5,6 +5,8 @@ import EmblaCarousel, {
 } from 'embla-carousel'
 import { asEmblaV9 } from '../src/compat/emblaV8.js'
 
+const carousels: EmblaCarouselType[] = []
+
 type ButtonsType = { previous: HTMLButtonElement; next: HTMLButtonElement; dots: HTMLElement }
 
 type CarouselFixture = {
@@ -73,6 +75,7 @@ export function createCarousel({
   const emblaApi = asEmblaV9(
     EmblaCarousel(viewport, options, typeof plugins === 'function' ? plugins(buttons) : plugins)
   )
+  carousels.push(emblaApi)
 
   return { wrapper, slides, buttons, emblaApi }
 }
@@ -82,6 +85,7 @@ export function attributesOf(element: Element): Record<string, string> {
 }
 
 export function removeCarousels(): void {
+  for (const emblaApi of carousels.splice(0)) emblaApi.destroy()
   document.body.replaceChildren()
 }
 

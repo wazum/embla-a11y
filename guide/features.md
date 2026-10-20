@@ -143,13 +143,13 @@ If your code disables, hides or removes the element that has focus, the plugin m
 
 ## Autoplay, AutoScroll and the rotation button
 
-If you use the Autoplay or AutoScroll plugin, any focus or press inside the carousel stops it for good. That includes focus from a screen reader, voice control or a script, not only the Tab key. The carousel then stays where the user is, and the focused slide comes into view. A resize keeps the rotation as it was: once a user stopped it, it stays stopped, and a rotation nobody stopped keeps running.
+If you use the Autoplay or AutoScroll plugin, any focus or press inside the carousel stops it for good. That includes focus from a screen reader on a link or button, voice control or a script, not only the Tab key. Reading with a screen reader does not move focus, so it does not stop the rotation; for those users the rotation button is the only way to stop it. The carousel then stays where the user is, and the focused slide comes into view. A resize keeps the rotation as it was: once a user stopped it, it stays stopped, and a rotation nobody stopped keeps running.
 
 The rotation button starts and stops the rotation. Its text always says what pressing it will do. The text follows every change, also a stop through focus or a call to `play()` or `stop()` in your code. Focus on the button itself does not stop the rotation.
 
 - No configuration for the stop on interaction. List the Autoplay or AutoScroll plugin before this plugin.
 - With Embla 9, Autoplay and AutoScroll no longer start on their own. Call `play()` after creating the carousel, as in the example below. With Embla 8.6 they start by themselves.
-- Option: `rotationButton` for the button.
+- Option: `rotationButton` for the button. You need it whenever you use Autoplay or AutoScroll. Without it the plugin warns in the console.
 - Markup: a real `<button type="button">` inside the carousel area, before the slides, so people reach it before the moving content. Put both texts in it, in the page's language: one element with `data-rotation-playing` for while it runs, one with `data-rotation-stopped` and `hidden` for while it is stopped. The plugin only switches `hidden` between them.
 
 ```html

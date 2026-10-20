@@ -17,6 +17,7 @@ export type RotationMemoryType = {
   stoppedByUser: boolean
   startedByUser: boolean
   playing: boolean | null
+  warnedMissingButton: boolean
 }
 
 export type RotationButtonType = {
@@ -128,6 +129,7 @@ export class RotationControl implements Feature {
 
   private restore(): void {
     if (this.destroyed) return
+    this.warnWithoutButton()
     for (const rotation of this.rotations()) {
       if (this.mustStayStopped()) rotation.stop()
       else if (this.memory.playing === true && !rotation.isPlaying() && this.canRotate()) {
@@ -135,6 +137,15 @@ export class RotationControl implements Feature {
       }
     }
     this.updateLabel()
+  }
+
+  private warnWithoutButton(): void {
+    if (this.button !== null || this.memory.warnedMissingButton) return
+    if (this.rotations().length === 0) return
+    this.memory.warnedMissingButton = true
+    console.warn(
+      'embla-a11y: Autoplay or AutoScroll runs without a rotation button. Screen reader users who read without moving focus cannot stop it. Pass rotationButton.'
+    )
   }
 
   private updateLabel(): void {
