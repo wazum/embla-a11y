@@ -173,5 +173,7 @@ export class DotButtons implements Feature {
 function exposedText(node: Node): string {
   if (!(node instanceof Element)) return node.textContent ?? ''
   if (node.matches('[aria-hidden="true"], [hidden]')) return ''
+  if (node.matches('img')) return node.getAttribute('alt') ?? ''
+  if (node.matches('[role="img"][aria-label]')) return node.getAttribute('aria-label') ?? ''
   return Array.from(node.childNodes, exposedText).join('')
 }

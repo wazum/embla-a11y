@@ -137,7 +137,7 @@ Style the unavailable state with the attribute, and keep focus visible:
 The current dot gets `aria-current="true"`. No dot is ever disabled, and dots you rebuild later get the same treatment.
 
 - Option: `dots`, the element that holds the dot buttons.
-- Markup: one `<button type="button">` per snap point, in order. The best name is your own hidden text, rendered on the server in the page's language, as in the README example. The plugin keeps it.
+- Markup: one `<button type="button">` per snap point, in order. The best name is your own hidden text, rendered on the server in the page's language, as in the README example. The plugin keeps it, and also a thumbnail image's `alt` text.
 
 The plugin never writes text of its own, because only your page knows its language. If you build the dots with JavaScript, put a template on the dots element. The plugin fills in the slide numbers and adds the text as visually hidden text, which browser translation can reach:
 

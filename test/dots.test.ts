@@ -243,6 +243,28 @@ test('gives a dot that was replaced its own markup back', async () => {
   expect(replaced.childNodes).toHaveLength(0)
 })
 
+test('keeps the name of a dot that shows only an image with alt text', async () => {
+  const { buttons } = createCarousel({
+    slideCount: 2,
+    slideWidth: '100%',
+    dotsAttributes: germanTemplate,
+    plugins: ({ dots }) => [emblaA11y({ label: 'Products', dots })]
+  })
+  const imageDots = ['Bild 1', 'Bild 2'].map((alt) => {
+    const dot = document.createElement('button')
+    dot.type = 'button'
+    const image = document.createElement('img')
+    image.alt = alt
+    dot.append(image)
+    return dot
+  })
+
+  buttons.dots.replaceChildren(...imageDots)
+
+  await expect.element(page.getByRole('button', { name: 'Bild 1', exact: true })).toBeVisible()
+  expect(imageDots.map((dot) => dot.querySelector('span'))).toEqual([null, null])
+})
+
 test('restores the dots on destroy', () => {
   const { buttons, emblaApi } = createCarousel({
     slideCount: 2,
