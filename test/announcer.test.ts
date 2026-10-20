@@ -90,6 +90,52 @@ test('stays silent on automatic moves after a cancelled touch', async () => {
   expect(announcer.textContent).toBe('')
 })
 
+test('announces the text from announcement when the markup has no template', async () => {
+  const announcer = createAnnouncer({})
+  const { buttons, emblaApi } = createCarousel({
+    slideCount: 3,
+    slideWidth: '100%',
+    plugins: ({ previous, next }) => [
+      emblaA11y({
+        label: 'Products',
+        previousButton: previous,
+        nextButton: next,
+        announcer,
+        announcement: (first, last, total) => `Folien ${first} bis ${last} von ${total}`
+      })
+    ]
+  })
+  buttons.next.addEventListener('click', () => emblaApi.goToNext(true))
+
+  buttons.next.click()
+  await new Promise((resolve) => setTimeout(resolve, 50))
+
+  expect(announcer.textContent).toBe('Folien 2 bis 2 von 3')
+})
+
+test('prefers the template from the markup over announcement', async () => {
+  const announcer = createAnnouncer({ 'data-announcement': 'Folie {first} von {total}' })
+  const { buttons, emblaApi } = createCarousel({
+    slideCount: 3,
+    slideWidth: '100%',
+    plugins: ({ previous, next }) => [
+      emblaA11y({
+        label: 'Products',
+        previousButton: previous,
+        nextButton: next,
+        announcer,
+        announcement: () => 'Ignoriert'
+      })
+    ]
+  })
+  buttons.next.addEventListener('click', () => emblaApi.goToNext(true))
+
+  buttons.next.click()
+  await new Promise((resolve) => setTimeout(resolve, 50))
+
+  expect(announcer.textContent).toBe('Folie 2 von 3')
+})
+
 test('warns when the announcer has no text', () => {
   const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
   const announcer = createAnnouncer({})

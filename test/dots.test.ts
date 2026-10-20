@@ -27,6 +27,38 @@ test('names dots with the template from the markup', async () => {
   await expect.element(page.getByRole('button', { name: 'Folien 3 bis 4' })).toBeVisible()
 })
 
+test('names dots with dotLabel when the markup has no template', async () => {
+  createCarousel({
+    slideCount: 4,
+    slideWidth: '50%',
+    options: { slidesToScroll: 2 },
+    dotTexts: ['', ''],
+    plugins: ({ dots }) => [
+      emblaA11y({
+        label: 'Products',
+        dots,
+        dotLabel: (first, last) => `Folien ${first} bis ${last}`
+      })
+    ]
+  })
+
+  await expect.element(page.getByRole('button', { name: 'Folien 1 bis 2' })).toBeVisible()
+  await expect.element(page.getByRole('button', { name: 'Folien 3 bis 4' })).toBeVisible()
+})
+
+test('prefers the template from the markup over dotLabel', async () => {
+  createCarousel({
+    slideCount: 4,
+    slideWidth: '50%',
+    options: { slidesToScroll: 2 },
+    dotTexts: ['', ''],
+    dotsAttributes: germanTemplate,
+    plugins: ({ dots }) => [emblaA11y({ label: 'Products', dots, dotLabel: () => 'Ignoriert' })]
+  })
+
+  await expect.element(page.getByRole('button', { name: 'Folien 1 bis 2' })).toBeVisible()
+})
+
 test('names no dot and warns when there is no text, template or option', () => {
   const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
   const { buttons } = createCarousel({

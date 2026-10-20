@@ -35,6 +35,55 @@ test('takes the rotation button texts from the markup', async () => {
   await expect.element(page.getByRole('button', { name: 'Rotation starten' })).toBeVisible()
 })
 
+test('names the rotation button with rotationLabel and gives its text back on destroy', async () => {
+  const rotationButton = createRotationButton('Pause')
+  const { emblaApi } = createCarousel({
+    slideCount: 3,
+    slideWidth: '100%',
+    plugins: [
+      Autoplay({ delay: 1000 }),
+      emblaA11y({
+        label: 'Products',
+        rotationButton,
+        rotationLabel: (playing) => (playing ? 'Rotation stoppen' : 'Rotation starten')
+      })
+    ]
+  })
+  emblaApi.plugins().autoplay?.play()
+
+  await expect.element(page.getByRole('button', { name: 'Rotation stoppen' })).toBeVisible()
+
+  await page.getByRole('button', { name: 'Rotation stoppen' }).click()
+
+  await expect.element(page.getByRole('button', { name: 'Rotation starten' })).toBeVisible()
+
+  emblaApi.destroy()
+
+  expect(rotationButton.textContent).toBe('Pause')
+})
+
+test('writes rotationLabel into the element marked with data-rotation-label', async () => {
+  const rotationButton = createRotationButton(
+    '<svg aria-hidden="true"></svg><span data-rotation-label>Pause</span>'
+  )
+  const { emblaApi } = createCarousel({
+    slideCount: 3,
+    slideWidth: '100%',
+    plugins: [
+      Autoplay({ delay: 1000 }),
+      emblaA11y({
+        label: 'Products',
+        rotationButton,
+        rotationLabel: (playing) => (playing ? 'Rotation stoppen' : 'Rotation starten')
+      })
+    ]
+  })
+  emblaApi.plugins().autoplay?.play()
+
+  await expect.element(page.getByRole('button', { name: 'Rotation stoppen' })).toBeVisible()
+  expect(rotationButton.querySelector('svg')).not.toBeNull()
+})
+
 test('keeps the markup texts of the rotation button on destroy', () => {
   const rotationButton = createRotationButton(
     '<span data-rotation-playing>Rotation stoppen</span><span data-rotation-stopped hidden>Rotation starten</span>'

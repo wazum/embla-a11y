@@ -6,6 +6,17 @@ import { attributesOf, createCarousel, removeCarousels } from './fixture.js'
 afterEach(() => {
   removeCarousels()
   vi.restoreAllMocks()
+  emblaA11y.globalOptions = undefined
+})
+
+test('takes options from globalOptions, and options per carousel win', async () => {
+  emblaA11y.globalOptions = { label: 'Featured products' }
+
+  createCarousel({ plugins: [emblaA11y()] })
+  createCarousel({ plugins: [emblaA11y({ label: 'New arrivals' })] })
+
+  await expect.element(page.getByRole('region', { name: 'Featured products' })).toBeVisible()
+  await expect.element(page.getByRole('region', { name: 'New arrivals' })).toBeVisible()
 })
 
 test('names the region after a visible heading', async () => {
