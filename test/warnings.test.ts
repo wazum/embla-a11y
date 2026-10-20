@@ -85,7 +85,12 @@ const setups = [
   },
   {
     warning: 'without a rotation button',
-    create: () => createCarousel({ plugins: [Autoplay(), emblaA11y({ label: 'Products' })] })
+    create: () =>
+      createCarousel({
+        slideCount: 3,
+        slideWidth: '100%',
+        plugins: [Autoplay(), emblaA11y({ label: 'Products' })]
+      })
   }
 ]
 

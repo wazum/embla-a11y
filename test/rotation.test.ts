@@ -362,6 +362,18 @@ test('does not warn about a missing rotation button when there is one', async ()
   expect(rotationWarnings(warn.mock.calls)).toEqual([])
 })
 
+test('does not warn about a missing rotation button while everything fits in one view', async () => {
+  const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+  createCarousel({
+    slideCount: 3,
+    slideWidth: '20%',
+    plugins: [Autoplay({ delay: 1000 }), emblaA11y({ label: 'Products' })]
+  })
+  await new Promise((resolve) => setTimeout(resolve, 50))
+
+  expect(rotationWarnings(warn.mock.calls)).toEqual([])
+})
+
 test('does not warn about a missing rotation button without Autoplay or AutoScroll', async () => {
   const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
   createCarousel({

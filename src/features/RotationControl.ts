@@ -172,7 +172,7 @@ export class RotationControl implements Feature {
   }
 
   private warnWithoutButton(): void {
-    if (this.button !== null || this.rotations().length === 0) return
+    if (this.button !== null || !this.hasSomethingToRotate()) return
     this.warn(
       'Autoplay or AutoScroll runs without a rotation button. Screen reader users who read without moving focus cannot stop it. Pass rotationButton.'
     )
