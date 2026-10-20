@@ -120,8 +120,13 @@ export class DotButtons implements Feature {
     pages: number
   ): string | null {
     const single = this.container.getAttribute('data-dot-label')
-    const group = this.container.getAttribute('data-dot-label-group') ?? single
-    const template = firstSlide === lastSlide ? single : group
+    const ownGroup = this.container.getAttribute('data-dot-label-group')
+    const template = firstSlide === lastSlide ? single : (ownGroup ?? single)
+    if (firstSlide !== lastSlide && ownGroup === null && single !== null) {
+      this.warn(
+        'a dot shows several slides, but the dots element has only a data-dot-label template for one, so the dot is named after the first slide. Add a data-dot-label-group template such as "Slides {first} to {last}".'
+      )
+    }
     if (template !== null) {
       return template
         .replaceAll('{first}', String(firstSlide))

@@ -149,6 +149,25 @@ test('fills in the page and the number of pages', async () => {
   await expect.poll(() => announcer.textContent).toBe('Seite 2 von 3')
 })
 
+test('warns when several slides on screen are announced with the template for one', async () => {
+  const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+  const announcer = createAnnouncer({ 'data-announcement': 'Folie {first} von {total}' })
+  const { buttons, emblaApi } = createCarousel({
+    slideCount: 6,
+    slideWidth: '50%',
+    options: { slidesToScroll: 'auto' },
+    plugins: ({ previous, next }) => [
+      emblaA11y({ label: 'Products', previousButton: previous, nextButton: next, announcer })
+    ]
+  })
+  buttons.next.addEventListener('click', () => emblaApi.goToNext(true))
+
+  buttons.next.click()
+
+  await expect.poll(() => announcer.textContent).toBe('Folie 3 von 6')
+  expect(warn).toHaveBeenCalledWith(expect.stringContaining('data-announcement-group'))
+})
+
 test('passes the page and the number of pages to announcement', async () => {
   const announcement = vi.fn<AnnouncementType>((first, last) => `${first}-${last}`)
   const announcer = createAnnouncer({})

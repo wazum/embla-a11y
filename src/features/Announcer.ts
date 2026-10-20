@@ -184,8 +184,14 @@ export class Announcer implements Feature {
 
   private templateFor(slides: number[]): string | null {
     const single = this.element.getAttribute('data-announcement')
-    const group = this.element.getAttribute('data-announcement-group') ?? single
+    const ownGroup = this.element.getAttribute('data-announcement-group')
+    const group = ownGroup ?? single
     if (slides.length === 1) return single ?? group
+    if (ownGroup === null && single !== null) {
+      this.warn(
+        'several slides are on screen, but the announcer has only a data-announcement template for one, so it names only the first slide. Add a data-announcement-group template such as "Slides {first} to {last} of {total}".'
+      )
+    }
     if (!wrapsAround(slides)) return group
     const wrapped = this.element.getAttribute('data-announcement-wrapped')
     if (wrapped !== null) return wrapped

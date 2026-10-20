@@ -46,6 +46,21 @@ test('names dots with dotLabel when the markup has no template', async () => {
   await expect.element(page.getByRole('button', { name: 'Folien 3 bis 4' })).toBeVisible()
 })
 
+test('warns when dots for several slides are named with the template for one', async () => {
+  const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+  createCarousel({
+    slideCount: 4,
+    slideWidth: '50%',
+    options: { slidesToScroll: 2 },
+    dotTexts: ['', ''],
+    dotsAttributes: { 'data-dot-label': 'Folie {first}' },
+    plugins: ({ dots }) => [emblaA11y({ label: 'Products', dots })]
+  })
+
+  await expect.element(page.getByRole('button', { name: 'Folie 1' })).toBeVisible()
+  expect(warn).toHaveBeenCalledWith(expect.stringContaining('data-dot-label-group'))
+})
+
 test('fills in the page and the number of pages in dot names', async () => {
   createCarousel({
     slideCount: 4,
