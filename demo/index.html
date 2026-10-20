@@ -212,8 +212,28 @@
           </ul>
         </aside>
 
+        <nav class="demo-index" aria-labelledby="demo-index-heading">
+          <h3 id="demo-index-heading">Jump to a demo</h3>
+          <p>The next <kbd>Tab</kbd> continues inside the demo you pick.</p>
+          <ul role="list">
+            <li><a href="#basics">Basics</a></li>
+            <li><a href="#peek">Partly visible slides</a></li>
+            <li><a href="#groups">Scroll by view</a></li>
+            <li><a href="#loop">Loop</a></li>
+            <li><a href="#autoplay">Autoplay</a></li>
+            <li><a href="#auto-scroll">AutoScroll</a></li>
+            <li><a href="#fade">Fade</a></li>
+            <li><a href="#focus-rescue">Removing slides</a></li>
+            <li><a href="#every-slide">Every slide reachable</a></li>
+            <li><a href="#vertical">Vertical</a></li>
+            <li>
+              <a href="#german">German: <span lang="de">Städte in Europa</span></a>
+            </li>
+          </ul>
+        </nav>
+
         <ul class="demos__list" role="list">
-          <li class="demo demo--sky" id="basics">
+          <li tabindex="-1" class="demo demo--sky" id="basics">
             <section class="carousel" aria-labelledby="basics-heading" data-demo="basics">
               <header class="carousel__header">
                 <h3 id="basics-heading">Basics</h3>
@@ -292,7 +312,7 @@
             </div>
           </li>
 
-          <li class="demo demo--sage" id="peek">
+          <li tabindex="-1" class="demo demo--sage" id="peek">
             <section
               class="carousel carousel--peek"
               aria-labelledby="peek-heading"
@@ -374,7 +394,7 @@
             </div>
           </li>
 
-          <li class="demo demo--sand" id="groups">
+          <li tabindex="-1" class="demo demo--sand" id="groups">
             <section class="carousel" aria-labelledby="groups-heading" data-demo="groups">
               <header class="carousel__header">
                 <h3 id="groups-heading">Scroll by view</h3>
@@ -440,7 +460,7 @@
             </div>
           </li>
 
-          <li class="demo demo--slate" id="loop">
+          <li tabindex="-1" class="demo demo--slate" id="loop">
             <section class="carousel" aria-labelledby="loop-heading" data-demo="loop">
               <header class="carousel__header">
                 <h3 id="loop-heading">Loop</h3>
@@ -508,7 +528,7 @@
             </div>
           </li>
 
-          <li class="demo demo--mist" id="autoplay">
+          <li tabindex="-1" class="demo demo--mist" id="autoplay">
             <section class="carousel" aria-labelledby="autoplay-heading" data-demo="autoplay">
               <header class="carousel__header">
                 <h3 id="autoplay-heading">Autoplay</h3>
@@ -593,7 +613,7 @@
             </div>
           </li>
 
-          <li class="demo demo--stone" id="auto-scroll">
+          <li tabindex="-1" class="demo demo--stone" id="auto-scroll">
             <section class="carousel" aria-labelledby="auto-scroll-heading" data-demo="auto-scroll">
               <header class="carousel__header">
                 <h3 id="auto-scroll-heading">AutoScroll</h3>
@@ -643,7 +663,7 @@
             </div>
           </li>
 
-          <li class="demo demo--sky" id="fade">
+          <li tabindex="-1" class="demo demo--sky" id="fade">
             <section
               class="carousel carousel--single"
               aria-labelledby="fade-heading"
@@ -712,7 +732,7 @@
             </div>
           </li>
 
-          <li class="demo demo--sage" id="focus-rescue">
+          <li tabindex="-1" class="demo demo--sage" id="focus-rescue">
             <section
               class="carousel"
               aria-labelledby="focus-rescue-heading"
@@ -787,7 +807,7 @@
             </div>
           </li>
 
-          <li class="demo demo--sand" id="every-slide">
+          <li tabindex="-1" class="demo demo--sand" id="every-slide">
             <a class="skip-link skip-link--inline" href="#after-every-slide"
               >Skip past the every-slide demo</a
             >
@@ -865,7 +885,7 @@
             </div>
           </li>
 
-          <li class="demo demo--slate" id="vertical">
+          <li tabindex="-1" class="demo demo--slate" id="vertical">
             <section
               class="carousel carousel--vertical"
               aria-labelledby="vertical-heading"
@@ -919,7 +939,7 @@
               <p>The same features on the vertical axis.</p>
               <h4>Try it</h4>
               <ul class="demo__steps">
-                <li><kbd>Tab</kbd> through the Save buttons: the slides move up into view.</li>
+                <li>Press Next: the slides move up, and you hear the new position.</li>
                 <li>Press Next until the end: Next becomes unavailable and keeps focus.</li>
               </ul>
               <p class="demo__more">
@@ -931,7 +951,7 @@
             </div>
           </li>
 
-          <li class="demo demo--mist" id="german">
+          <li tabindex="-1" class="demo demo--mist" id="german">
             <section class="carousel" lang="de" aria-labelledby="german-heading" data-demo="german">
               <header class="carousel__header">
                 <h3 id="german-heading">Städte in Europa</h3>

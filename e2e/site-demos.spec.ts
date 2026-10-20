@@ -20,6 +20,34 @@ test.beforeEach(async ({ page }) => {
   await expect(page.locator('.carousel__dot').first()).toBeAttached()
 })
 
+test.describe('Jump to a demo', () => {
+  test('the next Tab continues inside the demo you picked', async ({ page }) => {
+    const index = page.getByRole('navigation', { name: 'Jump to a demo' })
+
+    await index.getByRole('link', { name: 'Every slide reachable' }).click()
+
+    await expect(page.locator('#every-slide')).toBeFocused()
+    await page.keyboard.press('Tab')
+    await expect(page.getByRole('link', { name: 'Skip past the every-slide demo' })).toBeFocused()
+    await page.keyboard.press('Tab')
+    await expect(
+      page.locator('#every-slide').getByRole('button', { name: 'Save Vienna', exact: true })
+    ).toBeFocused()
+  })
+
+  test('lists every demo', async ({ page }) => {
+    const targets = await page
+      .getByRole('navigation', { name: 'Jump to a demo' })
+      .getByRole('link')
+      .evaluateAll((links) => links.map((link) => link.getAttribute('href')))
+    const demos = await page
+      .locator('.demo')
+      .evaluateAll((cards) => cards.map((card) => `#${card.id}`))
+
+    expect(targets).toEqual(demos)
+  })
+})
+
 test.describe('Basics', () => {
   test('Next becomes unavailable at the end and keeps focus', async ({ page }) => {
     const demo = page.locator('#basics')
@@ -410,15 +438,17 @@ test.describe('Every slide reachable', () => {
 })
 
 test.describe('Vertical', () => {
-  test('Tab brings each slide into view', async ({ page }) => {
+  test('Next moves the slides up and announces the position', async ({ page }) => {
     const demo = page.locator('#vertical')
-    await demo.getByRole('button', { name: 'Save Vienna', exact: true }).focus()
+    await expect(demo.locator('.slide').nth(2)).toHaveAttribute('inert')
 
-    for (const city of ['Berlin', 'Paris', 'Rome']) {
-      await page.keyboard.press('Tab')
-      await expect(demo.getByRole('button', { name: `Save ${city}`, exact: true })).toBeFocused()
-      await expect.poll(() => focusedSlideFullyVisible(page)).toBe(true)
-    }
+    await demo.getByRole('button', { name: 'Next', exact: true }).click()
+
+    await expect.poll(() => visibleSlides(demo)).toContain(3)
+    await expect(demo.locator('.carousel__announcer')).toHaveText(
+      /^Slides? \d+( to \d+)? of 10$/,
+      afterSettle
+    )
   })
 
   test('Next becomes unavailable at the end and keeps focus', async ({ page }) => {

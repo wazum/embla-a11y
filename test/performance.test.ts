@@ -26,7 +26,7 @@ test('ignores changes that cannot affect the focused element', async () => {
   expect(check).not.toHaveBeenCalled()
 })
 
-test('measures the viewport once per pass while hiding off-screen slides', () => {
+test('measures the viewport once per pass while hiding off-screen slides', async () => {
   const { slides, emblaApi } = createCarousel({
     slideCount: 20,
     plugins: [emblaA11y({ label: 'Products' })]
@@ -36,6 +36,7 @@ test('measures the viewport once per pass while hiding off-screen slides', () =>
   measure.mockClear()
 
   emblaApi.goTo(10, true)
+  await new Promise((resolve) => requestAnimationFrame(resolve))
 
   const viewportReads = measure.mock.contexts.filter((element) => element === viewport).length
   const slideReads = measure.mock.contexts.filter((element) =>
