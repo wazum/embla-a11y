@@ -83,7 +83,14 @@ function emblaA11y(userOptions: EmblaA11yOptionsType = {}): EmblaA11yType {
     if (!options.active) return
 
     const viewport = emblaApi.rootNode()
-    const area = carouselArea(viewport, warn)
+    const controls = [
+      options.previousButton,
+      options.nextButton,
+      options.dots,
+      options.announcer,
+      options.rotationButton
+    ].filter((control) => control !== null)
+    const area = carouselArea(viewport, controls, warn)
     features = [
       new Region(area, options, warn),
       new SlideList(emblaApi, warn),
@@ -116,14 +123,35 @@ function emblaA11y(userOptions: EmblaA11yOptionsType = {}): EmblaA11yType {
 
 emblaA11y.globalOptions = undefined as EmblaA11yOptionsType | undefined
 
-function carouselArea(viewport: HTMLElement, warn: WarnType): HTMLElement {
+function carouselArea(viewport: HTMLElement, controls: HTMLElement[], warn: WarnType): HTMLElement {
   const parent = viewport.parentElement
   if (parent === null) return viewport
-  if (parent !== viewport.ownerDocument.body) return parent
-  warn(
-    'there is no element around the viewport, so the plugin uses the viewport as the carousel area. Wrap the viewport and its buttons in a <section> named by a heading.'
+  if (isOffLimits(parent)) {
+    warn(
+      'there is no element around the viewport, so the plugin uses the viewport as the carousel area. Wrap the viewport and its buttons in a <section> named by a heading.'
+    )
+    return viewport
+  }
+  let area = parent
+  while (!controls.every((control) => area.contains(control))) {
+    const next = area.parentElement
+    if (next === null || isOffLimits(next)) {
+      warn(
+        'a control is outside the carousel, so it is not part of the region, and pressing it does not stop Autoplay. Put the viewport and all its controls in one element, ideally a <section> named by a heading.'
+      )
+      return parent
+    }
+    area = next
+  }
+  return area
+}
+
+function isOffLimits(element: HTMLElement): boolean {
+  return (
+    element === element.ownerDocument.body ||
+    element.hasAttribute('role') ||
+    ['main', 'nav', 'header', 'footer', 'aside', 'form'].includes(element.localName)
   )
-  return viewport
 }
 
 export default emblaA11y

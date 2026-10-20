@@ -66,7 +66,10 @@ dots.querySelectorAll('button').forEach((dot, index) => {
 })
 ```
 
-The plugin treats the element around the viewport as the carousel. It becomes the region, and focus or a press inside it stops Autoplay. Keep the viewport and all its buttons in one wrapper, like the `<section>` above. If the viewport sits directly in `<body>`, the plugin uses the viewport itself and warns in the console.
+The plugin treats the smallest element around the viewport and all the controls you pass as the carousel. It becomes the region, and focus or a press inside it stops Autoplay. Keep the viewport and all its controls in one wrapper, like the `<section>` above. The plugin never takes over `<body>` or a landmark such as `<main>`: then it uses the viewport or its parent, and warns in the console.
+
+> [!IMPORTANT]
+> Keep the browser console open while you build the carousel. When your markup or options keep the plugin from making the carousel accessible, for example a missing name, a dot without text or Autoplay without a stop button, it warns there once per carousel and says how to fix it. It never fails silently, and it never fills the gap with English text of its own.
 
 With Embla 8.6 the methods are `scrollPrev`, `scrollNext` and `scrollTo`. You keep your own click handlers; the plugin never moves the carousel on a click. With other Embla plugins, list `emblaA11y` last ([why](guide/features.md#focus-brings-its-slide-into-view)).
 

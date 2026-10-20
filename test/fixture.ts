@@ -6,6 +6,7 @@ import EmblaCarousel, {
 import { asEmblaV9 } from '../src/compat/emblaV8.js'
 
 const carousels: EmblaCarouselType[] = []
+const stagedControls: HTMLElement[] = []
 
 type ButtonsType = { previous: HTMLButtonElement; next: HTMLButtonElement; dots: HTMLElement }
 
@@ -28,13 +29,14 @@ export function createCarousel({
   dotsAttributes = {},
   list = false,
   slideTag = list ? 'li' : 'div',
-  slideAttributes = {}
+  slideAttributes = {},
+  viewportWrapper = false
 }: {
   slideCount?: number
   slideWidth?: string
   options?: EmblaOptionsType
   plugins?: EmblaPluginType[] | ((buttons: ButtonsType) => EmblaPluginType[])
-  wrapperTag?: 'div' | 'section' | null
+  wrapperTag?: 'div' | 'section' | 'main' | null
   wrapperAttributes?: Record<string, string>
   heading?: { id: string; text: string }
   dotTexts?: string[]
@@ -42,6 +44,7 @@ export function createCarousel({
   list?: boolean
   slideTag?: 'div' | 'li' | 'article'
   slideAttributes?: Record<string, string>
+  viewportWrapper?: boolean
 } = {}): CarouselFixture {
   const wrapper = wrapperTag === null ? document.body : document.createElement(wrapperTag)
   for (const [name, value] of Object.entries(wrapperAttributes)) wrapper.setAttribute(name, value)
@@ -74,7 +77,9 @@ export function createCarousel({
   for (const [name, value] of Object.entries(dotsAttributes)) dots.setAttribute(name, value)
   dots.append(...dotTexts.map((text) => createButton(text)))
   const buttons = { previous: createButton('Previous'), next: createButton('Next'), dots }
-  wrapper.append(viewport, buttons.previous, buttons.next, dots)
+  const viewportBlock = viewportWrapper ? document.createElement('div') : viewport
+  if (viewportBlock !== viewport) viewportBlock.append(viewport)
+  wrapper.append(viewportBlock, buttons.previous, buttons.next, dots, ...stagedControls.splice(0))
   if (wrapper !== document.body) document.body.append(wrapper)
 
   const emblaApi = asEmblaV9(
@@ -89,7 +94,13 @@ export function attributesOf(element: Element): Record<string, string> {
   return Object.fromEntries(Array.from(element.attributes, ({ name, value }) => [name, value]))
 }
 
+export function stageControl<Control extends HTMLElement>(control: Control): Control {
+  stagedControls.push(control)
+  return control
+}
+
 export function removeCarousels(): void {
+  stagedControls.length = 0
   for (const emblaApi of carousels.splice(0)) emblaApi.destroy()
   document.body.replaceChildren()
 }

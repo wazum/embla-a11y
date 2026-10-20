@@ -2,7 +2,7 @@ import Autoplay from 'embla-carousel-autoplay'
 import { afterEach, expect, test, vi } from 'vitest'
 import { page } from 'vitest/browser'
 import emblaA11y from '../src/index.js'
-import { createCarousel, removeCarousels } from './fixture.js'
+import { createCarousel, removeCarousels, stageControl } from './fixture.js'
 
 afterEach(() => {
   removeCarousels()
@@ -13,8 +13,7 @@ function createRotationButton(html: string): HTMLButtonElement {
   const button = document.createElement('button')
   button.type = 'button'
   button.innerHTML = html
-  document.body.append(button)
-  return button
+  return stageControl(button)
 }
 
 test('takes the rotation button texts from the markup', async () => {
@@ -158,6 +157,24 @@ test('warns once when Autoplay runs without a rotation button, also after a reIn
 
   expect(warn).toHaveBeenCalledOnce()
   expect(warn).toHaveBeenCalledWith(expect.stringContaining('without a rotation button'))
+})
+
+test('stops for good on a press on Next outside an extra wrapper around the viewport', async () => {
+  const { buttons, emblaApi } = createCarousel({
+    viewportWrapper: true,
+    slideCount: 3,
+    slideWidth: '100%',
+    plugins: ({ previous, next }) => [
+      Autoplay({ delay: 1000 }),
+      emblaA11y({ label: 'Products', previousButton: previous, nextButton: next })
+    ]
+  })
+  emblaApi.plugins().autoplay?.play()
+  await new Promise((resolve) => setTimeout(resolve, 50))
+
+  await page.elementLocator(buttons.next).click()
+
+  expect(emblaApi.plugins().autoplay?.isPlaying()).toBe(false)
 })
 
 test('keeps rotating on a press outside the viewport when the viewport has no wrapper', async () => {

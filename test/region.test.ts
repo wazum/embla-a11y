@@ -66,6 +66,46 @@ test('makes a div the author named a region, and takes the role back on destroy'
   expect(wrapper.getAttribute('aria-labelledby')).toBe('products-heading')
 })
 
+test('finds the carousel around the viewport and its controls through an extra wrapper', async () => {
+  const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+  createCarousel({
+    wrapperTag: 'section',
+    wrapperAttributes: { 'aria-labelledby': 'products-heading' },
+    heading: { id: 'products-heading', text: 'Featured products' },
+    viewportWrapper: true,
+    plugins: ({ previous, next }) => [emblaA11y({ previousButton: previous, nextButton: next })]
+  })
+
+  await expect.element(page.getByRole('region', { name: 'Featured products' })).toBeVisible()
+  expect(page.getByRole('region').elements()).toHaveLength(1)
+  expect(warn).not.toHaveBeenCalled()
+})
+
+test('stays with the element around the viewport and warns when a control is outside the carousel', () => {
+  const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+  const announcer = document.createElement('p')
+  announcer.setAttribute('data-announcement', 'Slide {first} of {total}')
+  document.body.append(announcer)
+
+  const { wrapper } = createCarousel({ plugins: [emblaA11y({ label: 'Products', announcer })] })
+
+  expect(wrapper.getAttribute('role')).toBe('region')
+  expect(attributesOf(document.body)).toEqual({})
+  expect(warn).toHaveBeenCalledWith(expect.stringContaining('outside the carousel'))
+})
+
+test('leaves a landmark alone when the viewport sits directly in it', () => {
+  const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
+  const { wrapper } = createCarousel({
+    wrapperTag: 'main',
+    plugins: [emblaA11y({ label: 'Products' })]
+  })
+
+  expect(attributesOf(wrapper)).toEqual({})
+  expect(warn).toHaveBeenCalledWith(expect.stringContaining('no element around the viewport'))
+})
+
 test('leaves the body alone and warns when the viewport has no wrapper', () => {
   const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
 

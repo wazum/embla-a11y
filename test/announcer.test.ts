@@ -1,6 +1,6 @@
 import { afterEach, expect, test, vi } from 'vitest'
 import emblaA11y from '../src/index.js'
-import { createCarousel, removeCarousels } from './fixture.js'
+import { createCarousel, removeCarousels, stageControl } from './fixture.js'
 
 afterEach(() => {
   removeCarousels()
@@ -11,8 +11,7 @@ function createAnnouncer(attributes: Record<string, string>): HTMLElement {
   const announcer = document.createElement('p')
   announcer.setAttribute('aria-live', 'polite')
   for (const [name, value] of Object.entries(attributes)) announcer.setAttribute(name, value)
-  document.body.append(announcer)
-  return announcer
+  return stageControl(announcer)
 }
 
 test('leaves the announcer as it was on destroy', async () => {
@@ -26,8 +25,7 @@ test('leaves the announcer as it was on destroy', async () => {
   })
   buttons.next.addEventListener('click', () => emblaApi.goToNext(true))
   buttons.next.click()
-  await new Promise((resolve) => setTimeout(resolve, 50))
-  expect(announcer.textContent).toBe('Folie 2 von 3')
+  await expect.poll(() => announcer.textContent).toBe('Folie 2 von 3')
 
   emblaApi.destroy()
 

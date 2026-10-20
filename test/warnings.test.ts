@@ -1,7 +1,7 @@
 import Autoplay from 'embla-carousel-autoplay'
 import { afterEach, expect, test, vi } from 'vitest'
 import emblaA11y from '../src/index.js'
-import { createCarousel, removeCarousels } from './fixture.js'
+import { createCarousel, removeCarousels, stageControl } from './fixture.js'
 
 afterEach(() => {
   removeCarousels()
@@ -11,8 +11,7 @@ afterEach(() => {
 function createElement(tag: string, text: string): HTMLElement {
   const element = document.createElement(tag)
   element.textContent = text
-  document.body.append(element)
-  return element
+  return stageControl(element)
 }
 
 const setups = [
