@@ -11,6 +11,19 @@ const allLevels = [
   'best-practice'
 ]
 
+test('the demo site logs no warnings or errors', async ({ page }) => {
+  const messages: string[] = []
+  page.on('console', (message) => {
+    if (message.type() === 'warning' || message.type() === 'error') messages.push(message.text())
+  })
+  page.on('pageerror', (error) => messages.push(error.message))
+
+  await page.goto('/demo/index.html')
+  await expect(page.locator('.carousel__dot').first()).toBeAttached()
+
+  expect(messages).toEqual([])
+})
+
 for (const colorScheme of ['light', 'dark'] as const) {
   test(`the demo site has no axe violations up to AAA in ${colorScheme} mode`, async ({ page }) => {
     test.slow()

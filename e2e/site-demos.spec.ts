@@ -2,6 +2,19 @@ import { expect, test, type Locator, type Page } from '@playwright/test'
 
 const afterSettle = { timeout: 10_000 }
 
+const cities = [
+  'Vienna',
+  'Berlin',
+  'Paris',
+  'Rome',
+  'Madrid',
+  'Lisbon',
+  'Amsterdam',
+  'Prague',
+  'Budapest',
+  'Athens'
+]
+
 test.beforeEach(async ({ page }) => {
   await page.goto('/demo/index.html')
   await expect(page.locator('.carousel__dot').first()).toBeAttached()
@@ -44,6 +57,14 @@ test.describe('Basics', () => {
     await expect(page.locator('#basics .carousel__dot[aria-current="true"]')).toHaveCount(1)
     for (const name of await dots.allTextContents()) {
       expect(name).toMatch(/^Slides? \d+( to \d+)?$/)
+    }
+  })
+
+  test('skips off-screen slides but keeps the full count for screen readers', async ({ page }) => {
+    await expect(page.locator('#basics .slide[inert]').first()).toBeAttached()
+
+    for (const slide of await page.locator('#basics .slide').all()) {
+      await expect(slide).toHaveAttribute('aria-setsize', '10')
     }
   })
 
@@ -91,6 +112,31 @@ test.describe('Partly visible slides', () => {
 
     await expect(button).toHaveAttribute('aria-pressed', 'true')
     expect(await visibleSlides(demo)).toEqual(before)
+  })
+})
+
+test.describe('Partly visible slides, reading backwards', () => {
+  test('lands on the last slide you can see, not slide 10', async ({ page }) => {
+    const demo = page.locator('#peek')
+    const next = demo.getByRole('button', { name: 'Next', exact: true })
+    await next.focus()
+    for (let press = 0; press < 3; press++) {
+      await page.keyboard.press('Enter')
+      await page.waitForTimeout(150)
+    }
+    await expect(demo.locator('.carousel__announcer')).not.toBeEmpty(afterSettle)
+    const lastVisible = await demo
+      .locator('.slide:not([inert]) .slide__action')
+      .last()
+      .textContent()
+
+    await page.keyboard.press('Shift+Tab')
+    await page.keyboard.press('Shift+Tab')
+
+    const focused = await page.evaluate(() => document.activeElement?.textContent ?? '')
+    expect(focused).toBe(lastVisible)
+    expect(focused).not.toBe('Save Athens')
+    await expect.poll(() => focusedSlideFullyVisible(page)).toBe(true)
   })
 })
 
@@ -145,25 +191,17 @@ test.describe('Loop', () => {
     await expect(demo.locator('.carousel__announcer')).toHaveText(/of 10$/, afterSettle)
   })
 
-  test('Tab brings every slide into view, also across the seam', async ({ page }) => {
+  test('ten presses of Next lead back to Vienna', async ({ page }) => {
     const demo = page.locator('#loop')
-    await demo.getByRole('button', { name: 'Save Vienna', exact: true }).focus()
+    const next = demo.getByRole('button', { name: 'Next', exact: true })
+    await next.focus()
 
-    for (const city of [
-      'Berlin',
-      'Paris',
-      'Rome',
-      'Madrid',
-      'Lisbon',
-      'Amsterdam',
-      'Prague',
-      'Budapest',
-      'Athens'
-    ]) {
-      await page.keyboard.press('Tab')
-      await expect(demo.getByRole('button', { name: `Save ${city}`, exact: true })).toBeFocused()
-      await expect.poll(() => focusedSlideFullyVisible(page)).toBe(true)
+    for (let press = 0; press < 10; press++) {
+      await page.keyboard.press('Enter')
+      await page.waitForTimeout(150)
     }
+
+    await expect.poll(async () => (await visibleSlides(demo))[0], afterSettle).toBe(1)
   })
 })
 
@@ -255,15 +293,18 @@ test.describe('AutoScroll', () => {
 })
 
 test.describe('Fade', () => {
-  test('focus on a Save button fades its own slide in', async ({ page }) => {
+  test('focus never stays on a slide that is faded out', async ({ page }) => {
     const demo = page.locator('#fade')
     await demo.getByRole('button', { name: 'Save Vienna', exact: true }).focus()
 
-    await page.keyboard.press('Tab')
+    for (let press = 0; press < 10; press++) {
+      await page.keyboard.press('Tab')
+      const focusedSlide = demo.locator('.slide:has(.slide__action:focus)')
+      if ((await focusedSlide.count()) === 0) break
+      await expect.poll(() => opacity(focusedSlide)).toBe('1')
+    }
 
-    await expect(demo.getByRole('button', { name: 'Save Berlin', exact: true })).toBeFocused()
-    await expect.poll(() => opacity(demo.locator('.slide').nth(1))).toBe('1')
-    await expect.poll(() => opacity(demo.locator('.slide').nth(0))).toBe('0')
+    await expect(demo.getByRole('button', { name: 'Previous', exact: true })).toBeFocused()
   })
 
   test('Next announces the single slide', async ({ page }) => {
@@ -287,6 +328,13 @@ test.describe('Removing slides', () => {
 
   test('removing the last slide moves focus to the slide before', async ({ page }) => {
     const demo = page.locator('#focus-rescue')
+    const next = demo.getByRole('button', { name: 'Next', exact: true })
+    await next.focus()
+    for (let press = 0; press < 12; press++) {
+      if ((await next.getAttribute('aria-disabled')) === 'true') break
+      await page.keyboard.press('Enter')
+      await page.waitForTimeout(150)
+    }
     await demo.getByRole('button', { name: 'Remove Athens', exact: true }).focus()
 
     await page.keyboard.press('Enter')
@@ -313,43 +361,51 @@ test.describe('Removing slides', () => {
   })
 })
 
-test.describe('Hiding off-screen slides', () => {
+test.describe('Every slide reachable', () => {
   test('a skip link appears before the carousel and jumps past it', async ({ page }) => {
     await page.locator('#focus-rescue .demo__more a').focus()
 
     await page.keyboard.press('Tab')
 
-    const skipLink = page.getByRole('link', { name: 'Skip past the hidden-slides demo' })
+    const skipLink = page.getByRole('link', { name: 'Skip past the every-slide demo' })
     await expect(skipLink).toBeFocused()
     expect((await skipLink.boundingBox())?.width ?? 0).toBeGreaterThan(24)
     await page.keyboard.press('Enter')
-    await expect(page.locator('#after-hide-offscreen')).toBeFocused()
+    await expect(page.locator('#after-every-slide')).toBeFocused()
   })
 
-  test('Tab reaches only the slides on screen', async ({ page }) => {
-    const demo = page.locator('#hide-offscreen')
-    await expect(demo.locator('.slide[inert]').first()).toBeAttached()
-    await page.getByRole('link', { name: 'Skip past the hidden-slides demo' }).focus()
+  test('Tab brings every slide into view in turn', async ({ page }) => {
+    const demo = page.locator('#every-slide')
+    await demo.getByRole('button', { name: 'Save Vienna', exact: true }).focus()
 
-    const reached: string[] = []
-    for (let press = 0; press < 12; press++) {
+    for (const city of cities.slice(1)) {
       await page.keyboard.press('Tab')
-      if ((await demo.locator('.slide__action:focus').count()) === 0) break
+      await expect(demo.getByRole('button', { name: `Save ${city}`, exact: true })).toBeFocused()
       await expect.poll(() => focusedSlideFullyVisible(page)).toBe(true)
-      reached.push(await page.evaluate(() => document.activeElement?.textContent ?? ''))
     }
-
-    expect(reached.length).toBeGreaterThan(0)
-    expect(reached.length).toBeLessThan(10)
-    await expect(demo.getByRole('button', { name: 'Previous', exact: true })).toBeFocused()
   })
 
-  test('every slide keeps the full count for screen readers', async ({ page }) => {
-    const slides = page.locator('#hide-offscreen .slide')
-
-    for (const slide of await slides.all()) {
-      await expect(slide).toHaveAttribute('aria-setsize', '10')
+  test('reading backwards from the buttons jumps to slide 10', async ({ page }) => {
+    const demo = page.locator('#every-slide')
+    const next = demo.getByRole('button', { name: 'Next', exact: true })
+    await next.focus()
+    for (let press = 0; press < 3; press++) {
+      await page.keyboard.press('Enter')
+      await page.waitForTimeout(150)
     }
+
+    await page.keyboard.press('Shift+Tab')
+    await page.keyboard.press('Shift+Tab')
+
+    await expect(demo.getByRole('button', { name: 'Save Athens', exact: true })).toBeFocused()
+    await expect.poll(() => focusedSlideFullyVisible(page)).toBe(true)
+  })
+
+  test('hides no slide, so every heading is in the heading list', async ({ page }) => {
+    const region = page.getByRole('region', { name: 'Every slide reachable' })
+
+    await expect(page.locator('#every-slide .slide[inert]')).toHaveCount(0)
+    await expect(region.getByRole('heading', { level: 4 })).toHaveCount(10)
   })
 })
 

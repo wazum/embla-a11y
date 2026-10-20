@@ -27,7 +27,7 @@ const demos: Record<string, DemoType> = {
   'auto-scroll': { options: { loop: true }, plugins: () => [AutoScroll({ speed: 1 })] },
   fade: { plugins: () => [Fade()] },
   'focus-rescue': { slideAction: 'remove' },
-  'hide-offscreen': { hideOffscreen: true },
+  'every-slide': { hideOffscreen: false },
   vertical: { options: { axis: 'y' } },
   german: {}
 }
@@ -101,7 +101,7 @@ function setUp(carousel: HTMLElement): void {
     EmblaCarousel(viewport, { ...baseOptions, ...demo.options }, [
       ...(demo.plugins?.() ?? []),
       emblaA11y({
-        hideOffscreen: demo.hideOffscreen === true,
+        ...(demo.hideOffscreen === undefined ? {} : { hideOffscreen: demo.hideOffscreen }),
         previousButton: carousel.querySelector<HTMLElement>('.carousel__previous'),
         nextButton: carousel.querySelector<HTMLElement>('.carousel__next'),
         dots,

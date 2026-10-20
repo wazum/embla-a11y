@@ -131,10 +131,10 @@
             <p>Screen reader users find the carousel by its visible heading.</p>
           </li>
           <li class="feature feature--sage">
-            <h3>Every slide reachable</h3>
+            <h3>What you see is what you reach</h3>
             <p>
-              No slide is hidden from screen readers or the keyboard just because it is partly
-              off-screen.
+              Slides on screen, even partly, stay readable and reachable. Slides fully off-screen
+              are skipped until they come into view.
             </p>
           </li>
           <li class="feature feature--sand">
@@ -278,6 +278,10 @@
                 <li>
                   The current dot is marked as current, and every dot says which slides it shows.
                 </li>
+                <li>
+                  Slides fully off-screen are skipped. VoiceOver still says “list, 10 items”; NVDA
+                  counts only the slides on screen, for example “list, 2 items”.
+                </li>
               </ul>
               <p class="demo__more">
                 <a
@@ -353,6 +357,12 @@
                 <li>
                   Click a half-visible slide with the mouse: it does not jump away, so your click
                   lands where you pressed.
+                </li>
+                <li>
+                  Press Next three times, then move backwards past Previous with
+                  <kbd><kbd>Shift</kbd>+<kbd>Tab</kbd></kbd> or
+                  <kbd><kbd>VO</kbd>+<kbd>Left Arrow</kbd></kbd
+                  >: you land on the last slide you can see, not slide 10.
                 </li>
               </ul>
               <p class="demo__more">
@@ -485,8 +495,8 @@
                   where you are.
                 </li>
                 <li>
-                  <kbd>Tab</kbd> through all ten Save buttons: each slide comes into view in turn,
-                  also across the seam.
+                  Press Next ten times: after Athens comes Vienna again, and you are back where you
+                  started.
                 </li>
               </ul>
               <p class="demo__more">
@@ -688,8 +698,8 @@
               <h4>Try it</h4>
               <ul class="demo__steps">
                 <li>
-                  <kbd>Tab</kbd> into the slides: each Save button that gets focus fades its own
-                  slide in. Focus never sits on an invisible slide.
+                  <kbd>Tab</kbd> into the slides and on: focus never stays on a slide that is faded
+                  out.
                 </li>
                 <li>Press Next with a screen reader and you hear “Slide 2 of 10”.</li>
               </ul>
@@ -777,18 +787,14 @@
             </div>
           </li>
 
-          <li class="demo demo--sand" id="hide-offscreen">
-            <a class="skip-link skip-link--inline" href="#after-hide-offscreen"
-              >Skip past the hidden-slides demo</a
+          <li class="demo demo--sand" id="every-slide">
+            <a class="skip-link skip-link--inline" href="#after-every-slide"
+              >Skip past the every-slide demo</a
             >
-            <section
-              class="carousel carousel--whole"
-              aria-labelledby="hide-offscreen-heading"
-              data-demo="hide-offscreen"
-            >
+            <section class="carousel" aria-labelledby="every-slide-heading" data-demo="every-slide">
               <header class="carousel__header">
-                <h3 id="hide-offscreen-heading">Hiding off-screen slides</h3>
-                <p class="carousel__tag">Option</p>
+                <h3 id="every-slide-heading">Every slide reachable</h3>
+                <p class="carousel__tag"><code>hideOffscreen: false</code></p>
               </header>
               <div class="carousel__viewport">
                 <ul class="carousel__slides" role="list"></ul>
@@ -825,10 +831,12 @@
                 data-announcement-group="Slides {first} to {last} of {total}"
               ></p>
             </section>
-            <div class="demo__body" id="after-hide-offscreen" tabindex="-1">
+            <div class="demo__body" id="after-every-slide" tabindex="-1">
               <p>
-                With <code>hideOffscreen: true</code>, slides that are completely off-screen become
-                inert. Use it only when a long Tab sequence is the bigger problem.
+                The same slides, but none is ever hidden. Every city shows up in find-in-page and in
+                the heading and link lists. The price: the reading order runs through all ten
+                slides, so reading backwards from the buttons jumps to slide 10. Use it only for
+                carousels with a few slides.
               </p>
               <h4>Try it</h4>
               <ul class="demo__steps">
@@ -836,15 +844,22 @@
                   Press <kbd>Tab</kbd> before this demo: a skip link appears. It jumps past the
                   carousel.
                 </li>
-                <li><kbd>Tab</kbd> through: only the Save buttons on screen are Tab stops.</li>
                 <li>
-                  VoiceOver still says “list, 10 items”. NVDA counts only the slides on screen.
+                  <kbd>Tab</kbd> through all ten Save buttons: each slide comes into view in turn.
+                </li>
+                <li>
+                  Press Next three times, then <kbd><kbd>Shift</kbd>+<kbd>Tab</kbd></kbd> past
+                  Previous: you land on slide 10, and the carousel moves there.
+                </li>
+                <li>
+                  Search the page for “Athens”, or open the heading list: slide 10 is there. Both
+                  VoiceOver and NVDA say “list, 10 items”.
                 </li>
               </ul>
               <p class="demo__more">
                 <a
-                  href="https://github.com/wazum/embla-a11y/blob/main/guide/features.md#hiding-slides-that-are-off-screen"
-                  >Guide: hiding slides that are off-screen</a
+                  href="https://github.com/wazum/embla-a11y/blob/main/guide/features.md#keeping-every-slide-reachable"
+                  >Guide: keeping every slide reachable</a
                 >
               </p>
             </div>
