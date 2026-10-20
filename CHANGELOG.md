@@ -42,3 +42,8 @@ The first release. Works with Embla Carousel 8.6 and 9, in Chrome and Edge 110, 
 - On destroy, every attribute and text goes back to what you wrote.
 - `active`, `breakpoints` and `globalOptions` as in Embla.
 - Exported types: `EmblaA11yType`, `EmblaA11yOptionsType`, `AnnouncementType`, `DotLabelType`, `RotationLabelType`.
+
+### Known limits
+
+- Works in the normal page DOM only, not inside a shadow root.
+- NVDA counts only the slides on screen while off-screen slides are hidden, because it ignores `aria-setsize`.

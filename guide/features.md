@@ -262,6 +262,9 @@ emblaApi.plugins().autoplay.play()
 
 The plugin adds nothing on the server. The React, Vue and Solid wrappers also create an instance without a root element, and the plugin leaves that one alone too.
 
+> [!NOTE]
+> The plugin works in the normal page DOM, not inside a shadow root. Inside a web component's shadow DOM it cannot see which element has focus, so focus could be lost when slides are hidden.
+
 - No configuration.
 - Markup: render the section, heading, list, buttons and dot names on the server. Then the carousel is accessible before JavaScript runs.
 
