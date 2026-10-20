@@ -28,8 +28,10 @@ setText('#description', variant.description)
 root.style.setProperty('--per-view', String(variant.perView))
 root.classList.toggle('embla--vertical', variant.options.axis === 'y')
 if (variant.options.direction === 'rtl') root.dir = 'rtl'
-const section = root.closest('section')
-if (section !== null) section.hidden = parameters.has('hidden')
+const region = parameters.get('region')
+if (region !== null) replaceSectionWithDiv(region === 'named-div')
+const area = root.closest<HTMLElement>('.carousel')
+if (area !== null) area.hidden = parameters.has('hidden')
 
 const rotationButton = document.querySelector<HTMLElement>('.embla__rotation')
 if (rotationButton !== null) rotationButton.hidden = variant.rotation === undefined
@@ -55,6 +57,8 @@ const emblaApi = asEmblaV9(
         : []),
       ...(variant.rotation === 'auto-scroll' ? [AutoScroll({ speed: 2 })] : []),
       emblaA11y({
+        labelledBy: region === 'labelledBy' ? 'carousel-heading' : null,
+        label: region === 'label' ? 'Featured products' : null,
         hideOffscreen: parameters.has('hideOffscreen'),
         previousButton: document.querySelector<HTMLElement>('.embla__prev'),
         nextButton: document.querySelector<HTMLElement>('.embla__next'),
@@ -109,4 +113,14 @@ function createDot(index: number): HTMLButtonElement {
 function setText(selector: string, text: string): void {
   const element = document.querySelector(selector)
   if (element !== null) element.textContent = text
+}
+
+function replaceSectionWithDiv(named: boolean): void {
+  const section = document.querySelector('section.carousel')
+  if (section === null) return
+  const div = document.createElement('div')
+  div.className = section.className
+  if (named) div.setAttribute('aria-labelledby', 'carousel-heading')
+  div.append(...section.childNodes)
+  section.replaceWith(div)
 }

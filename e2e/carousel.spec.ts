@@ -15,6 +15,30 @@ test('previous and next buttons move the carousel', async ({ page }) => {
   await expect(productOne).toBeInViewport()
 })
 
+for (const naming of ['labelledBy', 'label', 'named-div']) {
+  test.describe(`region made by the plugin (${naming})`, () => {
+    test.beforeEach(async ({ page }) => {
+      await page.goto(`/e2e/pages/carousel.html?variant=three-per-view&region=${naming}`)
+    })
+
+    test('has no axe violations', async ({ page }) => {
+      const results = await new AxeBuilder({ page }).analyze()
+
+      expect(results.violations).toEqual([])
+    })
+
+    test('turns the div around the carousel into a named region with the buttons', async ({
+      page
+    }) => {
+      const region = page.getByRole('region', { name: 'Featured products' })
+
+      expect(await region.evaluate((element) => element.localName)).toBe('div')
+      await expect(region.getByRole('button', { name: 'Previous' })).toBeVisible()
+      await expect(region.getByRole('button', { name: 'Next' })).toBeVisible()
+    })
+  })
+}
+
 for (const variant of variants) {
   test.describe(variant.name, () => {
     test.beforeEach(async ({ page }) => {
