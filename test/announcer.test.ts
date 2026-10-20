@@ -21,7 +21,7 @@ test('leaves the announcer as it was on destroy', async () => {
     slideCount: 3,
     slideWidth: '100%',
     plugins: ({ previous, next }) => [
-      emblaA11y({ label: 'Produkte', previousButton: previous, nextButton: next, announcer })
+      emblaA11y({ label: 'Products', previousButton: previous, nextButton: next, announcer })
     ]
   })
   buttons.next.addEventListener('click', () => emblaApi.goToNext(true))
@@ -37,14 +37,13 @@ test('leaves the announcer as it was on destroy', async () => {
 test('gives back the markup that was in the announcer on destroy', async () => {
   const announcer = createAnnouncer({ 'data-announcement': 'Folie {first} von {total}' })
   const original = document.createElement('span')
-  original.lang = 'de'
-  original.textContent = 'Produkte'
+  original.textContent = 'Products'
   announcer.append(original)
   const { buttons, emblaApi } = createCarousel({
     slideCount: 3,
     slideWidth: '100%',
     plugins: ({ previous, next }) => [
-      emblaA11y({ label: 'Produkte', previousButton: previous, nextButton: next, announcer })
+      emblaA11y({ label: 'Products', previousButton: previous, nextButton: next, announcer })
     ]
   })
   buttons.next.addEventListener('click', () => emblaApi.goToNext(true))
@@ -62,7 +61,7 @@ test('announces nothing after destroy, even when a move was just made', async ()
     slideCount: 3,
     slideWidth: '100%',
     plugins: ({ previous, next }) => [
-      emblaA11y({ label: 'Produkte', previousButton: previous, nextButton: next, announcer })
+      emblaA11y({ label: 'Products', previousButton: previous, nextButton: next, announcer })
     ]
   })
   buttons.next.addEventListener('click', () => emblaApi.goToNext(true))
@@ -79,7 +78,7 @@ test('stays silent on automatic moves after a cancelled touch', async () => {
   const { emblaApi } = createCarousel({
     slideCount: 3,
     slideWidth: '100%',
-    plugins: [emblaA11y({ label: 'Produkte', announcer })]
+    plugins: [emblaA11y({ label: 'Products', announcer })]
   })
   emblaApi.rootNode().dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }))
   window.dispatchEvent(new PointerEvent('pointercancel'))
@@ -95,7 +94,7 @@ test('warns when the announcer has no text', () => {
   const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
   const announcer = createAnnouncer({})
 
-  createCarousel({ plugins: [emblaA11y({ label: 'Produkte', announcer })] })
+  createCarousel({ plugins: [emblaA11y({ label: 'Products', announcer })] })
 
   expect(warn).toHaveBeenCalledOnce()
 })

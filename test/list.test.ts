@@ -15,7 +15,7 @@ test('keeps the full count on list items while off-screen slides are hidden', ()
   const { slides } = createCarousel({
     slideCount: 10,
     list: true,
-    plugins: [emblaA11y({ label: 'Produkte', hideOffscreen: true })]
+    plugins: [emblaA11y({ label: 'Products', hideOffscreen: true })]
   })
 
   expect(positionsOf(slides)).toEqual(slides.map((_, index) => [String(index + 1), '10']))
@@ -24,7 +24,7 @@ test('keeps the full count on list items while off-screen slides are hidden', ()
 test('adds no list position to slides that are not list items', () => {
   const { slides } = createCarousel({
     slideCount: 10,
-    plugins: [emblaA11y({ label: 'Produkte', hideOffscreen: true })]
+    plugins: [emblaA11y({ label: 'Products', hideOffscreen: true })]
   })
 
   expect(positionsOf(slides)).toEqual(slides.map(() => [null, null]))
@@ -34,7 +34,7 @@ test('adds no list position while every slide stays reachable', () => {
   const { slides } = createCarousel({
     slideCount: 10,
     list: true,
-    plugins: [emblaA11y({ label: 'Produkte' })]
+    plugins: [emblaA11y({ label: 'Products' })]
   })
 
   expect(positionsOf(slides)).toEqual(slides.map(() => [null, null]))

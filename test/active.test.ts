@@ -12,7 +12,7 @@ function inertSlides(slides: HTMLElement[]): HTMLElement[] {
 test('does nothing when the plugin is switched off', () => {
   const { slides } = createCarousel({
     slideCount: 10,
-    plugins: [emblaA11y({ label: 'Produkte', hideOffscreen: true, active: false })]
+    plugins: [emblaA11y({ label: 'Products', hideOffscreen: true, active: false })]
   })
 
   expect(page.getByRole('region').elements()).toHaveLength(0)
@@ -24,7 +24,7 @@ test('does nothing when a breakpoint switches the plugin off', () => {
     slideCount: 10,
     plugins: [
       emblaA11y({
-        label: 'Produkte',
+        label: 'Products',
         hideOffscreen: true,
         breakpoints: { '(min-width: 1px)': { active: false } }
       })
@@ -41,7 +41,7 @@ test('takes everything back when a breakpoint switches the plugin off later', as
     slideCount: 10,
     plugins: [
       emblaA11y({
-        label: 'Produkte',
+        label: 'Products',
         hideOffscreen: true,
         breakpoints: { '(min-width: 900px)': { active: false } }
       })
@@ -60,7 +60,7 @@ test('does nothing when the carousel itself is switched off', () => {
   const { slides } = createCarousel({
     slideCount: 10,
     options: { active: false },
-    plugins: [emblaA11y({ label: 'Produkte', hideOffscreen: true })]
+    plugins: [emblaA11y({ label: 'Products', hideOffscreen: true })]
   })
 
   expect(page.getByRole('region').elements()).toHaveLength(0)

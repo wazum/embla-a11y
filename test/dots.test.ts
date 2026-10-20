@@ -20,7 +20,7 @@ test('names dots with the template from the markup', async () => {
     options: { slidesToScroll: 2 },
     dotTexts: ['', ''],
     dotsAttributes: germanTemplate,
-    plugins: ({ dots }) => [emblaA11y({ label: 'Produkte', dots })]
+    plugins: ({ dots }) => [emblaA11y({ label: 'Products', dots })]
   })
 
   await expect.element(page.getByRole('button', { name: 'Folien 1 bis 2' })).toBeVisible()
@@ -33,7 +33,7 @@ test('names no dot and warns when there is no text, template or option', () => {
     slideCount: 2,
     slideWidth: '100%',
     dotTexts: ['', ''],
-    plugins: ({ dots }) => [emblaA11y({ label: 'Produkte', dots })]
+    plugins: ({ dots }) => [emblaA11y({ label: 'Products', dots })]
   })
 
   expect(buttons.dots.textContent).toBe('')
@@ -61,7 +61,7 @@ test('names dots that show only a hidden icon', async () => {
       for (const dot of dots.querySelectorAll('button')) {
         dot.innerHTML = '<span aria-hidden="true">●</span>'
       }
-      return [emblaA11y({ label: 'Produkte', dots })]
+      return [emblaA11y({ label: 'Products', dots })]
     }
   })
 

@@ -24,7 +24,7 @@ test('takes the rotation button texts from the markup', async () => {
   const { emblaApi } = createCarousel({
     slideCount: 3,
     slideWidth: '100%',
-    plugins: [Autoplay({ delay: 1000 }), emblaA11y({ label: 'Produkte', rotationButton })]
+    plugins: [Autoplay({ delay: 1000 }), emblaA11y({ label: 'Products', rotationButton })]
   })
   emblaApi.plugins().autoplay?.play()
 
@@ -44,7 +44,7 @@ test('keeps the markup texts of the rotation button on destroy', () => {
     slideWidth: '100%',
     plugins: [
       Autoplay({ delay: 1000 }),
-      emblaA11y({ label: 'Produkte', rotationButton, rotationLabel: () => 'Ignoriert' })
+      emblaA11y({ label: 'Products', rotationButton, rotationLabel: () => 'Ignoriert' })
     ]
   })
 
@@ -70,7 +70,7 @@ test('does not break when there is only one slide to rotate', async () => {
   createCarousel({
     slideCount: 1,
     slideWidth: '100%',
-    plugins: [Autoplay({ delay: 1000 }), emblaA11y({ label: 'Produkte', rotationButton })]
+    plugins: [Autoplay({ delay: 1000 }), emblaA11y({ label: 'Products', rotationButton })]
   })
 
   rotationButton.click()
@@ -86,7 +86,7 @@ test('leaves a rotation button without texts alone and warns', async () => {
   const { emblaApi } = createCarousel({
     slideCount: 3,
     slideWidth: '100%',
-    plugins: [Autoplay({ delay: 1000 }), emblaA11y({ label: 'Produkte', rotationButton })]
+    plugins: [Autoplay({ delay: 1000 }), emblaA11y({ label: 'Products', rotationButton })]
   })
   emblaApi.plugins().autoplay?.play()
   await new Promise((resolve) => setTimeout(resolve, 50))
