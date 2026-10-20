@@ -204,7 +204,10 @@ test('leaves a rotation button without texts alone and warns', async () => {
   const { emblaApi } = createCarousel({
     slideCount: 3,
     slideWidth: '100%',
-    plugins: [Autoplay({ delay: 1000 }), emblaA11y({ label: 'Products', rotationButton })]
+    plugins: ({ previous, next }) => [
+      Autoplay({ delay: 1000 }),
+      emblaA11y({ label: 'Products', previousButton: previous, nextButton: next, rotationButton })
+    ]
   })
   emblaApi.plugins().autoplay?.play()
   await new Promise((resolve) => setTimeout(resolve, 50))
@@ -326,7 +329,10 @@ test('does not warn about a missing rotation button when there is one', async ()
   createCarousel({
     slideCount: 3,
     slideWidth: '100%',
-    plugins: [Autoplay({ delay: 1000 }), emblaA11y({ label: 'Products', rotationButton })]
+    plugins: ({ previous, next }) => [
+      Autoplay({ delay: 1000 }),
+      emblaA11y({ label: 'Products', previousButton: previous, nextButton: next, rotationButton })
+    ]
   })
   await new Promise((resolve) => setTimeout(resolve, 50))
 

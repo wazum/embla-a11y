@@ -136,6 +136,20 @@ test('does not warn about dragging with previous and next buttons', () => {
   expect(dragOnlyWarnings(warn.mock.calls)).toEqual([])
 })
 
+test('warns about dragging when there is only an announcer', () => {
+  const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+  const announcer = createElement('p', '')
+  announcer.setAttribute('data-announcement', 'Slide {first} of {total}')
+
+  createCarousel({
+    slideCount: 3,
+    slideWidth: '100%',
+    plugins: [emblaA11y({ label: 'Products', announcer })]
+  })
+
+  expect(dragOnlyWarnings(warn.mock.calls)).toHaveLength(1)
+})
+
 test('does not warn about dragging with dots', () => {
   const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
 
