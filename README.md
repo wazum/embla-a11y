@@ -1,5 +1,14 @@
 # embla-a11y
 
+<p align="center">
+  <a href="https://github.com/wazum/embla-a11y/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/wazum/embla-a11y/ci.yml?branch=main&style=for-the-badge&logo=githubactions&logoColor=white&label=ci&labelColor=24273a" alt="CI status"></a>
+  <a href="https://wazum.github.io/embla-a11y/"><img src="https://img.shields.io/badge/demo-live-b5ead7?style=for-the-badge&logo=githubpages&logoColor=white&labelColor=24273a" alt="Live demo"></a>
+  <a href="https://www.embla-carousel.com"><img src="https://img.shields.io/badge/Embla-8.6%20%7C%209-c3b1e1?style=for-the-badge&labelColor=24273a" alt="Embla Carousel 8.6 and 9"></a>
+  <a href="https://www.w3.org/TR/WCAG22/"><img src="https://img.shields.io/badge/WCAG-2.2%20AA-ffb997?style=for-the-badge&labelColor=24273a" alt="Aims at WCAG 2.2 AA"></a>
+  <a href="CONTRIBUTING.md#screen-reader-tests"><img src="https://img.shields.io/badge/tested%20with-VoiceOver%20%7C%20NVDA%20%7C%20Orca-a7c7e7?style=for-the-badge&labelColor=24273a" alt="Tested with VoiceOver, NVDA and Orca"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/licence-MIT-ffc6d9?style=for-the-badge&labelColor=24273a" alt="MIT licence"></a>
+</p>
+
 An accessibility plugin for [Embla Carousel](https://www.embla-carousel.com) 8.6 and 9. Work in progress, not published yet.
 
 The plugin never hides content that people can see. It aims at WCAG 2.2 AA, plus the AAA criteria a carousel can meet. Every change runs automated tests in Chromium, Firefox and WebKit against both Embla versions, and screen reader tests with VoiceOver, NVDA and Orca. It needs Chrome or Edge 110, Firefox 115 or Safari 16 and newer.
