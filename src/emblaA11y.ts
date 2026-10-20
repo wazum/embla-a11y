@@ -7,7 +7,7 @@ import type {
 import { asEmblaV9 } from './compat/emblaV8.js'
 import { Announcer, type AnnouncementType } from './features/Announcer.js'
 import { DotButtons, type DotLabelType } from './features/DotButtons.js'
-import type { Feature } from './features/Feature.js'
+import type { Feature, WarnType } from './features/Feature.js'
 import { FocusRescue, type FocusMemoryType } from './features/FocusRescue.js'
 import { FollowFocus } from './features/FollowFocus.js'
 import { HideOffscreen } from './features/HideOffscreen.js'
@@ -61,10 +61,16 @@ function emblaA11y(userOptions: EmblaA11yOptionsType = {}): EmblaA11yType {
   const rotationMemory: RotationMemoryType = {
     stoppedByUser: false,
     startedByUser: false,
-    playing: null,
-    warnedMissingButton: false
+    playing: null
   }
+  const warnings = new Set<string>()
   let features: Feature[] = []
+
+  function warn(message: string): void {
+    if (warnings.has(message)) return
+    warnings.add(message)
+    console.warn(`embla-a11y: ${message}`)
+  }
 
   function init(anyEmblaApi: EmblaCarouselType, optionsHandler: OptionsHandlerType): void {
     const emblaApi = asEmblaV9(anyEmblaApi)
@@ -76,20 +82,20 @@ function emblaA11y(userOptions: EmblaA11yOptionsType = {}): EmblaA11yType {
     if (!options.active) return
 
     const viewport = emblaApi.rootNode()
-    const area = carouselArea(viewport)
+    const area = carouselArea(viewport, warn)
     features = [
-      new Region(area, options),
-      new RotationControl(emblaApi, area, rotationMemory, options),
+      new Region(area, options, warn),
+      new RotationControl(emblaApi, area, rotationMemory, options, warn),
       new FollowFocus(emblaApi),
       new PreviousNextButtons(emblaApi, options),
       new FocusRescue(emblaApi, area, options, focusMemory)
     ]
     if (options.hideOffscreen) features.push(new HideOffscreen(emblaApi))
     if (options.dots !== null) {
-      features.push(new DotButtons(emblaApi, options.dots, options.dotLabel))
+      features.push(new DotButtons(emblaApi, options.dots, options.dotLabel, warn))
     }
     if (options.announcer !== null) {
-      features.push(new Announcer(emblaApi, options.announcer, options))
+      features.push(new Announcer(emblaApi, options.announcer, options, warn))
     }
   }
 
@@ -108,12 +114,12 @@ function emblaA11y(userOptions: EmblaA11yOptionsType = {}): EmblaA11yType {
 
 emblaA11y.globalOptions = undefined as EmblaA11yOptionsType | undefined
 
-function carouselArea(viewport: HTMLElement): HTMLElement {
+function carouselArea(viewport: HTMLElement, warn: WarnType): HTMLElement {
   const parent = viewport.parentElement
   if (parent === null) return viewport
   if (parent !== viewport.ownerDocument.body) return parent
-  console.warn(
-    'embla-a11y: there is no element around the viewport, so the plugin uses the viewport as the carousel area. Wrap the viewport and its buttons in a <section> named by a heading.'
+  warn(
+    'there is no element around the viewport, so the plugin uses the viewport as the carousel area. Wrap the viewport and its buttons in a <section> named by a heading.'
   )
   return viewport
 }

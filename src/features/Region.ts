@@ -1,5 +1,5 @@
 import { AttributeStore } from '../AttributeStore.js'
-import type { Feature } from './Feature.js'
+import type { Feature, WarnType } from './Feature.js'
 
 export type RegionNameType = {
   label: string | null
@@ -14,10 +14,10 @@ export type RegionNameType = {
 export class Region implements Feature {
   private readonly attributes = new AttributeStore()
 
-  public constructor(element: HTMLElement, name: RegionNameType) {
+  public constructor(element: HTMLElement, name: RegionNameType, warn: WarnType) {
     if (!this.hasName(element) && !this.setName(element, name)) {
-      console.warn(
-        'embla-a11y: the carousel has no name, so it is not a region. Add a visible heading and pass its id as labelledBy, or pass a label.'
+      warn(
+        'the carousel has no name, so it is not a region. Add a visible heading and pass its id as labelledBy, or pass a label.'
       )
       return
     }

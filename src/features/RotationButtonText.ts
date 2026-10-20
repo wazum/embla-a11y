@@ -1,4 +1,5 @@
 import { AttributeStore } from '../AttributeStore.js'
+import type { WarnType } from './Feature.js'
 
 export type RotationLabelType = (playing: boolean) => string
 
@@ -14,14 +15,18 @@ export class RotationButtonText {
   private readonly rotationLabel: RotationLabelType | null
   private originalNodes: ChildNode[] | null = null
 
-  public constructor(button: HTMLElement | null, rotationLabel: RotationLabelType | null) {
+  public constructor(
+    button: HTMLElement | null,
+    rotationLabel: RotationLabelType | null,
+    warn: WarnType
+  ) {
     this.playingText = button?.querySelector<HTMLElement>('[data-rotation-playing]') ?? null
     this.stoppedText = button?.querySelector<HTMLElement>('[data-rotation-stopped]') ?? null
     this.rotationLabel = rotationLabel
     this.labelTarget = button?.querySelector<HTMLElement>('[data-rotation-label]') ?? button
     if (button !== null && !this.hasMarkupTexts() && rotationLabel === null) {
-      console.warn(
-        'embla-a11y: the rotation button has no texts. Add one element with data-rotation-playing and one with data-rotation-stopped, or pass rotationLabel.'
+      warn(
+        'the rotation button has no texts. Add one element with data-rotation-playing and one with data-rotation-stopped, or pass rotationLabel.'
       )
     }
   }

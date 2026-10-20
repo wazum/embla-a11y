@@ -1,6 +1,6 @@
 import type { EmblaCarouselType } from 'embla-carousel'
 import { isOnScreen } from '../visibleSlides.js'
-import type { Feature } from './Feature.js'
+import type { Feature, WarnType } from './Feature.js'
 
 export type AnnouncementType = (
   firstSlide: number,
@@ -60,7 +60,8 @@ export class Announcer implements Feature {
   public constructor(
     emblaApi: EmblaCarouselType,
     announcer: HTMLElement,
-    { announcement, previousButton, nextButton, dots }: AnnouncerOptionsType
+    { announcement, previousButton, nextButton, dots }: AnnouncerOptionsType,
+    warn: WarnType
   ) {
     this.emblaApi = emblaApi
     this.element = announcer
@@ -74,8 +75,8 @@ export class Announcer implements Feature {
     emblaApi.on('select', this.onSelect)
     emblaApi.on('settle', this.onSettle)
     if (!announcer.hasAttribute('data-announcement') && announcement === null) {
-      console.warn(
-        'embla-a11y: the announcer has no text. Add data-announcement and data-announcement-group templates to it, or pass announcement.'
+      warn(
+        'the announcer has no text. Add data-announcement and data-announcement-group templates to it, or pass announcement.'
       )
     }
   }

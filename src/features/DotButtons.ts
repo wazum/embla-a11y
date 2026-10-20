@@ -1,6 +1,6 @@
 import type { EmblaCarouselType } from 'embla-carousel'
 import { AttributeStore } from '../AttributeStore.js'
-import type { Feature } from './Feature.js'
+import type { Feature, WarnType } from './Feature.js'
 
 export type DotLabelType = (firstSlide: number, lastSlide: number) => string
 
@@ -15,7 +15,7 @@ export class DotButtons implements Feature {
   private readonly emblaApi: EmblaCarouselType
   private readonly container: HTMLElement
   private readonly dotLabel: DotLabelType | null
-  private warned = false
+  private readonly warn: WarnType
   private readonly attributes = new AttributeStore()
   private readonly names = new Map<Element, HTMLSpanElement>()
   private readonly sources = new WeakMap<HTMLSpanElement, string>()
@@ -25,11 +25,13 @@ export class DotButtons implements Feature {
   public constructor(
     emblaApi: EmblaCarouselType,
     container: HTMLElement,
-    dotLabel: DotLabelType | null
+    dotLabel: DotLabelType | null,
+    warn: WarnType
   ) {
     this.emblaApi = emblaApi
     this.container = container
     this.dotLabel = dotLabel
+    this.warn = warn
     this.update()
     emblaApi.on('select', this.onSelect)
     this.observer.observe(container, { childList: true, subtree: true })
@@ -81,7 +83,9 @@ export class DotButtons implements Feature {
       return
     }
     if (label === null) {
-      this.warnOnce()
+      this.warn(
+        'a dot button has no name. Give it text in the markup, add a data-dot-label template to the dots element, or pass dotLabel.'
+      )
       return
     }
     if (ownName !== undefined) {
@@ -96,14 +100,6 @@ export class DotButtons implements Feature {
     dot.append(created)
     this.names.set(dot, created)
     this.sources.set(created, label)
-  }
-
-  private warnOnce(): void {
-    if (this.warned) return
-    this.warned = true
-    console.warn(
-      'embla-a11y: a dot button has no name. Give it text in the markup, add a data-dot-label template to the dots element, or pass dotLabel.'
-    )
   }
 
   private hasAuthorName(dot: HTMLButtonElement, ownName: HTMLSpanElement | undefined): boolean {

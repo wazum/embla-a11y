@@ -1,5 +1,5 @@
 import type { EmblaCarouselType, EmblaEventListType } from 'embla-carousel'
-import type { Feature } from './Feature.js'
+import type { Feature, WarnType } from './Feature.js'
 import { RotationButtonText, type RotationLabelType } from './RotationButtonText.js'
 
 declare module 'embla-carousel' {
@@ -17,7 +17,6 @@ export type RotationMemoryType = {
   stoppedByUser: boolean
   startedByUser: boolean
   playing: boolean | null
-  warnedMissingButton: boolean
 }
 
 export type RotationButtonType = {
@@ -44,6 +43,7 @@ export class RotationControl implements Feature {
   private readonly memory: RotationMemoryType
   private readonly button: HTMLElement | null
   private readonly buttonText: RotationButtonText
+  private readonly warn: WarnType
   private readonly onInteraction = (event: Event): void => {
     if (event.target instanceof Node && this.button?.contains(event.target) === true) return
     this.stopForGood()
@@ -65,13 +65,15 @@ export class RotationControl implements Feature {
     emblaApi: EmblaCarouselType,
     area: HTMLElement,
     memory: RotationMemoryType,
-    { rotationButton, rotationLabel }: RotationButtonType
+    { rotationButton, rotationLabel }: RotationButtonType,
+    warn: WarnType
   ) {
     this.emblaApi = emblaApi
     this.area = area
     this.memory = memory
     this.button = rotationButton
-    this.buttonText = new RotationButtonText(rotationButton, rotationLabel)
+    this.warn = warn
+    this.buttonText = new RotationButtonText(rotationButton, rotationLabel, warn)
     area.addEventListener('focusin', this.onInteraction, true)
     area.addEventListener('pointerdown', this.onInteraction, true)
     rotationButton?.addEventListener('click', this.onToggle)
@@ -140,11 +142,9 @@ export class RotationControl implements Feature {
   }
 
   private warnWithoutButton(): void {
-    if (this.button !== null || this.memory.warnedMissingButton) return
-    if (this.rotations().length === 0) return
-    this.memory.warnedMissingButton = true
-    console.warn(
-      'embla-a11y: Autoplay or AutoScroll runs without a rotation button. Screen reader users who read without moving focus cannot stop it. Pass rotationButton.'
+    if (this.button !== null || this.rotations().length === 0) return
+    this.warn(
+      'Autoplay or AutoScroll runs without a rotation button. Screen reader users who read without moving focus cannot stop it. Pass rotationButton.'
     )
   }
 
