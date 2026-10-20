@@ -40,6 +40,30 @@ test('adds no region and warns when the carousel has no name', () => {
   expect(warn).toHaveBeenCalledOnce()
 })
 
+test('makes a div the author named a region, and takes the role back on destroy', async () => {
+  const { wrapper, emblaApi } = createCarousel({
+    wrapperAttributes: { 'aria-labelledby': 'products-heading' },
+    heading: { id: 'products-heading', text: 'Featured products' },
+    plugins: [emblaA11y()]
+  })
+
+  await expect.element(page.getByRole('region', { name: 'Featured products' })).toBeVisible()
+
+  emblaApi.destroy()
+
+  expect(wrapper.hasAttribute('role')).toBe(false)
+  expect(wrapper.getAttribute('aria-labelledby')).toBe('products-heading')
+})
+
+test("keeps the author's own role on a named div", () => {
+  const { wrapper } = createCarousel({
+    wrapperAttributes: { role: 'group', 'aria-label': 'Featured products' },
+    plugins: [emblaA11y()]
+  })
+
+  expect(wrapper.getAttribute('role')).toBe('group')
+})
+
 test("keeps the author's own region name", async () => {
   createCarousel({
     wrapperTag: 'section',

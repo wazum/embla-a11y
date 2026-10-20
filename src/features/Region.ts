@@ -15,8 +15,7 @@ export class Region implements Feature {
   private readonly attributes = new AttributeStore()
 
   public constructor(element: HTMLElement, name: RegionNameType) {
-    if (element.hasAttribute('aria-label') || element.hasAttribute('aria-labelledby')) return
-    if (!this.setName(element, name)) {
+    if (!this.hasName(element) && !this.setName(element, name)) {
       console.warn(
         'embla-a11y: the carousel has no name, so it is not a region. Add a visible heading and pass its id as labelledBy, or pass a label.'
       )
@@ -29,6 +28,10 @@ export class Region implements Feature {
 
   public destroy(): void {
     this.attributes.restore()
+  }
+
+  private hasName(element: HTMLElement): boolean {
+    return element.hasAttribute('aria-label') || element.hasAttribute('aria-labelledby')
   }
 
   private setName(element: HTMLElement, { label, labelledBy }: RegionNameType): boolean {
