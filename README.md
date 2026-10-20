@@ -9,13 +9,17 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/licence-MIT-ffc6d9?style=for-the-badge&labelColor=24273a" alt="MIT licence"></a>
 </p>
 
-An accessibility plugin for [Embla Carousel](https://www.embla-carousel.com) 8.6 and 9. Work in progress, not published yet.
+An accessibility plugin for [Embla Carousel](https://www.embla-carousel.com) 8.6 and 9. Try it on the [demo site](https://wazum.github.io/embla-a11y/) with your keyboard and screen reader.
 
 The plugin never hides content that people can see. It aims at WCAG 2.2 AA, plus the AAA criteria a carousel can meet. Every change runs automated tests in Chromium, Firefox and WebKit against both Embla versions, and screen reader tests with VoiceOver, NVDA and Orca. It needs Chrome or Edge 110, Firefox 115 or Safari 16 and newer.
 
 Use it instead of the official `embla-carousel-accessibility` plugin or `@bluecadet/embla-carousel-a11y`, not together with them. See [embla-a11y or the official plugin?](#embla-a11y-or-the-official-plugin)
 
 ## Quick start
+
+```sh
+npm install embla-a11y
+```
 
 Good markup does most of the work. The plugin fills in what markup cannot do on its own: state that changes while the carousel moves, and focus. All texts come from your markup, in your page's language. The plugin never writes English of its own.
 
