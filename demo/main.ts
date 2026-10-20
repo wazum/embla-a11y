@@ -7,14 +7,14 @@ import AutoScroll from 'embla-carousel-auto-scroll'
 import Autoplay from 'embla-carousel-autoplay'
 import Fade from 'embla-carousel-fade'
 import { asEmblaV9 } from '../src/compat/emblaV8.js'
-import emblaA11y from '../src/index.js'
+import emblaA11y, { type EmblaA11yOptionsType } from '../src/index.js'
 
 type LanguageType = 'en' | 'de'
 
 type DemoType = {
   options?: EmblaOptionsType
   plugins?: () => EmblaPluginType[]
-  hideOffscreen?: boolean
+  a11y?: EmblaA11yOptionsType
   slideAction?: 'save' | 'remove'
 }
 
@@ -22,12 +22,13 @@ const demos: Record<string, DemoType> = {
   basics: {},
   peek: {},
   groups: { options: { slidesToScroll: 'auto' } },
+  'dot-keys': { a11y: { dotKeys: true } },
   loop: { options: { loop: true } },
   autoplay: { options: { loop: true }, plugins: () => [Autoplay({ delay: 4000 })] },
   'auto-scroll': { options: { loop: true }, plugins: () => [AutoScroll({ speed: 1 })] },
   fade: { plugins: () => [Fade()] },
   'focus-rescue': { slideAction: 'remove' },
-  'every-slide': { hideOffscreen: false },
+  'every-slide': { a11y: { hideOffscreen: false } },
   vertical: { options: { axis: 'y' } },
   german: {}
 }
@@ -101,7 +102,7 @@ function setUp(carousel: HTMLElement): void {
     EmblaCarousel(viewport, { ...baseOptions, ...demo.options }, [
       ...(demo.plugins?.() ?? []),
       emblaA11y({
-        ...(demo.hideOffscreen === undefined ? {} : { hideOffscreen: demo.hideOffscreen }),
+        ...demo.a11y,
         previousButton: carousel.querySelector<HTMLElement>('.carousel__previous'),
         nextButton: carousel.querySelector<HTMLElement>('.carousel__next'),
         dots,

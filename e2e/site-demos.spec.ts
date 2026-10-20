@@ -169,32 +169,67 @@ test.describe('Partly visible slides, reading backwards', () => {
 })
 
 test.describe('Scroll by view', () => {
-  test('each dot names its group, and the announcement repeats it', async ({ page }) => {
+  test('each dot names its page, and the announcement repeats it', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 })
     const demo = page.locator('#groups')
     const dots = demo.locator('.carousel__dot')
-    await expect(dots.first()).toHaveText('Slides 1 to 2')
-    const names = await dots.allTextContents()
-    expect(coveredSlides(names)).toEqual(Array.from({ length: 10 }, (_, index) => index + 1))
+    await expect(dots.first()).toHaveText('Page 1 of 5')
+    expect(await dots.allTextContents()).toEqual(
+      Array.from({ length: 5 }, (_, index) => `Page ${index + 1} of 5`)
+    )
 
     await dots.nth(2).click()
 
-    await expect(demo.locator('.carousel__announcer')).toHaveText(
-      `${names[2] ?? ''} of 10`,
-      afterSettle
-    )
+    await expect(demo.locator('.carousel__announcer')).toHaveText('Page 3 of 5', afterSettle)
   })
 
-  test('the groups and dot names follow a narrower window', async ({ page }) => {
+  test('the pages follow a narrower window', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 })
     const dots = page.locator('#groups .carousel__dot')
-    await expect(dots.first()).toHaveText('Slides 1 to 2')
-    const wideCount = await dots.count()
+    await expect(dots.first()).toHaveText('Page 1 of 5')
 
     await page.setViewportSize({ width: 400, height: 900 })
 
-    await expect(dots.first()).toHaveText('Slide 1')
-    expect(await dots.count()).toBeGreaterThan(wideCount)
+    await expect(dots.first()).toHaveText('Page 1 of 10')
+    await expect(dots).toHaveCount(10)
+  })
+})
+
+test.describe('Arrow keys for the dots', () => {
+  test('only the current dot is a Tab stop', async ({ page }) => {
+    const demo = page.locator('#dot-keys')
+    const dots = demo.locator('.carousel__dot')
+    await demo.getByRole('button', { name: 'Next', exact: true }).focus()
+
+    await page.keyboard.press('Tab')
+    await expect(dots.first()).toBeFocused()
+    await page.keyboard.press('Tab')
+
+    await expect(demo.locator('.carousel__dot:focus')).toHaveCount(0)
+  })
+
+  test('the arrow keys, Home and End choose a slide, and wrap at the ends', async ({ page }) => {
+    const demo = page.locator('#dot-keys')
+    const dots = demo.locator('.carousel__dot')
+    await dots.first().focus()
+
+    await page.keyboard.press('ArrowRight')
+    await expect(dots.nth(1)).toBeFocused()
+    await expect(dots.nth(1)).toHaveAttribute('aria-current', 'true')
+    await expect.poll(() => visibleSlides(demo), afterSettle).toEqual([2])
+
+    await page.keyboard.press('End')
+    await expect(dots.nth(9)).toBeFocused()
+    await page.keyboard.press('Home')
+    await expect(dots.first()).toBeFocused()
+    await page.keyboard.press('ArrowLeft')
+    await expect(dots.nth(9)).toBeFocused()
+  })
+
+  test('shows a hint that the arrow keys work', async ({ page }) => {
+    await expect(
+      page.locator('#dot-keys').getByText('Use the arrow keys to choose a slide')
+    ).toBeVisible()
   })
 })
 
@@ -210,13 +245,18 @@ test.describe('Loop', () => {
     }
   })
 
-  test('Previous right away moves to the last slides and announces it', async ({ page }) => {
+  test('Previous right away announces the slides across the wrap', async ({ page }) => {
     const demo = page.locator('#loop')
+    const warnings = collectWarnings(page)
 
     await demo.getByRole('button', { name: 'Previous', exact: true }).click()
 
     await expect.poll(() => visibleSlides(demo)).toContain(10)
-    await expect(demo.locator('.carousel__announcer')).toHaveText(/of 10$/, afterSettle)
+    await expect(demo.locator('.carousel__announcer')).toHaveText(
+      /^Slides 10 and 1 of 10$/,
+      afterSettle
+    )
+    expect(warnings).toEqual([])
   })
 
   test('ten presses of Next lead back to Vienna', async ({ page }) => {
@@ -490,6 +530,14 @@ test.describe('German', () => {
   })
 })
 
+function collectWarnings(page: Page): string[] {
+  const warnings: string[] = []
+  page.on('console', (message) => {
+    if (message.type() === 'warning') warnings.push(message.text())
+  })
+  return warnings
+}
+
 function rotationButton(demo: Locator, name: string): Locator {
   return demo.getByRole('button', { name, exact: true })
 }
@@ -552,14 +600,6 @@ async function visiblePoint(element: Locator): Promise<{ x: number; y: number }>
     const left = Math.max(inner.left, outer.left)
     const right = Math.min(inner.right, outer.right)
     return { x: (left + right) / 2, y: inner.top + inner.height / 2 }
-  })
-}
-
-function coveredSlides(dotNames: string[]): number[] {
-  return dotNames.flatMap((name) => {
-    const [first, last] = (name.match(/\d+/g) ?? []).map(Number)
-    if (first === undefined) return []
-    return Array.from({ length: (last ?? first) - first + 1 }, (_, index) => first + index)
   })
 }
 

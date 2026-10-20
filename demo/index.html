@@ -219,6 +219,7 @@
             <li><a href="#basics">Basics</a></li>
             <li><a href="#peek">Partly visible slides</a></li>
             <li><a href="#groups">Scroll by view</a></li>
+            <li><a href="#dot-keys">Arrow keys for the dots</a></li>
             <li><a href="#loop">Loop</a></li>
             <li><a href="#autoplay">Autoplay</a></li>
             <li><a href="#auto-scroll">AutoScroll</a></li>
@@ -428,9 +429,87 @@
                 </button>
                 <div
                   class="carousel__dots"
+                  data-dot-label="Page {page} of {pages}"
+                  data-dot-label-group="Page {page} of {pages}"
+                ></div>
+              </div>
+              <p
+                class="carousel__announcer visually-hidden"
+                aria-live="polite"
+                aria-atomic="true"
+                data-announcement="Page {page} of {pages}"
+                data-announcement-group="Page {page} of {pages}"
+              ></p>
+            </section>
+            <div class="demo__body">
+              <p>
+                Each press moves a full view, like turning a page. The dots and the announcements
+                count pages instead of slides, with <code>{page}</code> and <code>{pages}</code> in
+                the templates.
+              </p>
+              <h4>Try it</h4>
+              <ul class="demo__steps">
+                <li>
+                  Move to the dots with a screen reader: they say “Page 1 of 5”, “Page 2 of 5” and
+                  so on.
+                </li>
+                <li>Press a dot and you hear the new page, for example “Page 3 of 5”.</li>
+                <li>
+                  Make the window narrower: with one slide per view there are ten pages, and the dot
+                  names follow.
+                </li>
+              </ul>
+              <p class="demo__more">
+                <a
+                  href="https://github.com/wazum/embla-a11y/blob/main/guide/features.md#dot-buttons"
+                  >Guide: dot buttons</a
+                >
+              </p>
+            </div>
+          </li>
+
+          <li tabindex="-1" class="demo demo--stone" id="dot-keys">
+            <section
+              class="carousel carousel--single"
+              aria-labelledby="dot-keys-heading"
+              data-demo="dot-keys"
+            >
+              <header class="carousel__header">
+                <h3 id="dot-keys-heading">Arrow keys for the dots</h3>
+                <p class="carousel__tag"><code>dotKeys: true</code></p>
+              </header>
+              <div class="carousel__viewport">
+                <ul class="carousel__slides" role="list"></ul>
+              </div>
+              <div class="carousel__controls">
+                <button type="button" class="carousel__button carousel__previous">
+                  <svg
+                    class="icon icon--previous"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    focusable="false"
+                  >
+                    <path d="m15 18-6-6 6-6" />
+                  </svg>
+                  Previous
+                </button>
+                <button type="button" class="carousel__button carousel__next">
+                  Next
+                  <svg
+                    class="icon icon--next"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    focusable="false"
+                  >
+                    <path d="m9 18 6-6-6-6" />
+                  </svg>
+                </button>
+                <div
+                  class="carousel__dots"
                   data-dot-label="Slide {first}"
                   data-dot-label-group="Slides {first} to {last}"
                 ></div>
+                <p class="carousel__hint">Use the arrow keys to choose a slide.</p>
               </div>
               <p
                 class="carousel__announcer visually-hidden"
@@ -441,20 +520,30 @@
               ></p>
             </section>
             <div class="demo__body">
-              <p>Each press moves a full view. Each dot stands for a group of slides.</p>
+              <p>
+                Ten dots would be ten Tab stops. With <code>dotKeys: true</code>, only the current
+                dot is one, and the arrow keys move between the dots.
+              </p>
               <h4>Try it</h4>
               <ul class="demo__steps">
                 <li>
-                  Move to the dots with a screen reader: they say “Slides 1 to 2”, “Slides 3 to 4”
-                  and so on.
+                  <kbd>Tab</kbd> to the dots: you land on the current dot. One more
+                  <kbd>Tab</kbd> leaves the dots.
                 </li>
-                <li>Press a dot and you hear the new range, for example “Slides 5 to 6 of 10”.</li>
-                <li>Make the window narrower: the groups and the dot names follow.</li>
+                <li>
+                  <kbd>Left Arrow</kbd> and <kbd>Right Arrow</kbd> choose the previous or next
+                  slide, <kbd>Home</kbd> and <kbd>End</kbd> the first and last. At the ends they
+                  wrap around.
+                </li>
+                <li>
+                  The dots stay plain buttons, not tabs. A screen reader in reading mode keeps its
+                  arrow keys; they only move the dots while a dot has focus.
+                </li>
               </ul>
               <p class="demo__more">
                 <a
-                  href="https://github.com/wazum/embla-a11y/blob/main/guide/features.md#dot-buttons"
-                  >Guide: dot buttons</a
+                  href="https://github.com/wazum/embla-a11y/blob/main/guide/features.md#fewer-tab-stops-for-many-dots"
+                  >Guide: fewer Tab stops for many dots</a
                 >
               </p>
             </div>
@@ -504,6 +593,7 @@
                 aria-atomic="true"
                 data-announcement="Slide {first} of {total}"
                 data-announcement-group="Slides {first} to {last} of {total}"
+                data-announcement-wrapped="Slides {slides} of {total}"
               ></p>
             </section>
             <div class="demo__body">
@@ -511,8 +601,8 @@
               <h4>Try it</h4>
               <ul class="demo__steps">
                 <li>
-                  Press Previous right away: the carousel moves to the last slides, and you hear
-                  where you are.
+                  Press Previous right away: the carousel wraps around to Athens and Vienna, and you
+                  hear “Slides 10 and 1 of 10”, not “10 to 1”.
                 </li>
                 <li>
                   Press Next ten times: after Athens comes Vienna again, and you are back where you
@@ -581,6 +671,7 @@
                 aria-atomic="true"
                 data-announcement="Slide {first} of {total}"
                 data-announcement-group="Slides {first} to {last} of {total}"
+                data-announcement-wrapped="Slides {slides} of {total}"
               ></p>
             </section>
             <div class="demo__body">

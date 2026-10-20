@@ -766,6 +766,12 @@ $gutter: clamp(1rem, 4vw, 2rem);
     margin-inline-start: auto;
   }
 
+  &__hint {
+    flex-basis: 100%;
+    text-align: end;
+    font-size: 0.875rem;
+  }
+
   &__dot {
     position: relative;
     display: inline-flex;
