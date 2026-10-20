@@ -76,7 +76,7 @@ function emblaA11y(userOptions: EmblaA11yOptionsType = {}): EmblaA11yType {
     if (!options.active) return
 
     const viewport = emblaApi.rootNode()
-    const area = viewport.parentElement ?? viewport
+    const area = carouselArea(viewport)
     features = [
       new Region(area, options),
       new RotationControl(emblaApi, area, rotationMemory, options),
@@ -107,5 +107,15 @@ function emblaA11y(userOptions: EmblaA11yOptionsType = {}): EmblaA11yType {
 }
 
 emblaA11y.globalOptions = undefined as EmblaA11yOptionsType | undefined
+
+function carouselArea(viewport: HTMLElement): HTMLElement {
+  const parent = viewport.parentElement
+  if (parent === null) return viewport
+  if (parent !== viewport.ownerDocument.body) return parent
+  console.warn(
+    'embla-a11y: there is no element around the viewport, so the plugin uses the viewport as the carousel area. Wrap the viewport and its buttons in a <section> named by a heading.'
+  )
+  return viewport
+}
 
 export default emblaA11y

@@ -111,6 +111,23 @@ test('warns once when Autoplay runs without a rotation button, also after a reIn
   expect(warn).toHaveBeenCalledWith(expect.stringContaining('without a rotation button'))
 })
 
+test('keeps rotating on a press outside the viewport when the viewport has no wrapper', async () => {
+  vi.spyOn(console, 'warn').mockImplementation(() => {})
+  const outside = createRotationButton('Elsewhere on the page')
+  const { emblaApi } = createCarousel({
+    wrapperTag: null,
+    slideCount: 3,
+    slideWidth: '100%',
+    plugins: [Autoplay({ delay: 1000 }), emblaA11y({ label: 'Products' })]
+  })
+  emblaApi.plugins().autoplay?.play()
+  await new Promise((resolve) => setTimeout(resolve, 50))
+
+  await page.elementLocator(outside).click()
+
+  expect(emblaApi.plugins().autoplay?.isPlaying()).toBe(true)
+})
+
 test('does not warn about a missing rotation button when there is one', async () => {
   const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
   const rotationButton = createRotationButton(

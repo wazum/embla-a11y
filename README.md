@@ -66,6 +66,8 @@ dots.querySelectorAll('button').forEach((dot, index) => {
 })
 ```
 
+The plugin treats the element around the viewport as the carousel. It becomes the region, and focus or a press inside it stops Autoplay. Keep the viewport and all its buttons in one wrapper, like the `<section>` above. If the viewport sits directly in `<body>`, the plugin uses the viewport itself and warns in the console.
+
 With Embla 8.6 the methods are `scrollPrev`, `scrollNext` and `scrollTo`. You keep your own click handlers; the plugin never moves the carousel on a click. With other Embla plugins, list `emblaA11y` last ([why](guide/features.md#focus-brings-its-slide-into-view)).
 
 The JavaScript and the complete HTML examples in this README and the guides run in the test suite, from the files in [`examples/`](examples).

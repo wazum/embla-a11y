@@ -32,14 +32,14 @@ export function createCarousel({
   slideWidth?: string
   options?: EmblaOptionsType
   plugins?: EmblaPluginType[] | ((buttons: ButtonsType) => EmblaPluginType[])
-  wrapperTag?: 'div' | 'section'
+  wrapperTag?: 'div' | 'section' | null
   wrapperAttributes?: Record<string, string>
   heading?: { id: string; text: string }
   dotTexts?: string[]
   dotsAttributes?: Record<string, string>
   list?: boolean
 } = {}): CarouselFixture {
-  const wrapper = document.createElement(wrapperTag)
+  const wrapper = wrapperTag === null ? document.body : document.createElement(wrapperTag)
   for (const [name, value] of Object.entries(wrapperAttributes)) wrapper.setAttribute(name, value)
 
   if (heading !== undefined) {
@@ -70,7 +70,7 @@ export function createCarousel({
   dots.append(...dotTexts.map((text) => createButton(text)))
   const buttons = { previous: createButton('Previous'), next: createButton('Next'), dots }
   wrapper.append(viewport, buttons.previous, buttons.next, dots)
-  document.body.append(wrapper)
+  if (wrapper !== document.body) document.body.append(wrapper)
 
   const emblaApi = asEmblaV9(
     EmblaCarousel(viewport, options, typeof plugins === 'function' ? plugins(buttons) : plugins)

@@ -1,7 +1,7 @@
 import { afterEach, expect, test, vi } from 'vitest'
 import { page } from 'vitest/browser'
 import emblaA11y from '../src/index.js'
-import { createCarousel, removeCarousels } from './fixture.js'
+import { attributesOf, createCarousel, removeCarousels } from './fixture.js'
 
 afterEach(() => {
   removeCarousels()
@@ -53,6 +53,15 @@ test('makes a div the author named a region, and takes the role back on destroy'
 
   expect(wrapper.hasAttribute('role')).toBe(false)
   expect(wrapper.getAttribute('aria-labelledby')).toBe('products-heading')
+})
+
+test('leaves the body alone and warns when the viewport has no wrapper', () => {
+  const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
+  createCarousel({ wrapperTag: null, plugins: [emblaA11y({ label: 'Featured products' })] })
+
+  expect(attributesOf(document.body)).toEqual({})
+  expect(warn).toHaveBeenCalledWith(expect.stringContaining('no element around the viewport'))
 })
 
 test("keeps the author's own role on a named div", () => {
