@@ -16,6 +16,7 @@ export class FollowFocus implements Feature {
     this.pressed = null
   }
   private readonly onSlideFocus = (): boolean => {
+    this.resetNativeScroll()
     const focused = document.activeElement
     return !(focused instanceof Element && this.overflow(focused) === 0)
   }
@@ -53,9 +54,7 @@ export class FollowFocus implements Feature {
   }
 
   private follow(target: EventTarget | null): void {
-    const root = this.emblaApi.rootNode()
-    root.scrollLeft = 0
-    root.scrollTop = 0
+    this.resetNativeScroll()
 
     const restoredByBrowser = this.windowWasLeft
     const pressed = this.pressed
@@ -68,6 +67,12 @@ export class FollowFocus implements Feature {
 
     const clipped = this.overflow(target)
     if (clipped !== 0) this.moveBy(-clipped)
+  }
+
+  private resetNativeScroll(): void {
+    const root = this.emblaApi.rootNode()
+    root.scrollLeft = 0
+    root.scrollTop = 0
   }
 
   private goToSlideOf(target: Element): void {

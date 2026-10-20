@@ -1,8 +1,25 @@
-import { afterEach, expect, test } from 'vitest'
+import { afterEach, expect, test, vi } from 'vitest'
+import { userEvent } from 'vitest/browser'
 import emblaA11y from '../src/index.js'
 import { createCarousel, removeCarousels } from './fixture.js'
 
 afterEach(removeCarousels)
+
+test('leaves the slidefocus event to later listeners when Tab lands in an off-screen slide', async () => {
+  const { slides, emblaApi } = createCarousel({
+    slideCount: 3,
+    slideWidth: '100%',
+    plugins: [emblaA11y({ label: 'Products', hideOffscreen: false })]
+  })
+  const laterListener = vi.fn<() => void>()
+  emblaApi.on('slidefocus', laterListener)
+  slides[0]?.querySelector('a')?.focus()
+
+  await userEvent.tab()
+
+  expect(document.activeElement).toBe(slides[1]?.querySelector('a'))
+  expect(laterListener).toHaveBeenCalledOnce()
+})
 
 test('brings a clipped link fully into view when focus comes back from an iframe', async () => {
   const { slides } = createCarousel({

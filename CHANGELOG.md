@@ -16,6 +16,7 @@ All notable changes to this project are listed here. The project follows [Semant
 - While AutoScroll runs, a slide that leaves the screen becomes `inert` in the same frame, not one frame later.
 - The rotation button no longer says "Stop" after reduced motion turns on while the mouse is over the carousel. Pressing it then started the rotation.
 - `role="region"` is only added to a `<div>`, not to elements such as `<li>` that cannot take it. The plugin warns instead.
+- Tab into an off-screen slide no longer cancels Embla's `slidefocus` event for later listeners.
 
 ## 1.0.0 (2026-10-20)
 
