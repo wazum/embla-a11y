@@ -85,7 +85,10 @@ export class Announcer implements Feature {
     emblaApi.rootNode().addEventListener('pointerdown', this.onPointerDown)
     emblaApi.on('select', this.onSelect)
     emblaApi.on('settle', this.onSettle)
-    if (!announcer.hasAttribute('data-announcement') && announcement === null) {
+    const hasTemplate =
+      announcer.hasAttribute('data-announcement') ||
+      announcer.hasAttribute('data-announcement-group')
+    if (!hasTemplate && announcement === null) {
       warn(
         'the announcer has no text. Add data-announcement and data-announcement-group templates to it, or pass announcement.'
       )
@@ -182,7 +185,7 @@ export class Announcer implements Feature {
   private templateFor(slides: number[]): string | null {
     const single = this.element.getAttribute('data-announcement')
     const group = this.element.getAttribute('data-announcement-group') ?? single
-    if (slides.length === 1) return single
+    if (slides.length === 1) return single ?? group
     if (!wrapsAround(slides)) return group
     const wrapped = this.element.getAttribute('data-announcement-wrapped')
     if (wrapped !== null) return wrapped

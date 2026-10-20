@@ -356,6 +356,26 @@ test('clears and rewrites identical text, so it is read again', async () => {
   await expect.poll(() => texts).toEqual(['Folie gewechselt', '', 'Folie gewechselt'])
 })
 
+test('uses the group template for one slide when there is no other', async () => {
+  const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+  const announcer = createAnnouncer({
+    'data-announcement-group': 'Folien {first} bis {last} von {total}'
+  })
+  const { buttons, emblaApi } = createCarousel({
+    slideCount: 3,
+    slideWidth: '100%',
+    plugins: ({ previous, next }) => [
+      emblaA11y({ label: 'Products', previousButton: previous, nextButton: next, announcer })
+    ]
+  })
+  buttons.next.addEventListener('click', () => emblaApi.goToNext(true))
+
+  buttons.next.click()
+
+  await expect.poll(() => announcer.textContent).toBe('Folien 2 bis 2 von 3')
+  expect(warn).not.toHaveBeenCalled()
+})
+
 test('warns when the announcer has no text', () => {
   const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
   const announcer = createAnnouncer({})
