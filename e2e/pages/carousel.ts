@@ -36,6 +36,13 @@ if (area !== null) area.hidden = parameters.has('hidden')
 const rotationButton = document.querySelector<HTMLElement>('.embla__rotation')
 if (rotationButton !== null) rotationButton.hidden = variant.rotation === undefined
 
+// Autoplay and AutoScroll stop themselves on interaction by default, which would hide a broken plugin.
+const withoutOwnInteraction = {
+  defaultInteraction: false,
+  stopOnInteraction: false,
+  stopOnFocusIn: false
+}
+
 const productHref = `?variant=${variant.name}&product=`
 container.append(
   ...Array.from({ length: variant.slides }, (_, index) => createSlide(productHref, index + 1))
@@ -51,11 +58,14 @@ const emblaApi = asEmblaV9(
         ? [
             Autoplay({
               delay: 1000,
+              ...withoutOwnInteraction,
               ...(variant.startsStopped === true ? { playOnInit: false } : {})
             })
           ]
         : []),
-      ...(variant.rotation === 'auto-scroll' ? [AutoScroll({ speed: 2 })] : []),
+      ...(variant.rotation === 'auto-scroll'
+        ? [AutoScroll({ speed: 2, ...withoutOwnInteraction })]
+        : []),
       emblaA11y({
         labelledBy: region === 'labelledBy' ? 'carousel-heading' : null,
         label: region === 'label' ? 'Featured products' : null,

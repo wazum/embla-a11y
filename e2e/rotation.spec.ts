@@ -36,6 +36,27 @@ for (const variant of ['autoplay', 'auto-scroll']) {
       expect(await focusedSlideIsVisible(page)).toBe(true)
     })
 
+    test('stops for good when someone presses inside the carousel', async ({ page }) => {
+      const heading = page.getByRole('heading', { name: 'Product 1', exact: true })
+      const box = await heading.boundingBox()
+      if (box === null) throw new Error('Product 1 heading not visible')
+      await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2)
+      await page.mouse.down()
+      await page.mouse.up()
+      await expect.poll(() => isRotating(page)).toBe(false)
+
+      await page.evaluate(
+        () =>
+          new Promise((resolve) => {
+            window.emblaApi?.on('settle', resolve)
+            window.emblaApi?.goToNext()
+          })
+      )
+      await page.waitForTimeout(1500)
+
+      expect(await isRotating(page)).toBe(false)
+    })
+
     test('stays stopped through a resize after the user stopped it', async ({ page }) => {
       await page.getByRole('link', { name: 'Details for product 2' }).focus()
       await expect.poll(() => isRotating(page)).toBe(false)
