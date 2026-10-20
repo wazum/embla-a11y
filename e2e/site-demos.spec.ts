@@ -375,12 +375,15 @@ test.describe('Fade', () => {
     await expect(demo.getByRole('button', { name: 'Previous', exact: true })).toBeFocused()
   })
 
-  test('Next announces the single slide', async ({ page }) => {
+  test('Next announces the single slide with its heading', async ({ page }) => {
     const demo = page.locator('#fade')
 
     await demo.getByRole('button', { name: 'Next', exact: true }).click()
 
-    await expect(demo.locator('.carousel__announcer')).toHaveText('Slide 2 of 10', afterSettle)
+    await expect(demo.locator('.carousel__announcer')).toHaveText(
+      'Slide 2 of 10: Berlin',
+      afterSettle
+    )
   })
 })
 
