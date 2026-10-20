@@ -57,6 +57,51 @@ test('leaves the page exactly as it was after destroy, with every feature in use
   expect(document.body.innerHTML).toBe(before)
 })
 
+test('stops following focus after destroy', () => {
+  const { slides, emblaApi } = createCarousel({
+    slideCount: 3,
+    slideWidth: '100%',
+    plugins: [emblaA11y({ label: 'Products', hideOffscreen: false })]
+  })
+  const viewport = emblaApi.rootNode()
+  const link = slides[0]?.querySelector('a')
+  if (link === null || link === undefined) throw new Error('link not found')
+  link.style.marginLeft = '200px'
+  emblaApi.destroy()
+  viewport.scrollLeft = 40
+  const scrolled = viewport.scrollLeft
+
+  link.focus()
+
+  expect(scrolled).toBeGreaterThan(0)
+  expect(viewport.scrollLeft).toBe(scrolled)
+})
+
+test('leaves the rotation button alone after destroy', async () => {
+  const rotationButton = document.createElement('button')
+  rotationButton.innerHTML =
+    '<span data-rotation-playing>Stop</span><span data-rotation-stopped hidden>Start</span>'
+  const { wrapper, emblaApi } = createCarousel({
+    slideCount: 3,
+    slideWidth: '100%',
+    plugins: ({ previous, next }) => [
+      Autoplay({ delay: 1000 }),
+      emblaA11y({ label: 'Products', previousButton: previous, nextButton: next, rotationButton })
+    ]
+  })
+  wrapper.append(rotationButton)
+  emblaApi.plugins().autoplay?.play()
+  await new Promise((resolve) => setTimeout(resolve, 50))
+  emblaApi.destroy()
+  const before = rotationButton.innerHTML
+
+  rotationButton.click()
+  wrapper.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }))
+  await new Promise((resolve) => setTimeout(resolve, 50))
+
+  expect(rotationButton.innerHTML).toBe(before)
+})
+
 test('restores the original markup on destroy', () => {
   const { wrapper, emblaApi } = createCarousel({
     plugins: [emblaA11y({ label: 'Featured products' })],
