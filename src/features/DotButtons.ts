@@ -2,6 +2,11 @@ import type { EmblaCarouselType } from 'embla-carousel'
 import { AttributeStore } from '../AttributeStore.js'
 import type { Feature, WarnType } from './Feature.js'
 
+export type DotButtonsOptionsType = {
+  dotLabel: DotLabelType | null
+  dotKeys: boolean
+}
+
 export type DotLabelType = (
   firstSlide: number,
   lastSlide: number,
@@ -20,31 +25,46 @@ export class DotButtons implements Feature {
   private readonly emblaApi: EmblaCarouselType
   private readonly container: HTMLElement
   private readonly dotLabel: DotLabelType | null
+  private readonly dotKeys: boolean
   private readonly warn: WarnType
   private readonly attributes = new AttributeStore()
   private readonly names = new Map<Element, HTMLSpanElement>()
   private readonly sources = new WeakMap<HTMLSpanElement, string>()
   private readonly observer = new MutationObserver(() => this.update())
   private readonly onSelect = (): void => this.update()
+  private readonly onKeyDown = (event: KeyboardEvent): void => {
+    if (event.altKey || event.ctrlKey || event.metaKey) return
+    const dots = Array.from(this.container.querySelectorAll('button'))
+    const index = dots.findIndex((dot) => dot === event.target)
+    if (index === -1) return
+    const target = dots[this.targetIndex(event.key, index, dots.length) ?? -1]
+    if (target === undefined) return
+    event.preventDefault()
+    target.focus()
+    target.click()
+  }
 
   public constructor(
     emblaApi: EmblaCarouselType,
     container: HTMLElement,
-    dotLabel: DotLabelType | null,
+    { dotLabel, dotKeys }: DotButtonsOptionsType,
     warn: WarnType
   ) {
     this.emblaApi = emblaApi
     this.container = container
     this.dotLabel = dotLabel
+    this.dotKeys = dotKeys
     this.warn = warn
     this.update()
     emblaApi.on('select', this.onSelect)
     this.observer.observe(container, { childList: true, subtree: true })
+    if (dotKeys) container.addEventListener('keydown', this.onKeyDown)
   }
 
   public destroy(): void {
     this.observer.disconnect()
     this.emblaApi.off('select', this.onSelect)
+    this.container.removeEventListener('keydown', this.onKeyDown)
     for (const name of this.names.values()) name.remove()
     this.names.clear()
     this.attributes.restore()
@@ -64,7 +84,21 @@ export class DotButtons implements Feature {
       }
       if (snap === selectedSnap) this.attributes.set(dot, 'aria-current', 'true')
       else this.attributes.remove(dot, 'aria-current')
+      if (!this.dotKeys) return
+      if (snap === selectedSnap) this.attributes.reset(dot, 'tabindex')
+      else this.attributes.set(dot, 'tabindex', '-1')
     })
+  }
+
+  private targetIndex(key: string, index: number, count: number): number | null {
+    const rightToLeft = getComputedStyle(this.container).direction === 'rtl'
+    const forward = rightToLeft ? 'ArrowLeft' : 'ArrowRight'
+    const backward = rightToLeft ? 'ArrowRight' : 'ArrowLeft'
+    if (key === forward) return (index + 1) % count
+    if (key === backward) return (index - 1 + count) % count
+    if (key === 'Home') return 0
+    if (key === 'End') return count - 1
+    return null
   }
 
   private releaseRemoved(dots: HTMLButtonElement[]): void {

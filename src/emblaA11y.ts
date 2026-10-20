@@ -31,6 +31,7 @@ type OptionsType = CreateOptionsType<{
   nextButton: HTMLElement | null
   dots: HTMLElement | null
   dotLabel: DotLabelType | null
+  dotKeys: boolean
   rotationButton: HTMLElement | null
   rotationLabel: RotationLabelType | null
   announcer: HTMLElement | null
@@ -52,6 +53,7 @@ const defaultOptions: OptionsType = {
   nextButton: null,
   dots: null,
   dotLabel: null,
+  dotKeys: false,
   rotationButton: null,
   rotationLabel: null,
   announcer: null,
@@ -103,7 +105,7 @@ function emblaA11y(userOptions: EmblaA11yOptionsType = {}): EmblaA11yType {
     ]
     if (options.hideOffscreen) features.push(new HideOffscreen(emblaApi))
     if (options.dots !== null) {
-      features.push(new DotButtons(emblaApi, options.dots, options.dotLabel, warn))
+      features.push(new DotButtons(emblaApi, options.dots, options, warn))
     }
     if (options.announcer !== null) {
       features.push(new Announcer(emblaApi, options.announcer, options, warn))

@@ -156,6 +156,26 @@ Style the current dot with the attribute, and make each dot at least 24 by 24 pi
 }
 ```
 
+### Fewer Tab stops for many dots
+
+By default every dot is a Tab stop. With 20 dots, a keyboard user who picks dot 13 needs many Shift+Tab presses to get back to the slides. With `dotKeys: true`:
+
+- Only the current dot is a Tab stop.
+- While a dot has focus, the Left and Right arrow keys move to the previous or next dot and show its slides. Home and End go to the first and last dot. The keys wrap around at the ends and are swapped for right-to-left text.
+- The dots stay plain buttons with `aria-current`. Screen readers in reading mode keep their arrow keys, because the plugin only reacts while a dot has focus.
+
+```js
+emblaA11y({ dots, dotKeys: true })
+```
+
+> [!NOTE]
+> Sighted keyboard users cannot see that the arrow keys work. Show a short hint near the dots, for example "Use the arrow keys to choose a slide", in your page's language.
+
+> [!TIP]
+> Screen reader users mostly move by headings, not by Tab. With a heading in every slide, they get from any dot back to the slides with one key press, with or without `dotKeys`.
+
+The plugin does not turn the dots into tabs (`role="tab"`), as the ARIA Authoring Practices suggest. In tests with blind, low-vision and keyboard-only users, carousels with tabs confused people: the tabs come after the slides they control, and the dots do not look like tabs.
+
 ## Position announcements
 
 After someone moves the carousel with a button, a dot or a drag, screen readers hear where they are now, for example "Slides 4 to 6 of 10". It is said once, politely, after the move ends. Nothing is said on load, on a resize, while Autoplay or AutoScroll move the carousel, or when focus brings a slide into view, because then the screen reader already reads the focused element.

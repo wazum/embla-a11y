@@ -1,6 +1,6 @@
 import type { EmblaCarouselType } from 'embla-carousel'
 import { afterEach, describe, expect, test } from 'vitest'
-import { page } from 'vitest/browser'
+import { page, userEvent } from 'vitest/browser'
 import { removeCarousels } from './fixture.js'
 
 declare const USES_EMBLA_V8: boolean
@@ -57,6 +57,19 @@ describe.skipIf(USES_EMBLA_V8)('examples', () => {
     await expect
       .poll(() => element('.embla__announcer').textContent, { timeout: 3000 })
       .toBe('Slide 3 of 3')
+  })
+
+  test('dot keys keep one dot in the Tab order and move with the arrow keys', async () => {
+    await runExample('dot-keys.js', 'dots-from-script.html')
+    await expect.poll(() => elements('.embla__dot')).toHaveLength(3)
+    const dots = elements('.embla__dot')
+    expect(dots.map((dot) => dot.getAttribute('tabindex'))).toEqual([null, '-1', '-1'])
+
+    dots[0]?.focus()
+    await userEvent.keyboard('{ArrowRight}')
+
+    expect(document.activeElement).toBe(dots[1])
+    await expect.poll(() => dots[1]?.getAttribute('aria-current'), { timeout: 3000 }).toBe('true')
   })
 
   test('switching off on wide screens takes everything back', async () => {
