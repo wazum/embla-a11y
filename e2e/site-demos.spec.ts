@@ -406,7 +406,11 @@ test.describe('Removing slides', () => {
       await page.keyboard.press('Enter')
       await page.waitForTimeout(150)
     }
-    await demo.getByRole('button', { name: 'Remove Athens', exact: true }).focus()
+    const removeAthens = demo.getByRole('button', { name: 'Remove Athens', exact: true })
+    await expect
+      .poll(() => removeAthens.evaluate((button) => button.closest('[inert]') === null))
+      .toBe(true)
+    await removeAthens.focus()
 
     await page.keyboard.press('Enter')
 
