@@ -148,7 +148,10 @@ test('warns once when Autoplay runs without a rotation button, also after a reIn
   const { emblaApi } = createCarousel({
     slideCount: 3,
     slideWidth: '100%',
-    plugins: [Autoplay({ delay: 1000 }), emblaA11y({ label: 'Products' })]
+    plugins: ({ previous, next }) => [
+      Autoplay({ delay: 1000 }),
+      emblaA11y({ label: 'Products', previousButton: previous, nextButton: next })
+    ]
   })
   await new Promise((resolve) => setTimeout(resolve, 50))
 
@@ -262,7 +265,13 @@ test('does not warn about a missing rotation button when there is one', async ()
 
 test('does not warn about a missing rotation button without Autoplay or AutoScroll', async () => {
   const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
-  createCarousel({ slideCount: 3, slideWidth: '100%', plugins: [emblaA11y({ label: 'Products' })] })
+  createCarousel({
+    slideCount: 3,
+    slideWidth: '100%',
+    plugins: ({ previous, next }) => [
+      emblaA11y({ label: 'Products', previousButton: previous, nextButton: next })
+    ]
+  })
   await new Promise((resolve) => setTimeout(resolve, 50))
 
   expect(warn).not.toHaveBeenCalled()

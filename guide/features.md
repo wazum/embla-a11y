@@ -99,6 +99,7 @@ At the start and the end, the previous or next button gets `aria-disabled="true"
 
 - Options: `previousButton` and `nextButton`.
 - Markup: real `<button type="button">` elements with visible text. Don't set `disabled` yourself. The plugin never changes the button's name.
+- A carousel with more than one position needs buttons or dots. Without them it can only be dragged, which keyboard, screen reader and voice control users cannot do, and the plugin warns in the console.
 
 If your buttons show only an icon, hide the icon and give the button hidden text:
 

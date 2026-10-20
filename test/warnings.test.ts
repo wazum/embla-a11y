@@ -64,6 +64,15 @@ const setups = [
       })
   },
   {
+    warning: 'can only be moved by dragging',
+    create: () =>
+      createCarousel({
+        slideCount: 3,
+        slideWidth: '100%',
+        plugins: [emblaA11y({ label: 'Products' })]
+      })
+  },
+  {
     warning: 'without a rotation button',
     create: () => createCarousel({ plugins: [Autoplay(), emblaA11y({ label: 'Products' })] })
   }
@@ -99,4 +108,43 @@ test('stays silent with warnings switched off for one carousel', () => {
   createCarousel({ plugins: [emblaA11y({ warnings: false })] })
 
   expect(warn).not.toHaveBeenCalled()
+})
+
+function dragOnlyWarnings(calls: unknown[][]): unknown[][] {
+  return calls.filter(([message]) => String(message).includes('can only be moved by dragging'))
+}
+
+test('does not warn about dragging when everything fits in one view', () => {
+  const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
+  createCarousel({ slideCount: 3, slideWidth: '20%', plugins: [emblaA11y({ label: 'Products' })] })
+
+  expect(dragOnlyWarnings(warn.mock.calls)).toEqual([])
+})
+
+test('does not warn about dragging with previous and next buttons', () => {
+  const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
+  createCarousel({
+    slideCount: 3,
+    slideWidth: '100%',
+    plugins: ({ previous, next }) => [
+      emblaA11y({ label: 'Products', previousButton: previous, nextButton: next })
+    ]
+  })
+
+  expect(dragOnlyWarnings(warn.mock.calls)).toEqual([])
+})
+
+test('does not warn about dragging with dots', () => {
+  const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
+  createCarousel({
+    slideCount: 3,
+    slideWidth: '100%',
+    dotTexts: ['1', '2', '3'],
+    plugins: ({ dots }) => [emblaA11y({ label: 'Products', dots })]
+  })
+
+  expect(dragOnlyWarnings(warn.mock.calls)).toEqual([])
 })
