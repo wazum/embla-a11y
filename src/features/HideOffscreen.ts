@@ -13,7 +13,9 @@ export class HideOffscreen implements Feature {
   private readonly attributes = new AttributeStore()
   private readonly onScroll = (): void => {
     this.moving = true
-    this.scheduleRefresh()
+    // Embla has just moved the slides, so a later frame would only see positions that are already stale.
+    if (this.autoScrolling()) this.refresh()
+    else this.scheduleRefresh()
   }
   private readonly onSettle = (): void => {
     this.moving = false

@@ -2,6 +2,12 @@
 
 All notable changes to this project are listed here. The project follows [Semantic Versioning](https://semver.org).
 
+## Unreleased
+
+### Fixed
+
+- While AutoScroll runs, a slide that leaves the screen becomes `inert` in the same frame, not one frame later.
+
 ## 1.0.0 (2026-10-20)
 
 The first release. Works with Embla Carousel 8.6 and 9, in Chrome and Edge 110, Firefox 115 and Safari 16 and newer.

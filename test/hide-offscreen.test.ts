@@ -34,17 +34,23 @@ test('keeps hiding slides that leave the screen while AutoScroll runs', async ()
   outside.textContent = 'Outside'
   document.body.prepend(outside)
   await userEvent.hover(outside)
+  const outOfStep: string[] = []
+  let offScreenSeen = 0
+  emblaApi.on('scroll', () => {
+    const viewport = emblaApi.rootNode().getBoundingClientRect()
+    slides.forEach((slide, index) => {
+      const rect = slide.getBoundingClientRect()
+      const offScreen = rect.right < viewport.left + 1 || rect.left > viewport.right - 1
+      if (offScreen) offScreenSeen++
+      if (offScreen !== slide.hasAttribute('inert')) outOfStep.push(`slide ${index + 1}`)
+    })
+  })
   emblaApi.plugins().autoScroll?.play()
   await new Promise((resolve) => setTimeout(resolve, 1500))
 
-  const viewport = emblaApi.rootNode().getBoundingClientRect()
-  const offScreen = slides.filter((slide) => {
-    const rect = slide.getBoundingClientRect()
-    return rect.right <= viewport.left + 1 || rect.left >= viewport.right - 1
-  })
   expect(emblaApi.plugins().autoScroll?.isPlaying()).toBe(true)
-  expect(offScreen.length).toBeGreaterThan(0)
-  expect(offScreen.map((slide) => slide.hasAttribute('inert'))).toEqual(offScreen.map(() => true))
+  expect(offScreenSeen).toBeGreaterThan(0)
+  expect(outOfStep).toEqual([])
 })
 
 test('keeps every slide reachable with hideOffscreen: false', () => {
