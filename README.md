@@ -4,7 +4,7 @@ An accessibility plugin for [Embla Carousel](https://www.embla-carousel.com) 8.6
 
 The plugin never hides content that people can see. It aims at WCAG 2.2 AA, plus the AAA criteria a carousel can meet. Every change runs automated tests in Chromium, Firefox and WebKit against both Embla versions, and screen reader tests with VoiceOver, NVDA and Orca. It needs Chrome or Edge 110, Firefox 115 or Safari 16 and newer.
 
-Use it instead of the official `embla-carousel-accessibility` plugin or `@bluecadet/embla-carousel-a11y`, not together with them.
+Use it instead of the official `embla-carousel-accessibility` plugin or `@bluecadet/embla-carousel-a11y`, not together with them. See [embla-a11y or the official plugin?](#embla-a11y-or-the-official-plugin)
 
 ## Quick start
 
@@ -100,6 +100,22 @@ The examples use a common `visually-hidden` class. It hides text on screen and k
 - [Autoplay, AutoScroll and the rotation button](guide/features.md#autoplay-autoscroll-and-the-rotation-button): stops for good on interaction, respects reduced motion, and keeps the button text right.
 - [Server rendering and frameworks](guide/features.md#server-rendering-and-frameworks): safe with SSR and the React, Vue and Solid wrappers.
 - [Clean destroy and switching off](guide/features.md#clean-destroy-and-switching-off): everything the plugin added is taken back.
+
+## embla-a11y or the official plugin?
+
+Use one of them, not both: they manage the same attributes. The official [Accessibility plugin](https://www.embla-carousel.com/docs/plugins/accessibility) is maintained by the Embla team and follows the carousel pattern of the ARIA Authoring Practices, with slides labelled "Slide 3 of 10". Choose embla-a11y if you need:
+
+- **Every slide people can see stays readable and reachable.** The official plugin hides every slide outside the selected snap from screen readers and the keyboard, also slides that are fully on screen. With three slides in view and the default `slidesToScroll: 1`, it hides one or two of them. The Embla team keeps this on purpose ([#1389](https://github.com/davidjerleke/embla-carousel/issues/1389)).
+- **All texts come from your page, in its language.** The official plugin writes English names over your own: a button that shows "Zurück" is announced as "Go to previous Slide", which voice control users cannot match, and the carousel is called "Carousel" instead of by your heading.
+- **Autoplay and AutoScroll that people can stop.** A stop button, stop on any interaction, and reduced motion. The official plugin leaves this to you.
+- **Focus that is never lost or out of sight.** Focus from screen readers, voice control and scripts brings its slide into view, and moves on when the focused element disappears.
+- **Your markup back as it was.** On destroy, every attribute goes back to what you wrote. The official plugin removes names you wrote yourself.
+- **Embla 8.6 as well as 9.**
+
+> [!NOTE]
+> Checked in Chromium against `embla-carousel-accessibility` 9.0.0-rc04.
+
+To switch, remove `embla-carousel-accessibility` and its `setup…()` calls, move the texts into your markup as in the [quick start](#quick-start), and pass your elements to `emblaA11y()`.
 
 ## Options
 
