@@ -1,2 +1,5 @@
 export { default } from './emblaA11y.js'
 export type { EmblaA11yType, EmblaA11yOptionsType } from './emblaA11y.js'
+export type { AnnouncementType } from './features/Announcer.js'
+export type { DotLabelType } from './features/DotButtons.js'
+export type { RotationLabelType } from './features/RotationButtonText.js'
