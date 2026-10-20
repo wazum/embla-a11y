@@ -233,6 +233,20 @@ The plugin adds nothing on the server. The React, Vue and Solid wrappers also cr
 - No configuration.
 - Markup: render the section, heading, list, buttons and dot names on the server. Then the carousel is accessible before JavaScript runs.
 
+Pass the elements from refs. Embla's wrappers compare the plugin options on every render and re-initialise the carousel with a new plugin instance when an element changes, for example on the render after the first one, when the refs are filled. The plugin keeps what matters across that switch: a rotation the user stopped stays stopped, and a warning is not repeated. List `emblaA11y` last, as everywhere.
+
+```jsx
+const previous = useRef(null)
+const next = useRef(null)
+const [viewport, emblaApi] = useEmblaCarousel({}, [
+  Autoplay(),
+  emblaA11y({ previousButton: previous.current, nextButton: next.current })
+])
+```
+
+> [!NOTE]
+> This React snippet is an illustration and does not run in the test suite. What it relies on does: tests swap in a new plugin instance with new buttons the way the wrappers do, and check that the old buttons get their markup back and a stopped rotation stays stopped.
+
 ## Clean destroy and switching off
 
 When the plugin is destroyed or Embla re-initialises, every attribute and text the plugin added goes back to how it was. The same happens when you switch the plugin off, for example on wide screens where the carousel becomes a plain grid:

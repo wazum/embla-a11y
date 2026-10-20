@@ -59,22 +59,15 @@ const defaultOptions: OptionsType = {
   warnings: true
 }
 
+type CarouselStateType = { rotation: RotationMemoryType; warnings: Set<string> }
+
+// Framework wrappers swap in a new plugin instance when an option changes, so state that must
+// outlive it, like a rotation the user stopped, belongs to the carousel, not the instance.
+const carouselStates = new WeakMap<HTMLElement, CarouselStateType>()
+
 function emblaA11y(userOptions: EmblaA11yOptionsType = {}): EmblaA11yType {
   const focusMemory: FocusMemoryType = { focused: null }
-  const rotationMemory: RotationMemoryType = {
-    stoppedByUser: false,
-    startedByUser: false,
-    playing: null
-  }
-  const warnings = new Set<string>()
-  let warningsOn = true
   let features: Feature[] = []
-
-  function warn(message: string): void {
-    if (!warningsOn || warnings.has(message)) return
-    warnings.add(message)
-    console.warn(`embla-a11y: ${message}`)
-  }
 
   function init(anyEmblaApi: EmblaCarouselType, optionsHandler: OptionsHandlerType): void {
     const emblaApi = asEmblaV9(anyEmblaApi)
@@ -84,9 +77,14 @@ function emblaA11y(userOptions: EmblaA11yOptionsType = {}): EmblaA11yType {
       mergeOptions(mergeOptions(defaultOptions, emblaA11y.globalOptions), userOptions)
     )
     if (!options.active) return
-    warningsOn = options.warnings
 
     const viewport = emblaApi.rootNode()
+    const state = stateOf(viewport)
+    const warn: WarnType = (message) => {
+      if (!options.warnings || state.warnings.has(message)) return
+      state.warnings.add(message)
+      console.warn(`embla-a11y: ${message}`)
+    }
     const controls = [
       options.previousButton,
       options.nextButton,
@@ -98,7 +96,7 @@ function emblaA11y(userOptions: EmblaA11yOptionsType = {}): EmblaA11yType {
     features = [
       new Region(area, options, warn),
       new SlideList(emblaApi, warn),
-      new RotationControl(emblaApi, area, rotationMemory, options, warn),
+      new RotationControl(emblaApi, area, state.rotation, options, warn),
       new FollowFocus(emblaApi),
       new PreviousNextButtons(emblaApi, options),
       new FocusRescue(emblaApi, area, options, focusMemory)
@@ -126,6 +124,17 @@ function emblaA11y(userOptions: EmblaA11yOptionsType = {}): EmblaA11yType {
 }
 
 emblaA11y.globalOptions = undefined as EmblaA11yOptionsType | undefined
+
+function stateOf(viewport: HTMLElement): CarouselStateType {
+  const existing = carouselStates.get(viewport)
+  if (existing !== undefined) return existing
+  const created: CarouselStateType = {
+    rotation: { stoppedByUser: false, startedByUser: false, playing: null },
+    warnings: new Set<string>()
+  }
+  carouselStates.set(viewport, created)
+  return created
+}
 
 function carouselArea(viewport: HTMLElement, controls: HTMLElement[], warn: WarnType): HTMLElement {
   const parent = viewport.parentElement
