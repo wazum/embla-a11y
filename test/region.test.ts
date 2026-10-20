@@ -166,9 +166,7 @@ test('takes a div the author made a region as the carousel', async () => {
 
   expect(emblaApi.plugins().autoplay?.isPlaying()).toBe(false)
   expect(page.getByRole('region').elements()).toEqual([wrapper])
-  expect(
-    warn.mock.calls.filter(([message]) => !String(message).includes('rotation button'))
-  ).toEqual([])
+  expect(warn.mock.calls.filter(([message]) => String(message).includes('region'))).toEqual([])
 })
 
 test("keeps the author's own region name", async () => {

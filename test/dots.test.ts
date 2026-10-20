@@ -96,7 +96,9 @@ test('names no dot and warns when there is no text, template or option', () => {
   })
 
   expect(buttons.dots.textContent).toBe('')
-  expect(warn).toHaveBeenCalledOnce()
+  expect(warn.mock.calls.filter(([message]) => String(message).includes('dot'))).toEqual([
+    [expect.stringContaining('a dot button has no name')]
+  ])
 })
 
 test('keeps the visible text of a dot as its name', async () => {

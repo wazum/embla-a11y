@@ -73,6 +73,17 @@ const setups = [
       })
   },
   {
+    warning: 'without an announcer',
+    create: () =>
+      createCarousel({
+        slideCount: 3,
+        slideWidth: '100%',
+        plugins: ({ previous, next }) => [
+          emblaA11y({ label: 'Products', previousButton: previous, nextButton: next })
+        ]
+      })
+  },
+  {
     warning: 'without a rotation button',
     create: () => createCarousel({ plugins: [Autoplay(), emblaA11y({ label: 'Products' })] })
   }

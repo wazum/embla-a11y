@@ -4,6 +4,10 @@ All notable changes to this project are listed here. The project follows [Semant
 
 ## Unreleased
 
+### Added
+
+- A warning when the previous and next buttons or the dots have no announcer.
+
 ### Fixed
 
 - While AutoScroll runs, a slide that leaves the screen becomes `inert` in the same frame, not one frame later.

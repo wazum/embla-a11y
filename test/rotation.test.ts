@@ -36,6 +36,10 @@ async function createHoverableCarousel() {
   return { ...carousel, rotationButton, outside }
 }
 
+function rotationWarnings(calls: unknown[][]): unknown[][] {
+  return calls.filter(([message]) => String(message).includes('rotation'))
+}
+
 function buttonSays(rotationButton: HTMLElement): string {
   const shown = rotationButton.querySelector<HTMLElement>('span:not([hidden])')
   return shown?.textContent ?? ''
@@ -229,7 +233,9 @@ test('leaves a rotation button without texts alone and warns', async () => {
   await new Promise((resolve) => setTimeout(resolve, 50))
 
   expect(rotationButton.textContent).toBe('Pause')
-  expect(warn).toHaveBeenCalledOnce()
+  expect(rotationWarnings(warn.mock.calls)).toEqual([
+    [expect.stringContaining('the rotation button has no texts')]
+  ])
 })
 
 test('warns once when Autoplay runs without a rotation button, also after a reInit', async () => {
@@ -247,8 +253,9 @@ test('warns once when Autoplay runs without a rotation button, also after a reIn
   emblaApi.reInit()
   await new Promise((resolve) => setTimeout(resolve, 50))
 
-  expect(warn).toHaveBeenCalledOnce()
-  expect(warn).toHaveBeenCalledWith(expect.stringContaining('without a rotation button'))
+  expect(rotationWarnings(warn.mock.calls)).toEqual([
+    [expect.stringContaining('without a rotation button')]
+  ])
 })
 
 test('stops for good on a press on Next outside an extra wrapper around the viewport', async () => {
@@ -352,7 +359,7 @@ test('does not warn about a missing rotation button when there is one', async ()
   })
   await new Promise((resolve) => setTimeout(resolve, 50))
 
-  expect(warn).not.toHaveBeenCalled()
+  expect(rotationWarnings(warn.mock.calls)).toEqual([])
 })
 
 test('does not warn about a missing rotation button without Autoplay or AutoScroll', async () => {
@@ -366,5 +373,5 @@ test('does not warn about a missing rotation button without Autoplay or AutoScro
   })
   await new Promise((resolve) => setTimeout(resolve, 50))
 
-  expect(warn).not.toHaveBeenCalled()
+  expect(rotationWarnings(warn.mock.calls)).toEqual([])
 })

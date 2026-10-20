@@ -113,9 +113,14 @@ function emblaA11y(userOptions: EmblaA11yOptionsType = {}): EmblaA11yType {
       features.push(new Announcer(emblaApi, options.announcer, options, warn))
     }
     const navigation = [options.previousButton, options.nextButton, options.dots]
-    if (emblaApi.snapList().length > 1 && navigation.every((control) => control === null)) {
+    if (emblaApi.snapList().length < 2) return
+    if (navigation.every((control) => control === null)) {
       warn(
         'the carousel can only be moved by dragging. Keyboard, screen reader and voice control users need buttons, and off-screen slides cannot be reached without them. Pass previousButton and nextButton, or dots.'
+      )
+    } else if (options.announcer === null) {
+      warn(
+        'the buttons move the carousel without an announcer, so screen reader users hear nothing after pressing them. Pass announcer with a template for the slides on screen.'
       )
     }
   }
