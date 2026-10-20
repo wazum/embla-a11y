@@ -135,6 +135,11 @@ function canHoldFocus(element: Element): boolean {
     element.isConnected &&
     !element.matches(':disabled') &&
     element.closest('[inert], [hidden]') === null &&
-    element.checkVisibility({ visibilityProperty: true })
+    isVisible(element)
   )
+}
+
+function isVisible(element: Element): boolean {
+  if (!('checkVisibility' in element)) return true
+  return element.checkVisibility({ visibilityProperty: true })
 }
