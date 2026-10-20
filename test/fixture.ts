@@ -37,7 +37,7 @@ export function createCarousel({
   slideWidth?: string
   options?: EmblaOptionsType
   plugins?: EmblaPluginType[] | ((buttons: ButtonsType) => EmblaPluginType[])
-  wrapperTag?: 'div' | 'section' | 'main' | null
+  wrapperTag?: 'div' | 'section' | 'main' | 'li' | null
   wrapperAttributes?: Record<string, string>
   heading?: { id: string; text: string }
   dotTexts?: string[]

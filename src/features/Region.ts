@@ -21,9 +21,14 @@ export class Region implements Feature {
       )
       return
     }
-    if (element.localName !== 'section' && !element.hasAttribute('role')) {
+    if (element.localName === 'section' || element.hasAttribute('role')) return
+    if (element.localName === 'div') {
       this.attributes.set(element, 'role', 'region')
+      return
     }
+    warn(
+      `the carousel is a <${element.localName}>, which keeps its own role, so it is not a region. Wrap the viewport and its controls in a <section> named by a heading.`
+    )
   }
 
   public destroy(): void {

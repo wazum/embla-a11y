@@ -18,7 +18,7 @@ Each section says what the plugin does, which option turns it on, and what marku
 The smallest element around the viewport and all its controls becomes a named region, so screen reader users can find the carousel and know what it is. An extra wrapper around the viewport is fine; the plugin looks past it.
 
 - Markup: wrap the viewport and all buttons in a `<section>` with `aria-labelledby` pointing at a visible heading, as in the README example. Then the plugin adds nothing. If you name a `<div>` instead, the plugin adds `role="region"`, because a name on a plain `<div>` reaches no screen reader.
-- Options: if your markup has no name, pass the id of a visible heading as `labelledBy`, or a text as `label`. The plugin then names the element around the viewport and adds `role="region"` if it is not a `<section>`.
+- Options: if your markup has no name, pass the id of a visible heading as `labelledBy`, or a text as `label`. The plugin then names the element around the viewport and adds `role="region"` if it is a `<div>`. Other elements, such as an `<li>`, keep their own role, and the plugin warns in the console.
 - The plugin never overwrites a name or role you wrote. Without any name it adds no region and warns in the console.
 
 A visible heading is better than `label`: most screen reader users move through a page by headings, and browsers translate visible text but not an `aria-label` added by script.

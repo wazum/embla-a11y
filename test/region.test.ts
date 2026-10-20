@@ -150,6 +150,18 @@ test('leaves the body alone and warns when the viewport has no wrapper', () => {
   expect(warn).toHaveBeenCalledWith(expect.stringContaining('no element around the viewport'))
 })
 
+test('keeps the role of an element that cannot be a region, and warns', () => {
+  const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
+  const { wrapper } = createCarousel({
+    wrapperTag: 'li',
+    plugins: [emblaA11y({ label: 'Featured products' })]
+  })
+
+  expect(wrapper.hasAttribute('role')).toBe(false)
+  expect(warn).toHaveBeenCalledWith(expect.stringContaining('<li>'))
+})
+
 test("keeps the author's own role on a named div", () => {
   const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
   const { wrapper } = createCarousel({
