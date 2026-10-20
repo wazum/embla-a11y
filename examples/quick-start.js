@@ -16,3 +16,5 @@ next.addEventListener('click', () => emblaApi.goToNext())
 dots.querySelectorAll('button').forEach((dot, index) => {
   dot.addEventListener('click', () => emblaApi.goTo(index))
 })
+
+export { emblaApi }

@@ -1,3 +1,4 @@
+import type { EmblaCarouselType } from 'embla-carousel'
 import { afterEach, describe, expect, test } from 'vitest'
 import { page } from 'vitest/browser'
 import { removeCarousels } from './fixture.js'
@@ -9,9 +10,13 @@ const markup = import.meta.glob<string>('../examples/*.html', {
   import: 'default',
   eager: true
 })
-const scripts = import.meta.glob('../examples/*.js')
+const scripts = import.meta.glob<{ emblaApi: EmblaCarouselType }>('../examples/*.js')
+const carousels: EmblaCarouselType[] = []
 
-afterEach(removeCarousels)
+afterEach(() => {
+  for (const emblaApi of carousels.splice(0)) emblaApi.destroy()
+  removeCarousels()
+})
 
 describe.skipIf(USES_EMBLA_V8)('examples', () => {
   test('quick start marks the ends and announces a move', async () => {
@@ -75,7 +80,9 @@ async function runExample(script: string, html: string): Promise<void> {
   `
   document.body.innerHTML = markup[`../examples/${html}`] ?? ''
   document.body.append(style)
-  await scripts[`../examples/${script}`]?.()
+  const example = await scripts[`../examples/${script}`]?.()
+  if (example === undefined) throw new Error(`Example ${script} not found`)
+  carousels.push(example.emblaApi)
 }
 
 function element(selector: string): HTMLElement {

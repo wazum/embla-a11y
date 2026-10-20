@@ -12,3 +12,5 @@ const emblaApi = EmblaCarousel(
 )
 
 emblaApi.plugins().autoplay.play()
+
+export { emblaApi }

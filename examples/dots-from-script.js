@@ -16,3 +16,5 @@ dots.append(
     return dot
   })
 )
+
+export { emblaApi }
