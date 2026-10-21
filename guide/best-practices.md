@@ -32,7 +32,7 @@ If a button says "Next", don't give it a different `aria-label`. Voice control u
 
 ## Prefer text in the page over `aria-label`
 
-Browsers translate text in the page, but not an `aria-label`, and text rendered on the server works before JavaScript runs.
+Browsers translate text in the page. They translate an `aria-label` only sometimes, and never one that a script adds. Text rendered on the server also works before JavaScript runs.
 
 ## Avoid autoplay
 
