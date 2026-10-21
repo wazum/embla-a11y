@@ -1,5 +1,5 @@
 import type { EmblaCarouselType } from 'embla-carousel'
-import { afterEach, describe, expect, test } from 'vitest'
+import { afterEach, describe, expect, test, vi } from 'vitest'
 import { page, userEvent } from 'vitest/browser'
 import { removeCarousels } from './fixture.js'
 
@@ -16,6 +16,7 @@ const carousels: EmblaCarouselType[] = []
 afterEach(() => {
   for (const emblaApi of carousels.splice(0)) emblaApi.destroy()
   removeCarousels()
+  vi.restoreAllMocks()
 })
 
 describe.skipIf(USES_EMBLA_V8)('examples', () => {
@@ -33,11 +34,13 @@ describe.skipIf(USES_EMBLA_V8)('examples', () => {
     expect(element('.embla__next').getAttribute('aria-disabled')).toBe('true')
   })
 
-  test('rotation starts with the host and the button stops it', async () => {
+  test('rotation starts with the host, the button stops it, and nothing is missing', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
     await runExample('rotation.js', 'rotation.html')
 
     await expect.poll(() => element('[data-rotation-stopped]').hidden).toBe(true)
     expect(element('[data-rotation-playing]').hidden).toBe(false)
+    expect(warn).not.toHaveBeenCalled()
 
     element('.embla__rotation').click()
 
