@@ -19,6 +19,8 @@ Chrome says the same: "If the content is fundamentally a list, use a `<ul>` elem
 
 Putting `role="group"` on each `<li>` is no middle way: the items are then no list items, and the count is gone.
 
+The same reasons apply to the container. The Authoring Practices say: "The carousel container has the aria-roledescription property set to carousel." [2] The plugin makes the container a region named by a visible heading instead, and adds no role description.
+
 ## Consequences
 
 - To follow the Authoring Practices, the author writes `role="group"`, `aria-roledescription` and a name on each slide. The plugin keeps them.
