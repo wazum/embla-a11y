@@ -8,7 +8,7 @@ Most screen reader users move through a page by headings, and a visible heading 
 
 ## Don't hide slides that are on screen
 
-Hiding visible slides from screen readers locks out people who see the screen and also use speech, and people who use voice control. Hidden slides also disappear from the heading and link lists that screen reader users navigate with.
+Hiding visible slides from screen readers locks out people who see the screen and also use speech, and people who use voice control. Hidden slides also disappear from the heading and link lists that screen reader users navigate with. The plugin hides only slides that are completely off-screen, and those leave the lists too. If people need to find every slide there, use [`hideOffscreen: false`](features.md#keeping-every-slide-reachable).
 
 ## Offer a way past long carousels
 
