@@ -4,7 +4,8 @@ import type { Feature } from './Feature.js'
 /**
  * Moves the carousel until the focused element inside a slide is fully visible.
  * It follows keyboard, screen reader and script focus, but not mouse or touch presses or focus the browser restores.
- * It also undoes the browser's own scrolling of the viewport.
+ * It also undoes the browser's own scrolling of the viewport, and moves the carousel to what the browser scrolled to
+ * without focus, as find in page or a link to a slide do.
  */
 export class FollowFocus implements Feature {
   private readonly emblaApi: EmblaCarouselType
@@ -19,6 +20,13 @@ export class FollowFocus implements Feature {
     this.resetNativeScroll()
     const focused = document.activeElement
     return !(focused instanceof Element && this.overflow(focused) === 0)
+  }
+  private readonly onNativeScroll = (): void => {
+    const root = this.emblaApi.rootNode()
+    const distance =
+      this.emblaApi.internalEngine().axis.scroll === 'x' ? root.scrollLeft : root.scrollTop
+    this.resetNativeScroll()
+    if (distance !== 0) this.moveBy(-distance)
   }
   private readonly onWindowBlur = (): void => {
     this.windowWasLeft = true
@@ -37,6 +45,7 @@ export class FollowFocus implements Feature {
     this.emblaApi = emblaApi
     emblaApi.rootNode().addEventListener('focusin', this.onFocusIn)
     emblaApi.rootNode().addEventListener('pointerdown', this.onPointerDown, true)
+    emblaApi.rootNode().addEventListener('scroll', this.onNativeScroll)
     window.addEventListener('keydown', this.onKeyDown, true)
     emblaApi.on('slidefocus', this.onSlideFocus)
     window.addEventListener('blur', this.onWindowBlur)
@@ -47,6 +56,7 @@ export class FollowFocus implements Feature {
     clearTimeout(this.restoreTimeout)
     this.emblaApi.rootNode().removeEventListener('focusin', this.onFocusIn)
     this.emblaApi.rootNode().removeEventListener('pointerdown', this.onPointerDown, true)
+    this.emblaApi.rootNode().removeEventListener('scroll', this.onNativeScroll)
     window.removeEventListener('keydown', this.onKeyDown, true)
     this.emblaApi.off('slidefocus', this.onSlideFocus)
     window.removeEventListener('blur', this.onWindowBlur)

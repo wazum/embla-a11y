@@ -88,7 +88,7 @@ Make the skip link visible when it has focus.
 
 ## Focus brings its slide into view
 
-When something inside a slide gets focus, the carousel moves until it is fully visible. This works for the Tab key, screen readers, voice control and scripts. A mouse or touch press does not move the carousel, so the click lands where you pressed. Focus that the browser restores when someone comes back to the tab does not move it either. The plugin also stops the browser from scrolling the viewport by itself, which would push the slides out of place.
+When something inside a slide gets focus, the carousel moves until it is fully visible. This works for the Tab key, screen readers, voice control and scripts. A mouse or touch press does not move the carousel, so the click lands where you pressed. Focus that the browser restores when someone comes back to the tab does not move it either. The plugin also stops the browser from scrolling the viewport by itself, which would push the slides out of place. When the browser scrolls to something in a slide without focus, as find in page or a link to a slide do, the carousel moves there instead.
 
 - No configuration.
 - List `emblaA11y` after Embla's other plugins. When the focused slide is already fully visible, the plugin cancels Embla's `slidefocus` jump, and Embla 9 then skips every `slidefocus` listener registered after it. Plugins listed later miss the event, and so do listeners you add with `emblaApi.on('slidefocus', …)` after creating the carousel.
