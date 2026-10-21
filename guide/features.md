@@ -134,7 +134,7 @@ Style the unavailable state with the attribute, and keep focus visible:
 
 ## Dot buttons
 
-The current dot gets `aria-current="true"`. No dot is ever disabled, and dots you rebuild later get the same treatment. Focus stays on the dot after a press, unlike in the W3C carousel tutorial, which moves it to the slide: in user tests that move was "very disruptive", and the announcer says where the carousel is now.
+The current dot gets `aria-current="true"`. No dot is ever disabled, and dots you rebuild later get the same treatment. Focus stays on the dot after a press, unlike in the W3C carousel tutorial, which moves it to the slide: in user tests that move was "very disruptive". Most screen readers do not say when the dot that has focus becomes current, so pass an [announcer](#position-announcements) too: it says where the carousel is now.
 
 - Option: `dots`, the element that holds the dot buttons.
 - Markup: one `<button type="button">` per snap point, in order. The best name is your own hidden text, rendered on the server in the page's language, as in the README example. The plugin keeps it, and also a thumbnail image's `alt` text.
@@ -182,7 +182,7 @@ emblaA11y({ dots, dotKeys: true })
 > [!TIP]
 > Screen reader users mostly move by headings, not by Tab. With a heading in every slide, they get from any dot back to the slides with one key press, with or without `dotKeys`.
 
-The plugin does not turn the dots into tabs (`role="tab"`), as the ARIA Authoring Practices suggest. In tests with blind, low-vision and keyboard-only users, carousels with tabs confused people: the tabs come after the slides they control, and the dots do not look like tabs.
+The ARIA Authoring Practices offer two kinds of carousel: one with plain buttons, and one where the dots are tabs (`role="tab"`). The plugin follows the one with buttons. In tests with blind, low-vision and keyboard-only users, carousels with tabs confused people: the tabs come after the slides they control, and the dots do not look like tabs.
 
 ## Position announcements
 
