@@ -38,14 +38,14 @@ describe.skipIf(USES_EMBLA_V8)('examples', () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
     await runExample('rotation.js', 'rotation.html')
 
-    await expect.poll(() => element('[data-rotation-stopped]').hidden).toBe(true)
-    expect(element('[data-rotation-playing]').hidden).toBe(false)
+    await expect.poll(() => element('[data-rotation-stopped]').ariaHidden).toBe('true')
+    expect(element('[data-rotation-playing]').ariaHidden).toBe(null)
     expect(warn).not.toHaveBeenCalled()
 
     element('.embla__rotation').click()
 
-    expect(element('[data-rotation-stopped]').hidden).toBe(false)
-    expect(element('[data-rotation-playing]').hidden).toBe(true)
+    expect(element('[data-rotation-stopped]').ariaHidden).toBe(null)
+    expect(element('[data-rotation-playing]').ariaHidden).toBe('true')
   })
 
   test('dots built by script get names from the template', async () => {

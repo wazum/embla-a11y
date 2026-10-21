@@ -1,5 +1,6 @@
 import type { EmblaCarouselType } from 'embla-carousel'
 import { AttributeStore } from '../AttributeStore.js'
+import { visuallyHidden } from '../visuallyHidden.js'
 import type { Feature, WarnType } from './Feature.js'
 
 export type DotButtonsOptionsType = {
@@ -13,9 +14,6 @@ export type DotLabelType = (
   page: number,
   pages: number
 ) => string
-
-const visuallyHidden =
-  'position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; border: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap'
 
 /**
  * Names each dot button without a name of its own, with visually hidden text from the data-dot-label template in the markup or the dotLabel option.

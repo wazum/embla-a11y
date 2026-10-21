@@ -223,7 +223,7 @@ The rotation button starts and stops the rotation. Its text always says what pre
 - With Embla 9, Autoplay and AutoScroll no longer start on their own. Call `play()` after creating the carousel, as in the example below. With Embla 8.6 they start by themselves.
 - Option: `rotationButton` for the button. You need it whenever you use Autoplay or AutoScroll. Without it the plugin warns in the console.
 - When there is nothing to rotate, the button gets `aria-disabled="true"`: without Autoplay or AutoScroll (the plugin also warns then), or while all slides fit in one view. Style it with the attribute, as for the previous and next buttons.
-- Markup: a real `<button type="button">` inside the carousel area, before the slides, so people reach it before the moving content. Put both texts in it, in the page's language: one element with `data-rotation-playing` for while it runs, one with `data-rotation-stopped` and `hidden` for while it is stopped. The plugin only switches `hidden` between them.
+- Markup: a real `<button type="button">` inside the carousel area, before the slides, so people reach it before the moving content. Put both texts in it, in the page's language: one element with `data-rotation-playing` for while it runs, one with `data-rotation-stopped` and `hidden` for while it is stopped. Browsers do not translate hidden text, so the plugin keeps both texts in the page: it shows the one that fits and hides the other on screen and from screen readers.
 
 ```html
 <section class="embla" aria-labelledby="products-heading">

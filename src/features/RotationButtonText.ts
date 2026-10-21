@@ -1,4 +1,5 @@
 import { AttributeStore } from '../AttributeStore.js'
+import { visuallyHidden } from '../visuallyHidden.js'
 import type { WarnType } from './Feature.js'
 
 export type RotationLabelType = (playing: boolean) => string
@@ -56,8 +57,15 @@ export class RotationButtonText {
     return this.playingText !== null && this.stoppedText !== null
   }
 
+  // Browsers never translate hidden text, so the other text stays rendered, out of sight and out of the name.
   private toggle(text: HTMLElement, visible: boolean): void {
-    if (visible) this.attributes.remove(text, 'hidden')
-    else this.attributes.set(text, 'hidden', '')
+    this.attributes.remove(text, 'hidden')
+    if (visible) {
+      this.attributes.reset(text, 'aria-hidden')
+      this.attributes.reset(text, 'style')
+      return
+    }
+    this.attributes.set(text, 'aria-hidden', 'true')
+    this.attributes.set(text, 'style', visuallyHidden)
   }
 }

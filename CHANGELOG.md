@@ -7,6 +7,7 @@ All notable changes to this project are listed here. The project follows [Semant
 ### Fixed
 
 - With `dotKeys`, an arrow key marks the next dot current before it gets focus, so screen readers read it as the current dot.
+- Page translation now reaches both texts of the rotation button. The text not shown stays in the page, hidden on screen and from screen readers, instead of getting `hidden`, which browsers never translate.
 
 ## 1.1.0 (2026-10-20)
 

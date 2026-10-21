@@ -41,7 +41,7 @@ function rotationWarnings(calls: unknown[][]): unknown[][] {
 }
 
 function buttonSays(rotationButton: HTMLElement): string {
-  const shown = rotationButton.querySelector<HTMLElement>('span:not([hidden])')
+  const shown = rotationButton.querySelector<HTMLElement>('span:not([aria-hidden="true"])')
   return shown?.textContent ?? ''
 }
 
@@ -104,6 +104,28 @@ test('keeps rotating when a touch enters the carousel', async () => {
   await new Promise((resolve) => setTimeout(resolve, 50))
 
   expect(emblaApi.plugins().autoplay?.isPlaying()).toBe(true)
+})
+
+test('keeps the other rotation text rendered, so page translation reaches it, and gives back hidden on destroy', async () => {
+  const rotationButton = createRotationButton(
+    '<span data-rotation-playing>Stop slide rotation</span><span data-rotation-stopped hidden>Start slide rotation</span>'
+  )
+  const { emblaApi } = createCarousel({
+    slideCount: 3,
+    slideWidth: '100%',
+    plugins: [Autoplay({ delay: 1000 }), emblaA11y({ label: 'Products', rotationButton })]
+  })
+  emblaApi.plugins().autoplay?.play()
+  const stopped = rotationButton.querySelector<HTMLElement>('[data-rotation-stopped]')
+
+  await expect.element(page.getByRole('button', { name: 'Stop slide rotation' })).toBeVisible()
+  expect(stopped?.hidden).toBe(false)
+  expect(stopped?.getAttribute('aria-hidden')).toBe('true')
+
+  emblaApi.destroy()
+
+  expect(stopped?.hidden).toBe(true)
+  expect(stopped?.hasAttribute('aria-hidden')).toBe(false)
 })
 
 test('takes the rotation button texts from the markup', async () => {
