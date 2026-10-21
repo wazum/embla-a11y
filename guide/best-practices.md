@@ -40,7 +40,7 @@ Moving content is the most common complaint from disabled users, and it can make
 
 ## Don't take over the arrow keys
 
-Screen readers use them to read. Buttons and the Tab key are enough.
+Screen readers use them to read. Buttons and the Tab key are enough, so never listen for arrow keys on the slides or on the page. The one exception is [`dotKeys: true`](features.md#fewer-tab-stops-for-many-dots) for many dots: it reacts to the arrow keys only while a dot has focus, so screen readers in reading mode keep theirs.
 
 ## Announce little
 
