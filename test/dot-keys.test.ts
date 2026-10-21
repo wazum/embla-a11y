@@ -40,6 +40,19 @@ test('moves the Tab stop with the current dot', async () => {
   await expect.poll(() => tabIndexes(dots)).toEqual(['-1', '-1', null, '-1'])
 })
 
+test('marks the next dot current before it gets focus, so screen readers read it as current', async () => {
+  const { dots } = createCarouselWithDots()
+  const currentOnFocus: (string | null | undefined)[] = []
+  dots[1]?.addEventListener('focus', () =>
+    currentOnFocus.push(dots[1]?.getAttribute('aria-current'))
+  )
+  dots[0]?.focus()
+
+  await userEvent.keyboard('{ArrowRight}')
+
+  expect(currentOnFocus).toEqual(['true'])
+})
+
 test('moves to the next dot and shows its slide with the arrow keys, wrapping at the ends', async () => {
   const { dots } = createCarouselWithDots()
   dots[0]?.focus()

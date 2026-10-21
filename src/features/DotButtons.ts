@@ -40,8 +40,8 @@ export class DotButtons implements Feature {
     const target = dots[this.targetIndex(event.key, index, dots.length) ?? -1]
     if (target === undefined) return
     event.preventDefault()
-    target.focus()
     target.click()
+    target.focus()
   }
 
   public constructor(

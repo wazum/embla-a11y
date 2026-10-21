@@ -2,6 +2,12 @@
 
 All notable changes to this project are listed here. The project follows [Semantic Versioning](https://semver.org).
 
+## Unreleased
+
+### Fixed
+
+- With `dotKeys`, an arrow key marks the next dot current before it gets focus, so screen readers read it as the current dot.
+
 ## 1.1.0 (2026-10-20)
 
 ### Added
