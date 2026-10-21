@@ -106,6 +106,27 @@ The examples use a common `visually-hidden` class. It hides text on screen and k
 }
 ```
 
+### Without a build step
+
+The plugin and Embla are plain JavaScript modules, so browsers load them directly from a CDN. An import map lets the JavaScript above run unchanged. Put that JavaScript in a file such as `carousel.js`, and load it as a module after the import map:
+
+```html
+<script type="importmap">
+  {
+    "imports": {
+      "embla-carousel": "https://cdn.jsdelivr.net/npm/embla-carousel@9.0.0-rc04/esm/embla-carousel.esm.js",
+      "embla-a11y": "https://cdn.jsdelivr.net/npm/embla-a11y@1/dist/index.js"
+    }
+  }
+</script>
+<script type="module" src="carousel.js"></script>
+```
+
+- `embla-a11y@1` always loads the newest 1.x version. Pin an exact version such as `embla-a11y@1.1.0` once your carousel is done, so an update never changes it unseen.
+- For Embla 8.6, use `embla-carousel@8.6.0/esm/embla-carousel.esm.js` and Embla 8's method names.
+- Safari 16.0 to 16.3 have no import maps. For them, write the full URLs into the `import` lines of `carousel.js` instead of the names.
+- To host the files yourself, download the package from npm, for example `https://registry.npmjs.org/embla-a11y/-/embla-a11y-1.1.0.tgz`, and serve its `dist` folder.
+
 ## What it does
 
 - [Named region](guide/features.md#named-region): screen reader users can find the carousel by its name.
