@@ -2,17 +2,21 @@
 
 Status: accepted
 
-The author puts one visually hidden live region with `aria-live="polite"` and `aria-atomic="true"` in the carousel area, in the page from the start. After someone moves the carousel with a button, a dot or a drag, the plugin writes a short position into it once, for example "Slides 4 to 6 of 10". It says nothing on load, on a resize, while Autoplay or AutoScroll move the carousel, or when focus brings a slide into view. The slides get no `aria-live`.
+## Context
 
-This follows the W3C tutorial: "Use a WAI-ARIA live region to inform screen reader users what item is currently shown." [1]
+After a press on Next or a dot, screen reader users need to hear that something changed. The W3C tutorial says: "Use a WAI-ARIA live region to inform screen reader users what item is currently shown." [1]
 
-The ARIA Authoring Practices put `aria-live` on the slides instead: `off` "if the carousel is automatically rotating", `polite` "if the carousel is NOT automatically rotating". [2] The plugin does not, because:
+The ARIA Authoring Practices put `aria-live` on the slides instead: `off` "if the carousel is automatically rotating", `polite` "if the carousel is NOT automatically rotating". [2] Live slides have problems:
 
 - A live region reads text, and a slide that holds only an image "would be totally silent". Bryan Garaventa sees the "possibly even hidden live region" as the answer. [3]
 - Several slides on screen are all read, at length. Shoelace removed `aria-live` from its slides because "it interrupts the virtual cursor". [4] Chrome warns that "each item entering the viewport might be announced one by one". [5]
 - WCAG warns of "making an application too "chatty" for a screen reader user". [6]
 
-The region is in the page before anything changes, because the browser must see "the empty live region container first". [7]
+A live region only works when the browser sees "the empty live region container first". [7]
+
+## Decision
+
+The author puts one visually hidden live region with `aria-live="polite"` and `aria-atomic="true"` in the carousel area, in the page from the start. After someone moves the carousel with a button, a dot or a drag, the plugin writes a short position into it once, for example "Slides 4 to 6 of 10". It says nothing on load, on a resize, while Autoplay or AutoScroll move the carousel, or when focus brings a slide into view. The slides get no `aria-live`.
 
 ## Consequences
 

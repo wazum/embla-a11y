@@ -2,17 +2,22 @@
 
 Status: accepted
 
-The dots are plain `<button>` elements. The current dot gets `aria-current="true"`, and no dot is ever disabled. After a press, focus stays on the dot, and the announcer says the new position.
+## Context
 
-The ARIA Authoring Practices offer two kinds of carousel. One has buttons, the other a slide picker "implemented using the tabs pattern". [1] The plugin uses buttons, because tabs confused people in user tests by Accessible360 [2]:
+The ARIA Authoring Practices offer two kinds of carousel. One has buttons, the other a slide picker "implemented using the tabs pattern". [1] In user tests by Accessible360, tabs confused people [2]:
 
 - Blind users "never experience tabbed interfaces where the tabs follow the tabpanels they control."
 - For low-vision users, "carousels typically do not visually resemble tabbed interfaces".
-- "Moving a keyboard user's focus programmatically is generally very disruptive". This is why focus does not move to the slide, as the W3C tutorial asks: "the focus should be set on the selected item." [3]
 
 Others agree. Sara Soueidan calls the tabs of CSS carousels "generally misleading and mostly incorrect". [4] Chrome makes links, not tabs, the default for CSS carousel markers, as a "direct response to CSS Carousels criticism". [5]
 
-The Authoring Practices mark the current dot as disabled: it "has the property aria-disabled set to `true`". [1] Screen readers then call a dot unavailable that people can still press. The plugin uses `aria-current`, as Jason Webb advises: "on the button of the slide dot corresponding to the currently-active slide". [6]
+The W3C tutorial moves focus to the slide after a press: "the focus should be set on the selected item." [3] Accessible360 found: "Moving a keyboard user's focus programmatically is generally very disruptive". [2]
+
+The Authoring Practices mark the current dot as disabled: it "has the property aria-disabled set to `true`". [1] Screen readers then call a dot unavailable that people can still press. Jason Webb puts `aria-current` "on the button of the slide dot corresponding to the currently-active slide". [6]
+
+## Decision
+
+The dots are plain `<button>` elements. The current dot gets `aria-current="true"`, and no dot is ever disabled. After a press, focus stays on the dot, and the announcer says the new position.
 
 ## Consequences
 

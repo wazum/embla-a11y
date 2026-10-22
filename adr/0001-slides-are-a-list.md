@@ -2,24 +2,28 @@
 
 Status: accepted
 
-The slides are a list: `<ul>` and `<li>`, or `role="list"` and `role="listitem"` on plain `<div>` slides. The plugin adds no `role="group"`, no `aria-roledescription` and no slide names. Screen readers then say the count and the position in the user's language.
+## Context
 
-The W3C has two carousel guides:
+Screen reader users need to know how many slides there are and where they are. The W3C has two carousel guides, and they differ:
 
 - The WAI tutorial uses a list: "carousels are typically best represented as unordered lists, using `<ul>` and `<li>`." [1]
-- The ARIA Authoring Practices use groups: "Each slide container has role group with the property aria-roledescription set to slide." [2]
+- The ARIA Authoring Practices use groups: "Each slide container has role group with the property aria-roledescription set to slide." [2] They also say: "The carousel container has the aria-roledescription property set to carousel." [2]
 
-The plugin uses the list, because groups have three problems:
+Groups have three problems:
 
 - A group has no count or position, so these go into the name. The same page says: "Normally, including set position and size information in an accessible name is not appropriate." [2]
 - Screen readers translate role names, but not `aria-roledescription`: "There is no auto-translation." [3]
 - Screen readers support it badly: "NVDA was ignoring it on group" [4], and JAWS read "each link as a "slide" but not a link". [5]
 
-Chrome says the same: "If the content is fundamentally a list, use a `<ul>` element for the correct semantics." [6]
+Chrome says: "If the content is fundamentally a list, use a `<ul>` element for the correct semantics." [6]
+
+## Decision
+
+The slides are a list: `<ul>` and `<li>`, or `role="list"` and `role="listitem"` on plain `<div>` slides. The plugin adds no `role="group"`, no `aria-roledescription` and no slide names. Screen readers then say the count and the position in the user's language.
 
 Putting `role="group"` on each `<li>` is no middle way: the items are then no list items, and the count is gone.
 
-The same reasons apply to the container. The Authoring Practices say: "The carousel container has the aria-roledescription property set to carousel." [2] The plugin makes the container a region named by a visible heading instead, and adds no role description.
+The same reasons apply to the container. The plugin makes it a region named by a visible heading, and adds no role description.
 
 ## Consequences
 

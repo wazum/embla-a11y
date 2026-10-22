@@ -2,13 +2,19 @@
 
 Status: accepted
 
-The plugin writes no words in any language. Every name and announcement comes from the page: visible text, templates in `data-` attributes, or callbacks for apps with their own translations. When a text is missing, the plugin names nothing and warns in the console. Names it adds are visually hidden text in the page, not `aria-label`. Only the region name can be an `aria-label`, through the `label` option, as a fallback to a visible heading.
+## Context
 
 Default texts reach pages in the wrong language. Embla's official accessibility plugin names a button "Go to previous Slide". [1] On an Italian site, a slider's labels "are not translated, even though the site locale is set to Italian". [2]
 
 Text in the page gets translated, `aria-label` often not. Adrian Roselli tested browser translation: support for `aria-label` is "still unreliable", and "No browser translated dynamic aria-label." [3] Visually hidden text: "This content will still be translated". [4]
 
-Hidden text is a trap too: "Chrome, Edge, and Firefox will not translate hidden content, even if it becomes visible later." [3] So the rotation button keeps its other text in the page, hidden on screen and from screen readers, not with `hidden`.
+Hidden text is a trap too: "Chrome, Edge, and Firefox will not translate hidden content, even if it becomes visible later." [3]
+
+## Decision
+
+The plugin writes no words in any language. Every name and announcement comes from the page: visible text, templates in `data-` attributes, or callbacks for apps with their own translations. When a text is missing, the plugin names nothing and warns in the console. Names it adds are visually hidden text in the page, not `aria-label`. Only the region name can be an `aria-label`, through the `label` option, as a fallback to a visible heading.
+
+The rotation button keeps its other text in the page, hidden on screen and from screen readers, not with `hidden`.
 
 ## Consequences
 
