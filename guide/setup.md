@@ -38,7 +38,7 @@ The plugin and Embla are plain JavaScript modules, so browsers load them directl
   {
     "imports": {
       "embla-carousel": "https://cdn.jsdelivr.net/npm/embla-carousel@9.0.0-rc04/esm/embla-carousel.esm.js",
-      "embla-a11y": "https://cdn.jsdelivr.net/npm/embla-a11y@1.1.2/dist/index.js"
+      "embla-a11y": "https://cdn.jsdelivr.net/npm/embla-a11y@1.1.3/dist/index.js"
     }
   }
 </script>
@@ -48,7 +48,7 @@ The plugin and Embla are plain JavaScript modules, so browsers load them directl
 - Keep exact versions in the URLs, so no new release changes your page unseen. Update them on purpose, after reading the [changelog](../CHANGELOG.md).
 - For Embla 8.6, use `embla-carousel@8.6.0/esm/embla-carousel.esm.js` and Embla 8's method names.
 - Safari 16.0 to 16.3 have no import maps. For them, write the full URLs into the `import` lines of `carousel.js` instead of the names.
-- To host the files yourself, download the package from npm, for example `https://registry.npmjs.org/embla-a11y/-/embla-a11y-1.1.2.tgz`, and serve its `dist` folder.
+- To host the files yourself, download the package from npm, for example `https://registry.npmjs.org/embla-a11y/-/embla-a11y-1.1.3.tgz`, and serve its `dist` folder.
 
 ## Server rendering and frameworks
 
