@@ -36,12 +36,19 @@ export class Announcer implements Feature {
   private readonly onControlClick = (): void => this.markUserAction()
   private readonly onPointerDown = (): void => {
     this.dragging = true
+    this.dragStart = {
+      target: this.emblaApi.internalEngine().target.get(),
+      slides: this.slidesInScreenOrder().join()
+    }
     window.addEventListener('pointerup', this.onPointerUp)
     window.addEventListener('pointercancel', this.onPointerUp)
   }
   private readonly onPointerUp = (): void => {
     window.removeEventListener('pointerup', this.onPointerUp)
     window.removeEventListener('pointercancel', this.onPointerUp)
+    if (this.dragStart?.target === this.emblaApi.internalEngine().target.get()) {
+      this.dragStart = null
+    }
     setTimeout(() => {
       this.dragging = false
     })
@@ -55,15 +62,24 @@ export class Announcer implements Feature {
       if (engine.target.get() === engine.location.get()) this.onSettle()
     })
   }
+  // With dragFree, a drag can bring other slides on screen without selecting another snap.
   private readonly onSettle = (): void => {
-    if (!this.pending) return
-    this.pending = false
-    this.announce()
+    const dragStart = this.dragStart
+    this.dragStart = null
+    if (this.pending) {
+      this.pending = false
+      this.announce()
+      return
+    }
+    if (dragStart !== null && dragStart.slides !== this.slidesInScreenOrder().join()) {
+      this.announce()
+    }
   }
   private readonly frames = new Set<number>()
   private userAction = false
   private userActionTimeout: ReturnType<typeof setTimeout> | undefined
   private dragging = false
+  private dragStart: { target: number; slides: string } | null = null
   private pending = false
   private written = false
 

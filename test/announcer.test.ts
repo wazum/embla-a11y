@@ -88,6 +88,47 @@ test('stays silent on automatic moves after a cancelled touch', async () => {
   expect(announcer.textContent).toBe('')
 })
 
+test('announces a free drag that brings other slides on screen without changing the snap', async () => {
+  const announcer = createAnnouncer({
+    'data-announcement': 'Slide {first} of {total}',
+    'data-announcement-group': 'Slides {first} to {last} of {total}'
+  })
+  const { emblaApi } = createCarousel({
+    slideCount: 6,
+    slideWidth: '35%',
+    options: { dragFree: true, align: 'start' },
+    plugins: [emblaA11y({ label: 'Products', announcer })]
+  })
+  const settled = new Promise((resolve) => emblaApi.on('settle', resolve))
+
+  emblaApi.rootNode().dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }))
+  emblaApi.internalEngine().scrollTo.distance(-100, false)
+  window.dispatchEvent(new PointerEvent('pointerup'))
+  await settled
+
+  await expect.poll(() => announcer.textContent).toBe('Slides 1 to 4 of 6')
+  expect(emblaApi.selectedSnap()).toBe(0)
+})
+
+test('stays silent after a press that does not move the carousel', async () => {
+  const announcer = createAnnouncer({ 'data-announcement': 'Slide {first} of {total}' })
+  const { emblaApi } = createCarousel({
+    slideCount: 3,
+    slideWidth: '100%',
+    options: { dragFree: true },
+    plugins: [emblaA11y({ label: 'Products', announcer })]
+  })
+  emblaApi.rootNode().dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }))
+  window.dispatchEvent(new PointerEvent('pointerup'))
+  await new Promise((resolve) => setTimeout(resolve, 50))
+  const settled = new Promise((resolve) => emblaApi.on('settle', resolve))
+
+  emblaApi.internalEngine().scrollTo.distance(-100, false)
+  await settled
+
+  expect(announcer.textContent).toBe('')
+})
+
 test('announces the text from announcement when the markup has no template', async () => {
   const announcer = createAnnouncer({})
   const { buttons, emblaApi } = createCarousel({
