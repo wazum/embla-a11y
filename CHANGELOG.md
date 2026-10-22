@@ -7,11 +7,11 @@ All notable changes to this project are listed here. The project follows [Semant
 ### Fixed
 
 - With `dotKeys`, an arrow key marks the next dot current before it gets focus, so screen readers read it as the current dot.
-- Page translation now reaches both texts of the rotation button. The text not shown stays in the page, hidden on screen and from screen readers, instead of getting `hidden`, which browsers never translate.
 - With `dotKeys`, the current dot is always in the Tab order, also when the markup already gives the dots `tabindex="-1"`.
 - A dot for one slide gets its name from `data-dot-label-group` when the dots have no `data-dot-label`, for example the last page of a `"Page {page} of {pages}"` carousel.
 - With `dragFree`, a drag that brings other slides on screen is announced, also when it does not reach the next snap.
-- A button in the carousel that is activated without focus or a pointer, as some assistive tech and voice control do, now also stops the rotation for good.
+- A button in the carousel that is activated without focus or a pointer, as some assistive tech and voice control do, now also stops the rotation until the user starts it again.
+- Page translation now reaches both texts of the rotation button. The text not shown stays in the page, hidden on screen and from screen readers, instead of getting `hidden`, which browsers never translate.
 - Focus moves on when a `<details>` element in the carousel closes around it, instead of dropping to the page.
 - When the browser scrolls the viewport without focus, for example for find in page or a link to a slide, the carousel moves there. Before, the slides were pushed out of place, and slides on screen could stay inert.
 
