@@ -36,6 +36,27 @@ test('moves focus to a link in an image map of the next slide', async () => {
   await expect.poll(() => document.activeElement).toBe(area)
 })
 
+test('moves focus on when a disclosure closes around it', async () => {
+  const { slides } = createCarousel({ plugins: [emblaA11y({ label: 'Products' })] })
+  const box = document.createElement('div')
+  box.style.height = '100px'
+  const details = document.createElement('details')
+  details.open = true
+  const summary = document.createElement('summary')
+  summary.textContent = 'More'
+  const close = document.createElement('button')
+  close.textContent = 'Close'
+  details.append(summary, close)
+  box.append(details)
+  slides[0]?.append(box)
+  await new Promise((resolve) => setTimeout(resolve, 50))
+  close.focus()
+
+  details.open = false
+
+  await expect.poll(() => document.activeElement).toBe(slides[0]?.querySelector('a'))
+})
+
 test('moves focus on in browsers without checkVisibility', async () => {
   Reflect.deleteProperty(Element.prototype, 'checkVisibility')
   const { slides } = createCarousel({ plugins: [emblaA11y({ label: 'Products' })] })

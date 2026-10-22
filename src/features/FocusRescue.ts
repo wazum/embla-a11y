@@ -57,7 +57,7 @@ export class FocusRescue implements Feature {
       subtree: true,
       childList: true,
       attributes: true,
-      attributeFilter: ['disabled', 'hidden', 'inert', 'style', 'class']
+      attributeFilter: ['disabled', 'hidden', 'inert', 'open', 'style', 'class']
     })
   }
 
