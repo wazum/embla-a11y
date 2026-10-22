@@ -83,7 +83,7 @@ export class DotButtons implements Feature {
       if (snap === selectedSnap) this.attributes.set(dot, 'aria-current', 'true')
       else this.attributes.remove(dot, 'aria-current')
       if (!this.dotKeys) return
-      if (snap === selectedSnap) this.attributes.reset(dot, 'tabindex')
+      if (snap === selectedSnap) this.attributes.remove(dot, 'tabindex')
       else this.attributes.set(dot, 'tabindex', '-1')
     })
   }

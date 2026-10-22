@@ -40,6 +40,28 @@ test('moves the Tab stop with the current dot', async () => {
   await expect.poll(() => tabIndexes(dots)).toEqual(['-1', '-1', null, '-1'])
 })
 
+test('moves the Tab stop when the markup already has one, and gives it back on destroy', async () => {
+  const { buttons, emblaApi } = createCarousel({
+    slideCount: 3,
+    slideWidth: '100%',
+    dotTexts: ['', '', ''],
+    dotsAttributes: { 'data-dot-label': 'Slide {first}' },
+    plugins: ({ dots }) => {
+      Array.from(dots.children).forEach((dot, index) => {
+        dot.setAttribute('tabindex', index === 0 ? '0' : '-1')
+      })
+      return [emblaA11y({ label: 'Products', dots, dotKeys: true })]
+    }
+  })
+  const dots = Array.from(buttons.dots.querySelectorAll('button'))
+
+  emblaApi.goTo(1, true)
+
+  await expect.poll(() => tabIndexes(dots)).toEqual(['-1', null, '-1'])
+  emblaApi.destroy()
+  expect(tabIndexes(dots)).toEqual(['0', '-1', '-1'])
+})
+
 test('marks the next dot current before it gets focus, so screen readers read it as current', async () => {
   const { dots } = createCarouselWithDots()
   const currentOnFocus: (string | null | undefined)[] = []
