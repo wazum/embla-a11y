@@ -54,6 +54,23 @@ test('moves the slide peeking in on the left only into full view when Shift+Tab 
   await expect.poll(() => slides[4]?.inert).toBe(true)
 })
 
+test('moves a slide with a fractional width only into full view when Tab reaches it in a centered loop', async () => {
+  const { slides, emblaApi } = createCarousel({
+    slideCount: 6,
+    slideWidth: '57.12%',
+    options: { loop: true, align: 'center' },
+    plugins: [emblaA11y({ label: 'Products' })]
+  })
+  slides[0]?.querySelector('a')?.focus()
+
+  await userEvent.tab()
+
+  const viewport = emblaApi.rootNode().getBoundingClientRect()
+  expect(document.activeElement).toBe(slides[1]?.querySelector('a'))
+  expect(slides[1]?.getBoundingClientRect().right).toBeCloseTo(viewport.right, 0)
+  await expect.poll(() => slides[2]?.inert).toBe(true)
+})
+
 for (const direction of ['ltr', 'rtl'] as const) {
   test(`shows what the browser scrolls to without focus, such as find in page, ${direction}`, async () => {
     const { slides, emblaApi } = createCarousel({

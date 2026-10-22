@@ -7,6 +7,8 @@ All notable changes to this project are listed here. The project follows [Semant
 ### Fixed
 
 - A slide that leaves the screen becomes `inert` while the carousel still moves, not only once it stops. Embla says it has stopped up to two seconds after the slides look still, and until then Tab and Shift+Tab could reach slides that had left the screen, and the carousel jumped back to them.
+- Focus on a partly visible slide now also moves it only into full view when the slides have fractional widths, for example 60% of a 952 px carousel. Before, the slide ended a fraction of a pixel short of the edge, the carousel jumped to its snap point, and Tab walked through every slide again.
+- With Embla 8.6, focus on a slide that is already in full view no longer moves the carousel to the nearest snap point when it rests between two of them.
 
 ## 1.1.2 (2026-10-22)
 

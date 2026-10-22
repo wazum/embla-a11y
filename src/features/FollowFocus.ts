@@ -135,8 +135,9 @@ export class FollowFocus implements Feature {
     const inner = element.getBoundingClientRect()
     const outer = this.emblaApi.rootNode().getBoundingClientRect()
     const [start, end] = this.edges()
-    if (inner[start] < outer[start]) return inner[start] - outer[start]
-    if (inner[end] > outer[end]) return inner[end] - outer[end]
+    // Slides with fractional widths stop a fraction of a pixel off the edge.
+    if (inner[start] < outer[start] - 1) return inner[start] - outer[start]
+    if (inner[end] > outer[end] + 1) return inner[end] - outer[end]
     return 0
   }
 

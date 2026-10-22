@@ -33,9 +33,15 @@ export function asEmblaV9(emblaApi: EmblaCarouselType): EmblaCarouselType {
   const slideFocusListeners = new Set<SlideFocusListenerType>()
   let jumpBack: (() => void) | null = null
   const onSlideFocusStart = (): void => {
-    const snap = emblaV8.selectedScrollSnap()
+    const engine = emblaApi.internalEngine()
+    const start = engine.target.get()
     const cancelled = [...slideFocusListeners].some((listener) => listener() === false)
-    jumpBack = cancelled ? () => emblaV8.scrollTo(snap, true) : null
+    jumpBack = cancelled
+      ? () => {
+          engine.scrollBody.useBaseFriction().useDuration(0)
+          engine.scrollTo.distance(start - engine.target.get(), false)
+        }
+      : null
   }
   const onSlideFocus = (): void => {
     jumpBack?.()
