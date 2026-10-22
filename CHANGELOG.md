@@ -11,6 +11,7 @@ All notable changes to this project are listed here. The project follows [Semant
 - With `dotKeys`, the current dot is always in the Tab order, also when the markup already gives the dots `tabindex="-1"`.
 - A dot for one slide gets its name from `data-dot-label-group` when the dots have no `data-dot-label`, for example the last page of a `"Page {page} of {pages}"` carousel.
 - With `dragFree`, a drag that brings other slides on screen is announced, also when it does not reach the next snap.
+- A button in the carousel that is activated without focus or a pointer, as some assistive tech and voice control do, now also stops the rotation for good.
 - When the browser scrolls the viewport without focus, for example for find in page or a link to a slide, the carousel moves there. Before, the slides were pushed out of place, and slides on screen could stay inert.
 
 ## 1.1.0 (2026-10-20)

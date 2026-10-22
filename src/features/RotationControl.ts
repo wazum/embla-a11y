@@ -93,6 +93,7 @@ export class RotationControl implements Feature {
     this.buttonText = new RotationButtonText(rotationButton, rotationLabel, warn)
     area.addEventListener('focusin', this.onInteraction, true)
     area.addEventListener('pointerdown', this.onInteraction, true)
+    area.addEventListener('click', this.onInteraction, true)
     area.addEventListener('pointerenter', this.onPointerEnter)
     area.addEventListener('pointerleave', this.onPointerLeave)
     rotationButton?.addEventListener('click', this.onToggle)
@@ -105,6 +106,7 @@ export class RotationControl implements Feature {
     this.destroyed = true
     this.area.removeEventListener('focusin', this.onInteraction, true)
     this.area.removeEventListener('pointerdown', this.onInteraction, true)
+    this.area.removeEventListener('click', this.onInteraction, true)
     this.area.removeEventListener('pointerenter', this.onPointerEnter)
     this.area.removeEventListener('pointerleave', this.onPointerLeave)
     this.button?.removeEventListener('click', this.onToggle)

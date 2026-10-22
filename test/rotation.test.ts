@@ -298,6 +298,16 @@ test('stops for good on a press on Next outside an extra wrapper around the view
   expect(emblaApi.plugins().autoplay?.isPlaying()).toBe(false)
 })
 
+test('stops for good when Next is activated without focus or a pointer, as some assistive tech does', async () => {
+  const { buttons, emblaApi, outside } = await createHoverableCarousel()
+  await userEvent.hover(outside)
+  await expect.poll(() => emblaApi.plugins().autoplay?.isPlaying()).toBe(true)
+
+  buttons.next.click()
+
+  expect(emblaApi.plugins().autoplay?.isPlaying()).toBe(false)
+})
+
 test('keeps rotating on a press outside the viewport when the viewport has no wrapper', async () => {
   vi.spyOn(console, 'warn').mockImplementation(() => {})
   const outside = createRotationButton('Elsewhere on the page')
