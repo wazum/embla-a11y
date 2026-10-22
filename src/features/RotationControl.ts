@@ -34,7 +34,7 @@ const rotationEvents: (keyof EmblaEventListType)[] = [
 ]
 
 /**
- * Stops the Autoplay and AutoScroll plugins for good as soon as someone focuses or presses anything in the carousel, and keeps them stopped.
+ * Stops the Autoplay and AutoScroll plugins as soon as someone focuses or presses anything in the carousel, and keeps them stopped until the user starts them again.
  * With reduced motion they stay stopped until the user starts them with the rotation button.
  * The rotation button starts and stops them, and its text always says what pressing it will do.
  * A reInit keeps the rotation as it was: stopped when the user stopped it, running when it ran.

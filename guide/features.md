@@ -1,19 +1,18 @@
 # Features
 
-Each section says what the plugin does, which option turns it on, and what markup it expects. The markup examples use the `visually-hidden` class from the [README](../README.md#quick-start).
+Each section says what the plugin does, which option turns it on, and what markup it expects. The markup examples use the `visually-hidden` class from the [README](../README.md#quick-start). The reasons behind the main choices, with sources, are in the [design decisions](../adr/README.md).
 
-- [Named region](#named-region)
-- [Only slides on screen are reachable](#only-slides-on-screen-are-reachable)
-- [Focus brings its slide into view](#focus-brings-its-slide-into-view)
+- [Carousel name](#carousel-name)
+- [Off-screen slides](#off-screen-slides)
+- [Keep focused content visible](#keep-focused-content-visible)
 - [Previous and next buttons](#previous-and-next-buttons)
 - [Dot buttons](#dot-buttons)
 - [Position announcements](#position-announcements)
-- [Focus never gets lost](#focus-never-gets-lost)
-- [Autoplay, AutoScroll and the rotation button](#autoplay-autoscroll-and-the-rotation-button)
-- [Server rendering and frameworks](#server-rendering-and-frameworks)
-- [Clean destroy and switching off](#clean-destroy-and-switching-off)
+- [Keep focus when content changes](#keep-focus-when-content-changes)
+- [Autoplay and AutoScroll](#autoplay-and-autoscroll)
+- [Turn off and clean up](#turn-off-and-clean-up)
 
-## Named region
+## Carousel name
 
 The smallest element around the viewport and all its controls becomes a named region, so screen reader users can find the carousel and know what it is. An extra wrapper around the viewport is fine; the plugin looks past it.
 
@@ -21,15 +20,20 @@ The smallest element around the viewport and all its controls becomes a named re
 - Options: if your markup has no name, pass the id of a visible heading as `labelledBy`, or a text as `label`. The plugin then names the element around the viewport and adds `role="region"` if it is a `<div>`. Other elements, such as an `<li>`, keep their own role, and the plugin warns in the console.
 - The plugin never overwrites a name or role you wrote. Without any name it adds no region and warns in the console.
 
-A visible heading is better than `label`: most screen reader users move through a page by headings, and browsers translate visible text but not an `aria-label` added by script.
+A visible heading is better than `label`: most screen reader users move through a page by headings, and browsers translate visible text but not an `aria-label` added by script. The plugin writes [no text of its own](../adr/0006-no-text-of-its-own.md).
 
-## Only slides on screen are reachable
+## Off-screen slides
 
-Slides that are completely outside the viewport become `inert`: the keyboard, screen readers, voice control and the mouse skip them. A slide is reachable as soon as any part of it is on screen, and the slide that holds focus is never hidden. So whether someone tabs or reads with a screen reader, forwards or backwards, from the buttons into the slides, they land on the slides they see. The carousel never jumps to a slide nobody asked for. To reach other slides, people use the buttons or the dots, just as they would with their eyes.
+Slides that are completely outside the viewport become `inert`: the keyboard, screen readers, voice control and the mouse skip them. A slide is reachable as soon as any part of it is on screen, and the slide that holds focus is never hidden. So whether someone tabs or reads with a screen reader, forwards or backwards, from the buttons into the slides, they land on the slides they see. The carousel never jumps to a slide nobody asked for. To reach other slides, people use the buttons or the dots, just as they would with their eyes. [Why off-screen slides are inert](../adr/0002-off-screen-slides-are-inert.md)
+
+A slide that is only partly visible stays reachable, because people can see it. Stepping onto it moves the carousel just enough to show it in full. That is the only movement focus causes, and it always goes towards something already on screen.
+
+### Setup
 
 - No configuration. To keep every slide reachable instead, see [Keeping every slide reachable](#keeping-every-slide-reachable).
 - Markup: make the slides a list. Screen readers then say "list" and the position of each slide, in the user's language. If the slides are list items, the plugin adds `aria-posinset` and `aria-setsize`, so the position and the full count stay right while slides are hidden. Safari drops list semantics when a list has no bullets, so the plugin adds `role="list"` to a `<ul>` or `<ol>` without a role; write it in the markup too, so it is there before JavaScript runs. Give each slide a heading, so it shows up in the heading list.
 - If your slides are plain `<div>` elements, as in Embla's own examples, the plugin turns them into a list with `role="list"` and `role="listitem"`, and takes the roles back on destroy. It never touches slides that already have a role. Other elements, such as `<article>`, keep their meaning, and the plugin warns in the console, because screen readers then cannot tell how many slides there are.
+- Don't put `tabindex` on the slides themselves. Only real links, buttons and form fields should be Tab stops.
 
 ```html
 <ul class="embla__container" role="list">
@@ -44,30 +48,17 @@ Slides that are completely outside the viewport become `inert`: the keyboard, sc
 </ul>
 ```
 
-Don't put `tabindex` on the slides themselves. Only real links, buttons and form fields should be Tab stops.
-
-> [!NOTE]
-> VoiceOver reads the full count, for example "list, 10 items". NVDA ignores `aria-setsize` and counts only the slides on screen, so for a carousel of 10 it says "list, with 3 items", which is wrong. The announcer gives the full count after the first move. If people need it before that, put it in the heading, for example "Featured products (10)", or [keep every slide reachable](#keeping-every-slide-reachable).
-
-> [!NOTE]
-> Slides that are off-screen are not in the heading list, the link list or the browser's find-in-page until they come into view. If people need to search or scan every item, link to a page that lists them all, for example "All 10 featured products".
-
-> [!TIP]
-> A slide that is only partly visible stays reachable, because people can see it. Stepping onto it moves the carousel just enough to show it in full. That is the only movement focus causes, and it always goes towards something already on screen.
-
-> [!IMPORTANT]
-> With Autoplay or AutoScroll, a slide that moves out of view becomes `inert`, also while a screen reader reads it. People who read without moving focus can only stop the rotation with the rotation button, so always pass [`rotationButton`](#autoplay-autoscroll-and-the-rotation-button).
-
 ### Why a list, and not "Slide 3 of 10"
 
-The carousel pattern of the [ARIA Authoring Practices](https://www.w3.org/WAI/ARIA/apg/patterns/carousel/) labels each slide as a group with `aria-roledescription="slide"` and a name like "Slide 3 of 10". The plugin uses a list instead:
+The carousel pattern of the [ARIA Authoring Practices](https://www.w3.org/WAI/ARIA/apg/patterns/carousel/) makes each slide a group with `aria-roledescription="slide"` and a name like "Slide 3 of 10". A list gives the count and the position in the user's own language and verbosity settings, and people can jump through the items with their screen reader's list commands. A group offers neither. `aria-roledescription` replaces the role name that screen readers would translate themselves, so every page has to translate it, and [MDN advises](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-roledescription) avoiding it. A name on every slide is also read before its content, each time someone enters a slide. [The full decision with sources](../adr/0001-slides-are-a-list.md)
 
-- A list gives the count and the position in the user's own language and verbosity settings, and lets people jump through the items with their screen reader's list commands. A group offers neither.
-- `aria-roledescription` replaces the role name that screen readers would translate themselves, so every page has to translate it. [MDN advises](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-roledescription) avoiding it, and the [Authoring Practices task force](https://www.w3.org/2020/01/28-aria-apg-minutes.html) found NVDA ignoring it on groups. A [tester on WebAIM](https://webaim.org/discussion/mail_message?id=49048) heard JAWS announce links as "slide".
-- A name on every slide is read before its content, each time someone enters a slide.
+If an audit asks for the Authoring Practices pattern exactly, write it in your markup: `role="group"`, `aria-roledescription` and a name on each slide, in your page's language. The plugin keeps roles you wrote and adds no list then.
 
-> [!TIP]
-> If an audit asks for the Authoring Practices pattern exactly, write it in your markup: `role="group"`, `aria-roledescription` and a name on each slide, in your page's language. The plugin keeps roles you wrote and adds no list then.
+### Limits
+
+- VoiceOver reads the full count, for example "list, 10 items". NVDA ignores `aria-setsize` and counts only the slides on screen, so for a carousel of 10 it says "list, with 3 items", which is wrong. The announcer gives the full count after the first move. If people need it before that, put it in the heading, for example "Featured products (10)", or [keep every slide reachable](#keeping-every-slide-reachable).
+- Slides that are off-screen are not in the heading list, the link list or the browser's find-in-page until they come into view. If people need to search or scan every item, link to a page that lists them all, for example "All 10 featured products".
+- With Autoplay or AutoScroll, a slide that moves out of view becomes `inert`, also while a screen reader reads it. People who read without moving focus can only stop the rotation with the rotation button, so always pass [`rotationButton`](#stop-button).
 
 ### Keeping every slide reachable
 
@@ -86,9 +77,11 @@ Tab then also passes every link and button in every slide. Put a link before the
 
 Make the skip link visible when it has focus.
 
-## Focus brings its slide into view
+## Keep focused content visible
 
-When something inside a slide gets focus, the carousel moves until it is fully visible. This works for the Tab key, screen readers, voice control and scripts. A mouse or touch press does not move the carousel, so the click lands where you pressed. Focus that the browser restores when someone comes back to the tab does not move it either. The plugin also stops the browser from scrolling the viewport by itself, which would push the slides out of place. When the browser scrolls to something in a slide without focus, as find in page or a link to a slide do, the carousel moves there instead.
+When something inside a slide gets focus, the carousel moves until it is fully visible. This works for the Tab key, screen readers, voice control and scripts. A mouse or touch press does not move the carousel, so the click lands where you pressed. Focus that the browser restores when someone comes back to the tab does not move it either.
+
+The plugin also stops the browser from scrolling the viewport by itself, which would push the slides out of place. When the browser scrolls to something in a slide without focus, as find in page or a link to a slide do, the carousel moves there instead.
 
 - No configuration.
 - List `emblaA11y` after Embla's other plugins. When the focused slide is already fully visible, the plugin cancels Embla's `slidefocus` jump, and Embla 9 then skips every `slidefocus` listener registered after it. Plugins listed later miss the event, and so do listeners you add with `emblaApi.on('slidefocus', …)` after creating the carousel.
@@ -134,7 +127,7 @@ Style the unavailable state with the attribute, and keep focus visible:
 
 ## Dot buttons
 
-The current dot gets `aria-current="true"`. No dot is ever disabled, and dots you rebuild later get the same treatment. Focus stays on the dot after a press, unlike in the W3C carousel tutorial, which moves it to the slide: in user tests that move was "very disruptive". Most screen readers do not say when the dot that has focus becomes current, so pass an [announcer](#position-announcements) too: it says where the carousel is now.
+The current dot gets `aria-current="true"`. No dot is ever disabled, and dots you rebuild later get the same treatment. Focus stays on the dot after a press, unlike in the W3C carousel tutorial, which moves it to the slide: in user tests that move was "very disruptive". Most screen readers do not say when the dot that has focus becomes current, so pass an [announcer](#position-announcements) too: it says where the carousel is now. [Why dots are buttons](../adr/0003-dots-are-buttons.md)
 
 - Option: `dots`, the element that holds the dot buttons.
 - Markup: one `<button type="button">` per snap point, in order. The best name is your own hidden text, rendered on the server in the page's language, as in the README example. The plugin keeps it, and also a thumbnail image's `alt` text.
@@ -186,7 +179,7 @@ The ARIA Authoring Practices offer two kinds of carousel: one with plain buttons
 
 ## Position announcements
 
-After someone moves the carousel with a button, a dot or a drag, screen readers hear where they are now, for example "Slides 4 to 6 of 10". It is said once, politely, after the move ends. This also works when your framework moves the carousel a moment after the click, for example in a React or Vue effect, as long as that is within a second. Nothing is said on load, on a resize, while Autoplay or AutoScroll move the carousel, or when focus brings a slide into view, because then the screen reader already reads the focused element.
+After someone moves the carousel with a button, a dot or a drag, screen readers hear where they are now, for example "Slides 4 to 6 of 10". It is said once, politely, after the move ends. This also works when your framework moves the carousel a moment after the click, for example in a React or Vue effect, as long as that is within a second. Nothing is said on load, on a resize, while Autoplay or AutoScroll move the carousel, or when focus brings a slide into view, because then the screen reader already reads the focused element. [Why one announcer](../adr/0005-one-announcer.md)
 
 - Option: `announcer`, an element you put in the carousel area, outside the slides, with `aria-live="polite"` and `aria-atomic="true"`. Hide it visually.
 - Markup: the texts as templates in the page's language. `data-announcement` is for one slide on screen, `data-announcement-group` for several. The plugin fills in `{first}`, `{last}` and `{total}`, counting the slides that are actually on screen. For carousels that move a whole view at a time, `{page}` and `{pages}` give the current position and the number of positions, for example "Page 2 of 4".
@@ -205,22 +198,23 @@ After someone moves the carousel with a button, a dot or a drag, screen readers 
 
 Put the element in the page from the start; screen readers only notice live regions that exist before their text changes. Never put `aria-live` on the slides themselves: then every move reads whole slides. In an app with its own translation library, pass `announcement(firstSlide, lastSlide, totalSlides, page, pages, slides, headings)` instead of the templates; `slides` holds the slide numbers on screen in screen order, and `headings` their headings, with an empty text for a slide without one. Without either, the plugin announces nothing and warns in the console.
 
-## Focus never gets lost
+## Keep focus when content changes
 
 If your code disables, hides or removes the element that has focus, the plugin moves focus to a nearby element instead of letting it fall back to the top of the page. A button hands focus to the other button, a slide to the nearest remaining slide, and if nothing is left, the carousel itself takes focus. Focus that the user moved away on purpose stays where it is.
 
 - No configuration. For the buttons it uses `previousButton` and `nextButton`.
 
-## Autoplay, AutoScroll and the rotation button
+## Autoplay and AutoScroll
 
-If you use the Autoplay or AutoScroll plugin, any focus or press inside the carousel stops it for good. That includes focus from a screen reader on a link or button, voice control or a script, not only the Tab key. Reading with a screen reader does not move focus, so it does not stop the rotation; for those users the rotation button is the only way to stop it. The carousel then stays where the user is, and the focused slide comes into view. A resize keeps the rotation as it was: once a user stopped it, it stays stopped, and a rotation nobody stopped keeps running.
+The plugin works with Embla's Autoplay and AutoScroll plugins. It runs your stop button, stops the rotation when someone uses the carousel, and keeps it from starting for people who asked for reduced motion. [Why interaction stops the rotation](../adr/0004-interaction-stops-rotation-for-good.md)
 
-While the mouse is over the carousel, the rotation pauses, and it goes on when the mouse leaves. This helps people who use a screen magnifier or read along with the mouse pointer. The button keeps saying "Stop" during the pause, and a press or the button still stops the rotation for good. Touch does not pause it: a tap is a press and stops it.
+- List the Autoplay or AutoScroll plugin before this plugin.
+- With Embla 9, Autoplay and AutoScroll no longer start on their own. Call `play()` after creating the carousel, as in the [reduced motion](#reduced-motion) example. With Embla 8.6 they start by themselves.
+
+### Stop button
 
 The rotation button starts and stops the rotation. Its text always says what pressing it will do. The text follows every change, also a stop through focus or a call to `play()` or `stop()` in your code. Focus on the button itself does not stop the rotation.
 
-- No configuration for the stop on interaction. List the Autoplay or AutoScroll plugin before this plugin.
-- With Embla 9, Autoplay and AutoScroll no longer start on their own. Call `play()` after creating the carousel, as in the example below. With Embla 8.6 they start by themselves.
 - Option: `rotationButton` for the button. You need it whenever you use Autoplay or AutoScroll. Without it the plugin warns in the console.
 - When there is nothing to rotate, the button gets `aria-disabled="true"`: without Autoplay or AutoScroll (the plugin also warns then), or while all slides fit in one view. Style it with the attribute, as for the previous and next buttons.
 - Markup: a real `<button type="button">` inside the carousel area, before the slides, so people reach it before the moving content. Put both texts in it, in the page's language: one element with `data-rotation-playing` for while it runs, one with `data-rotation-stopped` and `hidden` for while it is stopped. Browsers do not translate hidden text, so the plugin keeps both texts in the page: it shows the one that fits and hides the other on screen and from screen readers.
@@ -238,6 +232,18 @@ The rotation button starts and stops the rotation. Its text always says what pre
 ```
 
 In an app with its own translation library, pass `rotationLabel(playing)` instead. It writes the text into the button, or into an element with `data-rotation-label`. Without texts or `rotationLabel`, the plugin leaves the button alone and warns in the console.
+
+### When movement stops
+
+Any focus or press inside the carousel stops Autoplay and AutoScroll, and they stay stopped until the user starts them again with the rotation button. That includes focus from a screen reader on a link or button, voice control or a script, not only the Tab key. The carousel then stays where the user is, and the focused slide comes into view. No configuration is needed.
+
+A resize keeps the rotation as it was: once a user stopped it, it stays stopped, and a rotation nobody stopped keeps running.
+
+While the mouse is over the carousel, the rotation pauses, and it goes on when the mouse leaves. This helps people who use a screen magnifier or read along with the mouse pointer. The button keeps saying "Stop" during the pause, and a press or the button still stops the rotation until the user starts it again. Touch does not pause it: a tap is a press and stops it.
+
+Reading with a screen reader does not move focus, so it does not stop the rotation. For those users the rotation button is the only way to stop it.
+
+### Reduced motion
 
 For people who asked their system for reduced motion, Autoplay and AutoScroll do not start, and they stop as soon as someone turns the setting on. The rotation button can still start them: pressing it is a clear choice. The moves after a button press stay animated, so make them instant with Embla's `breakpoints` option:
 
@@ -261,31 +267,7 @@ const emblaApi = EmblaCarousel(
 emblaApi.plugins().autoplay.play()
 ```
 
-## Server rendering and frameworks
-
-The plugin adds nothing on the server. The React, Vue and Solid wrappers also create an instance without a root element, and the plugin leaves that one alone too.
-
-> [!NOTE]
-> The plugin works in the normal page DOM, not inside a shadow root. Inside a web component's shadow DOM it cannot see which element has focus, so focus could be lost when slides are hidden. For a carousel inside an iframe, create it with a script in the iframe, not in the parent page, for the same reason.
-
-- No configuration.
-- Markup: render the section, heading, list and slides on the server, so the named region and its content are there before JavaScript runs. The carousel does not work before that: the buttons do nothing, and slides beyond the first view can only be reached with Tab. Hide the buttons, dots and rotation button until Embla has started, for example with a class you add after creating the carousel, so nobody presses a button that does nothing.
-
-Pass the elements from refs. Embla's wrappers compare the plugin options on every render and re-initialise the carousel with a new plugin instance when an element changes, for example on the render after the first one, when the refs are filled. The plugin keeps what matters across that switch: a rotation the user stopped stays stopped, and a warning is not repeated. List `emblaA11y` last, as everywhere.
-
-```jsx
-const previous = useRef(null)
-const next = useRef(null)
-const [viewport, emblaApi] = useEmblaCarousel({}, [
-  Autoplay(),
-  emblaA11y({ previousButton: previous.current, nextButton: next.current })
-])
-```
-
-> [!NOTE]
-> This React snippet is an illustration and does not run in the test suite. What it relies on does: tests swap in a new plugin instance with new buttons the way the wrappers do, and check that the old buttons get their markup back and a stopped rotation stays stopped.
-
-## Clean destroy and switching off
+## Turn off and clean up
 
 When the plugin is destroyed or Embla re-initialises, every attribute and text the plugin added goes back to how it was. The same happens when you switch the plugin off, for example on wide screens where the carousel becomes a plain grid:
 

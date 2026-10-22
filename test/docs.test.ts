@@ -16,7 +16,7 @@ const runnableBlocks = Object.entries(docs).flatMap(([file, text]) =>
   })).filter(({ code }) => !code.includes('…'))
 )
 
-test('loads the current version from the CDN in the README', () => {
+test('loads the current version from the CDN in the setup guide', () => {
   const packageJson = import.meta.glob<string>('../package.json', {
     query: '?raw',
     import: 'default',
@@ -25,7 +25,7 @@ test('loads the current version from the CDN in the README', () => {
   const version = /"version": "([^"]+)"/.exec(packageJson ?? '')?.[1]
 
   expect(version).toBeDefined()
-  expect(docs['../README.md']).toContain(`cdn.jsdelivr.net/npm/embla-a11y@${version}/`)
+  expect(docs['../guide/setup.md']).toContain(`cdn.jsdelivr.net/npm/embla-a11y@${version}/`)
 })
 
 test.each(runnableBlocks)('runs the code block from $file in an example', ({ code }) => {

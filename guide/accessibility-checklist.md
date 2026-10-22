@@ -1,6 +1,6 @@
-# Best practices
+# Accessibility checklist
 
-The plugin can't fix everything. These come from accessibility experts and from people who use screen readers, magnifiers, voice control or the keyboard.
+The plugin can't fix everything. These points are up to your markup and design. They come from accessibility experts and from people who use screen readers, magnifiers, voice control or the keyboard.
 
 ## Name the carousel with a visible heading
 
@@ -36,12 +36,12 @@ Browsers translate text in the page. They translate an `aria-label` only sometim
 
 ## Avoid autoplay
 
-Moving content is the most common complaint from disabled users, and it can make people with vestibular disorders feel sick. If you need it, put a [stop button](features.md#autoplay-autoscroll-and-the-rotation-button) before the slides, stop for good when someone interacts with the carousel, and don't start it when the user asks for reduced motion.
+Moving content is the most common complaint from disabled users, and it can make people with vestibular disorders feel sick. If you need it, put a [stop button](features.md#stop-button) before the slides. When someone interacts with the carousel, stop the rotation, and keep it stopped until the user starts it again. Don't start it when the user asks for reduced motion.
 
 ## Don't take over the arrow keys
 
 Screen readers use them to read. Buttons and the Tab key are enough, so never listen for arrow keys on the slides or on the page. The one exception is [`dotKeys: true`](features.md#fewer-tab-stops-for-many-dots) for many dots: it reacts to the arrow keys only while a dot has focus, so screen readers in reading mode keep theirs.
 
-## Announce little
+## Keep announcements short
 
 A screen reader should hear a short position such as "3 of 10" after the user moves the carousel, not the whole slide, and nothing while it moves by itself.
