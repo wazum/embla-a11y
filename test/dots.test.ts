@@ -75,6 +75,19 @@ test('fills in the page and the number of pages in dot names', async () => {
   await expect.element(page.getByRole('button', { name: 'Seite 2 von 2' })).toBeVisible()
 })
 
+test('names a dot for one slide with the group template when there is no other', async () => {
+  createCarousel({
+    slideCount: 5,
+    slideWidth: '50%',
+    options: { slidesToScroll: 2 },
+    dotTexts: ['', '', ''],
+    dotsAttributes: { 'data-dot-label-group': 'Seite {page} von {pages}' },
+    plugins: ({ dots }) => [emblaA11y({ label: 'Products', dots })]
+  })
+
+  await expect.element(page.getByRole('button', { name: 'Seite 3 von 3' })).toBeVisible()
+})
+
 test('passes the page and the number of pages to dotLabel', async () => {
   const dotLabel = vi.fn<DotLabelType>(() => 'Seite')
   createCarousel({
