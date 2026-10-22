@@ -136,7 +136,9 @@ test.describe('three-per-view with hideOffscreen', () => {
     expect(canFocusMovedAwayLink).toBe(false)
   })
 
-  test('hides nothing while the carousel is still moving', async ({ page }) => {
+  test('hides a slide as soon as it leaves the screen while the carousel moves', async ({
+    page
+  }) => {
     await page.evaluate(() => window.emblaApi?.reInit({ duration: 200 }))
     const link = page.getByRole('link', { name: 'Details for product 1', exact: true })
     await link.focus()
@@ -169,7 +171,7 @@ test.describe('three-per-view with hideOffscreen', () => {
       return document.activeElement === leavingLink
     })
     expect(stillMoving, 'carousel should still be moving').toBe(true)
-    expect(canFocusLeavingLink, 'leaving slide should stay reachable').toBe(true)
+    expect(canFocusLeavingLink, 'slide that left the screen should be out of reach').toBe(false)
   })
 })
 

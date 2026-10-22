@@ -13,7 +13,7 @@ Embla moves the slides but leaves every slide in the page. Without more, Tab, sc
 
 ## Decision
 
-By default (`hideOffscreen: true`), a slide that is completely outside the viewport gets `inert` once the carousel stops moving. A slide that shows even one pixel stays reachable, and the slide that holds focus never becomes inert. `hideOffscreen: false` keeps every slide reachable.
+By default (`hideOffscreen: true`), a slide that is completely outside the viewport gets `inert`, also while the carousel moves. A slide that shows even one pixel stays reachable, and the slide that holds focus never becomes inert. `hideOffscreen: false` keeps every slide reachable.
 
 ## Consequences
 

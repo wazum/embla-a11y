@@ -2,6 +2,12 @@
 
 All notable changes to this project are listed here. The project follows [Semantic Versioning](https://semver.org).
 
+## Unreleased
+
+### Fixed
+
+- A slide that leaves the screen becomes `inert` while the carousel still moves, not only once it stops. Embla says it has stopped up to two seconds after the slides look still, and until then Tab and Shift+Tab could reach slides that had left the screen, and the carousel jumped back to them.
+
 ## 1.1.2 (2026-10-22)
 
 ### Fixed
