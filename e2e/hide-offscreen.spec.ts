@@ -46,6 +46,23 @@ for (const variant of variants) {
   })
 }
 
+test('Tab reaches the half-visible slide and then the buttons, not every slide', async ({
+  page,
+  isMobile
+}) => {
+  test.skip(isMobile, 'on a phone the buttons are wider than the slides and pull the next slide in')
+  await page.goto('/e2e/pages/carousel.html?variant=peek&hideOffscreen')
+  await page.getByRole('button', { name: 'Add product 2 to cart' }).focus()
+
+  await page.keyboard.press('Tab')
+  await expect(page.getByRole('link', { name: 'Details for product 3' })).toBeFocused()
+  await expect(page.getByRole('heading', { name: 'Product 3' })).toBeInViewport({ ratio: 1 })
+  await page.keyboard.press('Tab')
+  await page.keyboard.press('Tab')
+
+  await expect(page.getByRole('button', { name: 'Previous' })).toBeFocused()
+})
+
 test.describe('three-per-view with hideOffscreen', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/e2e/pages/carousel.html?variant=three-per-view&hideOffscreen')

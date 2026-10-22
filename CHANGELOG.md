@@ -2,6 +2,12 @@
 
 All notable changes to this project are listed here. The project follows [Semantic Versioning](https://semver.org).
 
+## Unreleased
+
+### Fixed
+
+- Focus on a partly visible slide moves the carousel just far enough to show that slide in full, instead of jumping to its snap point. The jump pulled the next slide in, so Tab walked through every slide of a carousel with peeking slides. Now Tab reaches the slides on screen and then the buttons, as in other layouts. After such a move the carousel can rest between two snap points until the next button press, drag or key.
+
 ## 1.1.1 (2026-10-22)
 
 ### Fixed

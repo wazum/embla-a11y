@@ -20,6 +20,7 @@ By default (`hideOffscreen: true`), a slide that is completely outside the viewp
 - Inert slides leave the heading list and the link list. A screen reader user: JAWS "only listed up the heading and links of the current" slide. [4]
 - Chrome advises against it for list carousels, because it "would affect the item count announced by screen readers". [5] The plugin adds `aria-setsize` and `aria-posinset`, so VoiceOver says the full count. NVDA ignores them and says "list, with 3 items" for ten slides. The guide shows the ways around it: the count in the heading, the announcer, or `hideOffscreen: false`.
 - While Autoplay or AutoScroll runs, a slide that moves away becomes inert, also while a screen reader reads it. The rotation button stops it. Without `inert` during rotation, the first Tab would land on slide 1 in the markup, not on the slide on screen.
+- Focus on a partly visible slide moves the carousel just far enough to show it in full, not to its snap point. A jump to the snap would pull the next slide in, which is then no longer inert, and Tab would walk through every slide. So after such a move the carousel can rest between two snap points, with the focused slide at the edge, until the next button press, drag or key snaps it again. Only keyboard, screen reader and script focus cause this move. A mouse or touch press never does.
 
 ## Sources
 

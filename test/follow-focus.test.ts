@@ -21,6 +21,39 @@ test('leaves the slidefocus event to later listeners when Tab lands in an off-sc
   expect(laterListener).toHaveBeenCalledOnce()
 })
 
+test('moves a partly visible slide only into full view, so the slide after it stays off screen', async () => {
+  const { slides, emblaApi } = createCarousel({
+    slideCount: 6,
+    slideWidth: '40%',
+    plugins: [emblaA11y({ label: 'Products' })]
+  })
+  slides[1]?.querySelector('a')?.focus()
+
+  await userEvent.tab()
+
+  const viewport = emblaApi.rootNode().getBoundingClientRect()
+  expect(document.activeElement).toBe(slides[2]?.querySelector('a'))
+  expect(slides[2]?.getBoundingClientRect().right).toBeCloseTo(viewport.right, 0)
+  await expect.poll(() => slides[3]?.inert).toBe(true)
+})
+
+test('moves the slide peeking in on the left only into full view when Shift+Tab reaches it in a centered loop', async () => {
+  const { slides, buttons, emblaApi } = createCarousel({
+    slideCount: 6,
+    slideWidth: '60%',
+    options: { loop: true, align: 'center' },
+    plugins: [emblaA11y({ label: 'Products' })]
+  })
+  buttons.previous.focus()
+
+  await userEvent.tab({ shift: true })
+
+  const viewport = emblaApi.rootNode().getBoundingClientRect()
+  expect(document.activeElement).toBe(slides[5]?.querySelector('a'))
+  expect(slides[5]?.getBoundingClientRect().left).toBeCloseTo(viewport.left, 0)
+  await expect.poll(() => slides[4]?.inert).toBe(true)
+})
+
 for (const direction of ['ltr', 'rtl'] as const) {
   test(`shows what the browser scrolls to without focus, such as find in page, ${direction}`, async () => {
     const { slides, emblaApi } = createCarousel({
