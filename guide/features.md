@@ -266,7 +266,7 @@ emblaApi.plugins().autoplay.play()
 The plugin adds nothing on the server. The React, Vue and Solid wrappers also create an instance without a root element, and the plugin leaves that one alone too.
 
 > [!NOTE]
-> The plugin works in the normal page DOM, not inside a shadow root. Inside a web component's shadow DOM it cannot see which element has focus, so focus could be lost when slides are hidden.
+> The plugin works in the normal page DOM, not inside a shadow root. Inside a web component's shadow DOM it cannot see which element has focus, so focus could be lost when slides are hidden. For a carousel inside an iframe, create it with a script in the iframe, not in the parent page, for the same reason.
 
 - No configuration.
 - Markup: render the section, heading, list and slides on the server, so the named region and its content are there before JavaScript runs. The carousel does not work before that: the buttons do nothing, and slides beyond the first view can only be reached with Tab. Hide the buttons, dots and rotation button until Embla has started, for example with a class you add after creating the carousel, so nobody presses a button that does nothing.
