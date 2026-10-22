@@ -26,7 +26,7 @@ A visible heading is better than `label`: most screen reader users move through 
 
 Slides that are completely outside the viewport become `inert`: the keyboard, screen readers, voice control and the mouse skip them. A slide is reachable as soon as any part of it is on screen, and the slide that holds focus is never hidden. So whether someone tabs or reads with a screen reader, forwards or backwards, from the buttons into the slides, they land on the slides they see. The carousel never jumps to a slide nobody asked for. To reach other slides, people use the buttons or the dots, just as they would with their eyes. [Why off-screen slides are inert](../adr/0002-off-screen-slides-are-inert.md)
 
-A slide that is only partly visible stays reachable, because people can see it. Stepping onto it moves the carousel just enough to show it in full. That is the only movement focus causes, and it always goes towards something already on screen.
+A slide that is only partly visible stays reachable, because people can see it. Stepping onto it moves the carousel just enough to show it in full, not to the slide's snap point. The slide after it stays off screen, so the next Tab reaches the buttons instead of walking through every slide. That is the only movement focus causes, and it always goes towards something already on screen.
 
 ### Setup
 
@@ -79,7 +79,7 @@ Make the skip link visible when it has focus.
 
 ## Keep focused content visible
 
-When something inside a slide gets focus, the carousel moves until it is fully visible. This works for the Tab key, screen readers, voice control and scripts. A mouse or touch press does not move the carousel, so the click lands where you pressed. Focus that the browser restores when someone comes back to the tab does not move it either.
+When something inside a slide gets focus, the carousel moves just far enough to show that slide in full, not to the slide's snap point. A jump to the snap point would pull the next slide in, and Tab would walk through every slide. So after such a move the carousel can rest between two snap points, with the focused slide at the edge, until the next button, dot, key or drag snaps it again. Content that sticks out of its slide, such as a wide button, comes into view too. This works for the Tab key, screen readers, voice control and scripts. A mouse or touch press does not move the carousel, so the click lands where you pressed. Focus that the browser restores when someone comes back to the tab does not move it either.
 
 The plugin also stops the browser from scrolling the viewport by itself, which would push the slides out of place. When the browser scrolls to something in a slide without focus, as find in page or a link to a slide do, the carousel moves there instead.
 
