@@ -245,7 +245,7 @@ test.describe('Loop', () => {
     }
   })
 
-  test('Previous right away announces the slides across the wrap', async ({ page }) => {
+  test('Previous right away announces the slides across the wrap', async ({ page, isMobile }) => {
     const demo = page.locator('#loop')
     const warnings = collectWarnings(page)
 
@@ -253,7 +253,7 @@ test.describe('Loop', () => {
 
     await expect.poll(() => visibleSlides(demo)).toContain(10)
     await expect(demo.locator('.carousel__announcer')).toHaveText(
-      /^Slides 10 and 1 of 10$/,
+      isMobile ? 'Slide 10 of 10' : /^Slides 10 and 1 of 10$/,
       afterSettle
     )
     expect(warnings).toEqual([])

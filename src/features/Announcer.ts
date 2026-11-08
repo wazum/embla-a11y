@@ -1,5 +1,5 @@
 import type { EmblaCarouselType } from 'embla-carousel'
-import { isOnScreen } from '../visibleSlides.js'
+import { isMostlyOnScreen, isOnScreen } from '../visibleSlides.js'
 import type { Feature, WarnType } from './Feature.js'
 
 // React and Vue often move the carousel in an effect after the click, not in the click itself.
@@ -160,14 +160,16 @@ export class Announcer implements Feature {
     const viewportRect = this.emblaApi.rootNode().getBoundingClientRect()
     const { axis } = this.emblaApi.internalEngine()
     const readingDirection = axis.direction(1)
-    return this.emblaApi
-      .slideNodes()
-      .flatMap((slide, index) => {
-        const rect = slide.getBoundingClientRect()
-        if (!isOnScreen(rect, viewportRect)) return []
-        return [{ number: index + 1, start: axis.scroll === 'x' ? rect.left : rect.top }]
-      })
-      .toSorted((a, b) => (a.start - b.start) * readingDirection)
+    const onScreen = this.emblaApi.slideNodes().flatMap((slide, index) => {
+      const rect = slide.getBoundingClientRect()
+      return isOnScreen(rect, viewportRect) ? [{ number: index + 1, rect }] : []
+    })
+    const mostlyOnScreen = onScreen.filter(({ rect }) =>
+      isMostlyOnScreen(rect, viewportRect, axis.scroll)
+    )
+    const start = axis.scroll === 'x' ? 'left' : 'top'
+    return (mostlyOnScreen.length > 0 ? mostlyOnScreen : onScreen)
+      .toSorted((a, b) => (a.rect[start] - b.rect[start]) * readingDirection)
       .map(({ number }) => number)
   }
 

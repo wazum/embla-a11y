@@ -8,3 +8,4 @@ Each record has the context, the decision, its consequences and the sources. The
 4. [Interaction stops the rotation until the user starts it again](0004-interaction-stops-rotation-for-good.md): focus or a press stops Autoplay and AutoScroll, and only the rotation button starts them again.
 5. [One announcer, after the user's moves](0005-one-announcer.md): one live region says a short position, and the slides get no `aria-live`.
 6. [No text of its own](0006-no-text-of-its-own.md): every text comes from the page, in its language.
+7. [The announcer names the slides that are mostly on screen](0007-announce-what-is-mostly-on-screen.md): a slide counts when at least half of it, or half the viewport, is on screen; `inert` keeps the one-pixel rule.

@@ -95,6 +95,28 @@ test('announces a free drag that brings other slides on screen without changing 
   })
   const { emblaApi } = createCarousel({
     slideCount: 6,
+    slideWidth: '30%',
+    options: { dragFree: true, align: 'start' },
+    plugins: [emblaA11y({ label: 'Products', announcer })]
+  })
+  const settled = new Promise((resolve) => emblaApi.on('settle', resolve))
+
+  emblaApi.rootNode().dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }))
+  emblaApi.internalEngine().scrollTo.distance(-120, false)
+  window.dispatchEvent(new PointerEvent('pointerup'))
+  await settled
+
+  await expect.poll(() => announcer.textContent).toBe('Slides 1 to 4 of 6')
+  expect(emblaApi.selectedSnap()).toBe(0)
+})
+
+test('stays silent after a free drag that shows only a sliver of another slide', async () => {
+  const announcer = createAnnouncer({
+    'data-announcement': 'Slide {first} of {total}',
+    'data-announcement-group': 'Slides {first} to {last} of {total}'
+  })
+  const { emblaApi } = createCarousel({
+    slideCount: 6,
     slideWidth: '35%',
     options: { dragFree: true, align: 'start' },
     plugins: [emblaA11y({ label: 'Products', announcer })]
@@ -105,9 +127,68 @@ test('announces a free drag that brings other slides on screen without changing 
   emblaApi.internalEngine().scrollTo.distance(-100, false)
   window.dispatchEvent(new PointerEvent('pointerup'))
   await settled
+  await new Promise((resolve) => setTimeout(resolve, 50))
 
-  await expect.poll(() => announcer.textContent).toBe('Slides 1 to 4 of 6')
-  expect(emblaApi.selectedSnap()).toBe(0)
+  expect(announcer.textContent).toBe('')
+})
+
+test('leaves out a slide that shows less than half', async () => {
+  const announcer = createAnnouncer({
+    'data-announcement': 'Slide {first} of {total}',
+    'data-announcement-group': 'Slides {first} to {last} of {total}'
+  })
+  const { buttons, emblaApi } = createCarousel({
+    slideCount: 5,
+    slideWidth: '45%',
+    options: { align: 'start' },
+    plugins: ({ previous, next }) => [
+      emblaA11y({ label: 'Products', previousButton: previous, nextButton: next, announcer })
+    ]
+  })
+  buttons.next.addEventListener('click', () => emblaApi.goToNext(true))
+
+  buttons.next.click()
+
+  await expect.poll(() => announcer.textContent).toBe('Slides 2 to 3 of 5')
+})
+
+test('names every slide on screen when none shows at least half', async () => {
+  const announcer = createAnnouncer({
+    'data-announcement': 'Slide {first} of {total}',
+    'data-announcement-group': 'Slides {first} to {last} of {total}'
+  })
+  const { slides, emblaApi } = createCarousel({
+    slideCount: 3,
+    slideWidth: '50%',
+    options: { dragFree: true, align: 'start' },
+    plugins: [emblaA11y({ label: 'Products', announcer })]
+  })
+  for (const slide of slides) slide.style.marginRight = '600px'
+  emblaApi.reInit()
+  const settled = new Promise((resolve) => emblaApi.on('settle', resolve))
+
+  emblaApi.rootNode().dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }))
+  emblaApi.internalEngine().scrollTo.distance(-300, false)
+  window.dispatchEvent(new PointerEvent('pointerup'))
+  await settled
+
+  await expect.poll(() => announcer.textContent).toBe('Slides 1 to 2 of 3')
+})
+
+test('names a slide wider than the viewport when it covers at least half of the viewport', async () => {
+  const announcer = createAnnouncer({ 'data-announcement': 'Slide {first} of {total}' })
+  const { buttons, emblaApi } = createCarousel({
+    slideCount: 3,
+    slideWidth: '250%',
+    plugins: ({ previous, next }) => [
+      emblaA11y({ label: 'Products', previousButton: previous, nextButton: next, announcer })
+    ]
+  })
+  buttons.next.addEventListener('click', () => emblaApi.goToNext(true))
+
+  buttons.next.click()
+
+  await expect.poll(() => announcer.textContent).toBe('Slide 2 of 3')
 })
 
 test('stays silent after a press that does not move the carousel', async () => {
