@@ -29,9 +29,7 @@ export class FollowFocus implements Feature {
     return true
   }
   private readonly onNativeScroll = (): void => {
-    const root = this.emblaApi.rootNode()
-    const distance =
-      this.emblaApi.internalEngine().axis.scroll === 'x' ? root.scrollLeft : root.scrollTop
+    const distance = this.nativeScroll()
     this.resetNativeScroll()
     if (distance !== 0) this.moveBy(-distance)
   }
@@ -58,6 +56,7 @@ export class FollowFocus implements Feature {
     emblaApi.on('slidefocus', this.onSlideFocus)
     window.addEventListener('blur', this.onWindowBlur)
     window.addEventListener('focus', this.onWindowFocus)
+    this.takeOverStartOffset()
   }
 
   public destroy(): void {
@@ -69,6 +68,19 @@ export class FollowFocus implements Feature {
     this.emblaApi.off('slidefocus', this.onSlideFocus)
     window.removeEventListener('blur', this.onWindowBlur)
     window.removeEventListener('focus', this.onWindowFocus)
+  }
+
+  // An exact move could leave a cut slide at the edge while Embla selects the stop before it.
+  private takeOverStartOffset(): void {
+    const distance = this.nativeScroll()
+    if (distance === 0) return
+    this.resetNativeScroll()
+    this.moveBy(-distance, true)
+  }
+
+  private nativeScroll(): number {
+    const root = this.emblaApi.rootNode()
+    return this.emblaApi.internalEngine().axis.scroll === 'x' ? root.scrollLeft : root.scrollTop
   }
 
   private follow(target: EventTarget | null): void {
@@ -119,7 +131,7 @@ export class FollowFocus implements Feature {
     return element.getBoundingClientRect()[this.edges()[0]]
   }
 
-  private moveBy(distance: number): void {
+  private moveBy(distance: number, toNearestStop = false): void {
     const engine = this.emblaApi.internalEngine()
     const current = engine.target.get()
     const wanted = current + engine.axis.direction(distance)
@@ -128,7 +140,7 @@ export class FollowFocus implements Feature {
       ? wanted
       : Math.min(Math.max(wanted, engine.limit.min), engine.limit.max)
     engine.scrollBody.useBaseFriction().useDuration(0)
-    engine.scrollTo.distance(reachable - current, false)
+    engine.scrollTo.distance(reachable - current, toNearestStop)
   }
 
   private overflow(element: Element): number {

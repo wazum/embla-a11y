@@ -7,6 +7,7 @@ All notable changes to this project are listed here. The project follows [Semant
 ### Fixed
 
 - The announcer names only the slides that show at least half on screen, or that cover at least half of the carousel when they are wider than it. A slide that only peeks in at the edge is no longer named, so after Next it says "Slides 3 to 4" like the dot, not "Slides 2 to 5". The peek stays reachable with Tab. If no slide shows half, it still names every slide on screen. [Why](adr/0007-announce-what-is-mostly-on-screen.md)
+- A viewport that is already scrolled when the plugin starts, for example on a site whose list scrolls natively until the script loads, is taken over: the scroll offset is reset and the carousel moves to the nearest snap point at once. Before, the slides showed shifted while Embla was still at the first snap point, so "Previous" stayed unavailable.
 
 ## 1.1.3 (2026-10-22)
 
